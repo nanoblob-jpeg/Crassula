@@ -72,21 +72,6 @@ int main()
         return -1;
     }    
 
-	/*
-	SHADER
-
-
-
-
-	 */
-    //Shader shaderProgram = ResourceManager::LoadShader("vertexShader.txt", "fragShader.txt", nullptr, "box");
-    
-    /*
-    TEXTURES
-	
-
-     */
-    //Texture container = ResourceManager::LoadTexture("container2.png", true, "container");
 	Crassula.Init();
 
 	
