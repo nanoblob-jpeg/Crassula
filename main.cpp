@@ -95,6 +95,9 @@ int main()
 
 
 	 */
+	//frame counting variables
+	double timeTracker{};
+	int frameCounter{};
 	
     // render loop	
     // -----------
@@ -104,7 +107,17 @@ int main()
     	deltaTime = currentFrame - lastFrame;
     	lastFrame = currentFrame;
 
-    	//remove this later
+    	//frame counter, debug useful
+    	if(timeTracker < 1){
+    		timeTracker += deltaTime;
+    		++frameCounter;
+    	}else if(timeTracker>=1){
+    		std::cout << frameCounter << '\n';
+    	}else{
+    		timeTracker = 0;
+    		frameCounter = 0;
+    	}
+
     	processInput(window);
 
     	glfwPollEvents();
@@ -131,11 +144,10 @@ int main()
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// sends all keyboard input to the ProcessInput funciton in Game
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-	//change this to add keys to the array in Game
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
        glfwSetWindowShouldClose(window, true);
     // if(glfwGetKey(window, GLFW_KEY_UP)){
