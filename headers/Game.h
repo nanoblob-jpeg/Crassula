@@ -5,6 +5,8 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 #include "Chunks.h"
+#include <GLFW/glfw3.h>
+#include <algorithm>
 
 #ifndef GAME_H
 #define GAME_H
@@ -33,6 +35,11 @@ public:
 	Chunks home_main;
 	//these are the 10x10 squares
 	std::vector<Chunks> chunks;
+
+	//Player object
+	Player player;
+	//movement variables:
+	int upCounter{};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();

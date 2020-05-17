@@ -150,28 +150,16 @@ void processInput(GLFWwindow *window)
 {
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
        glfwSetWindowShouldClose(window, true);
-    // if(glfwGetKey(window, GLFW_KEY_UP)){
-    // 	if(alpha <= 1.0)
-    // 		alpha += 0.002f;
-    // 	else
-    // 		alpha = 1.0f;
-    // }
-    // if(glfwGetKey(window, GLFW_KEY_DOWN)){
-    // 	if(alpha >= 0.0)
-    // 		alpha -= 0.002f;
-    // 	else
-    // 		alpha = 0.0f;
-    // }
+    
 
-
-    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    //     cam.ProcessKeyboard(UP, deltaTime);
-    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    //     cam.ProcessKeyboard(DOWN, deltaTime);
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    //     cam.ProcessKeyboard(LEFT, deltaTime);
-    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    //     cam.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KEY_W] = true;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KEY_S] = true;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KEY_A] = true;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KAY_D] = true;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
