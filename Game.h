@@ -47,7 +47,7 @@ public:
 	Player player;
 	//movement variables:
 	float upCounter{};
-
+	
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
 	//loads all textures

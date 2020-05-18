@@ -8,7 +8,8 @@
 
 class Chunks{
 public:
-	std::vector<GameObject> objects;
+	std::vector<GameObject*> objects;
+	std::string name;
 	Chunks(){}
 	void Load(const char *file);
 	void Draw(SpriteRenderer &renderer);

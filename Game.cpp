@@ -22,30 +22,19 @@ void Game::Init(){
 	 */
 	ResourceManager::LoadTexture("awesomeface.png", true, "face");
 
+	/*
+	load GameObjects
+	the building blocks for the chunks
+	*/
+	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
 
 	/*
 	load chunks
 	 */
 	//loading home_main chunk
-	home_main.Load("home_main.txt");
-	//parsing list of chunks ofr the 10x10 squares
-	std::vector<std::string> chunk_list;
-
-	std::string line;
-	std::ifstream fstream("chunk_list.txt");
-	if(fstream){
-		while(std::getline(fstream, line)){
-			chunk_list.push_back(line);
-		}
-	}else{
-		std::cout << "File not opened";
-	}
-	//loading 10x10 squares
-	for(int i{}; i < chunk_list.size(); ++i){
-		Chunks temp;
-		temp.Load(chunk_list[i].c_str());
-		chunks.push_back(temp);
-	}
+	ResourceManager::LoadChunk("home_main.txt", false);
+	//parsing list of chunks for the 10x10 squares
+	ResourceManager::LoadChunk("chunk_list.txt", true);
 
 	//todo  load in all of the possible plants and textures
 	//todo  load in all of the bowls and textures

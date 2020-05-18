@@ -6,6 +6,7 @@
 
 std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
+std::map<std::string, Chunk> ResourceManage::Chunks;
 
 // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
 Shader& ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name){
@@ -95,3 +96,83 @@ Texture ResourceManager::loadTextureFromFile(const char *file, bool alpha){
     stbi_image_free(data);
     return texture;
 };
+
+void ResourceManager::LoadGameObject(const char *file){
+    std::vector<std::string> gameobject_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            gameobject_list.push_back(line);
+        }
+    }else{
+        std::cout << "gameObjectDirectory could not be found/opened";
+    }
+
+    for(int i{}; i < gameobject_list.size(); ++i){
+        std::string line2;
+        std::ifstream fstream2(gameobject_list[i]);
+        std::string vname;
+        glm::vec2 pos, size;
+        std::string textureName;
+        glm::vec3 color;
+        if(fstream){
+            std::getline(fstream2, line2);
+            vname = line2;
+            std::getline(fstream2, line2);
+            pos[0] = std::stof(line2);
+            std::getline(fstream2, line2);
+            pos[1] = std::stof(line2);
+            std::getline(fstream2, line2);
+            size[0] = std::stof(line2);
+            std::getline(fstream2, line2);
+            size[1] = std::stof(line2);
+            std::getline(fstream2, line2);
+            color[0] = std::stof(line2);
+            std::getline(fstream2, line2);
+            color[1] = std::stof(line2);
+            std::getline(fstream2, line2);
+            color[2] = std::stof(line2);
+            std::getline(fstream2, textureName);
+            GameObject obj(pos, size, ResourceManager::GetTexture(textureName.c_str()), color);
+            Objects[vname] = obj;
+        }else{
+            std::cout << "could not open object file";
+        }
+    }
+}
+
+GameObject& GetGameObject(std::string name){
+    return Objects[name];
+}
+
+void ResourceManager::LoadChunk(const char *chunkFile, bool list){
+    if(bool){
+        //parsing list of chunks for the 10x10 squares
+        std::vector<std::string> chunk_list;
+    
+        std::string line;
+        std::ifstream fstream(chunkFile);
+        if(fstream){
+            while(std::getline(fstream, line)){
+                chunk_list.push_back(line);
+            }
+        }else{
+            std::cout << "File not opened";
+        }
+        //loading 10x10 squares
+        for(int i{}; i < chunk_list.size(); ++i){
+            Chunks temp;
+            temp.Load(chunk_list[i].c_str());
+            Chunks[temp.name] = temp;
+        }
+    }else{
+        Chunks temp;
+        temp.Load(chunkFile);
+        Chunks[temp.name] = temp;
+    }
+}
+
+Chunk& ResourceManager::GetChunk(std::string name){
+    return Chunks[name];
+}
