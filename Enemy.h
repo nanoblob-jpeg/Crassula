@@ -1,3 +1,6 @@
+#include <vector>
+#include "GameObject.h"
+
 #ifndef ENEMY
 #define ENEMY
 //interface for enemies
