@@ -16,11 +16,12 @@ void Game::Init(){
 	sProgram.setMat4("projection", projection);
 	sProgram.setMat4("view", view);
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+
 	/*
 	load textures
 	 */
-	
 	ResourceManager::LoadTexture("awesomeface.png", true, "face");
+
 
 	/*
 	load chunks
@@ -46,9 +47,13 @@ void Game::Init(){
 		chunks.push_back(temp);
 	}
 
-	//todo  load in the player object
-	//todo  this is also going to need deserialization so maybe add it
-	//todo  into the class so it does it by itself
+	//todo  load in all of the possible plants and textures
+	//todo  load in all of the bowls and textures
+
+	player = new Player();
+	player.loadPlayer("bin/player.txt");
+
+	
 }
 
 Game::~Game(){
@@ -65,52 +70,58 @@ void Game::Render(){
 void Game::Update(float dt){};
 
 void Game::ProcessInput(float dt){
-	if(Keys[GLFW_KEY_W]){
-		if(upCounter == 0)
-			player.falling = true;
-		//need to add code in the collision detector that will change falling to false
-		if(upCounter < 10){
-			upCounter++;
-			Player.velocity.y = 3.5;
+	if(m_state != START_SCREEN){
+		if(Keys[GLFW_KEY_W]){
+			if(upCounter == 0)
+				player.falling = true;
+			//need to add code in the collision detector that will change falling to false
+			if(upCounter < 0.5){
+				upCounter += dt;
+				player.velocity.y = 3.5;
+			}
+		}
+		if(Keys[GLFW_KEY_S]){
+			//todo
+			//make this call a switch weapon method in the Player class
+			//for now it will do nothing
+		}
+		//move left, with correct acceleration
+		if(Keys[GLFW_KEY_A]){
+			player.velocity.x -= player.speed;
+			if(player.velocity.x < 0)
+				player.velocity.x = std::max(player.velocity.x, (-3.5) - (speed/4));
+		}
+		//move right, with correct acceleration
+		if(Keys[GLFW_KEY_D]){
+			player.velocity.x += player.speed;
+			if(player.velocity.x > 0)
+				player.velocity.x = std::min(player.velocity.x, 3.5 + (speed/4));
+		}
+		//slowing down, correct acceleration
+		if(player.velocity.x > 0 && !player.velocity.x && !player.velocity.y){
+			if(player.velocity.x < 0){
+				if(player.velocity.x > -player.speed - 0.2;)
+					player.velocity.x = 0;
+				else
+					player.velocity.x += player.speed + 0.2;
+			}else{
+				if(player.velocity.x < player.speed + 0.2)
+					player.velocity.x = 0;
+				else
+					player.velocity.x -= (player.speed + 0.2);
+			}
+		}
+		if(player.falling && counter > 1){
+			player.velocity.y -= 0.6;
+		}
+		if(upCounter != 0 && !player.falling){
+			upCounter = 0;
+		}
+		cam.ProcessKeyboard(player.velocity, dt);
+	}else if(m_state = START_SCREEN){
+		if(Keys[GLFW_KEY_SPACE]){
+			m_state = HOME_MAIN;
 		}
 	}
-	if(Keys[GLFW_KEY_S]){
-		//todo
-		//make this call a switch weapon method in the Player class
-		//for now it will do nothing
-	}
-	//move left, with correct acceleration
-	if(Keys[GLFW_KEY_A]){
-		player.velocity.x -= player.speed;
-		if(player.velocity.x < 0)
-			player.velocity.x = std::max(player.velocity.x, (-3.5) - (speed/4));
-	}
-	//move right, with correct acceleration
-	if(Keys[GLFW_KEY_D]){
-		player.velocity.x += player.speed;
-		if(player.velocity.x > 0)
-			player.velocity.x = std::min(player.velocity.x, 3.5 + (speed/4));
-	}
-	//slowing down, correct acceleration
-	if(player.velocity.x > 0 && !player.velocity.x && !player.velocity.y){
-		if(player.velocity.x < 0){
-			if(player.velocity.x > -player.speed - 0.2;)
-				player.velocity.x = 0;
-			else
-				player.velocity.x += player.speed + 0.2;
-		}else{
-			if(player.velocity.x < player.speed + 0.2)
-				player.velocity.x = 0;
-			else
-				player.velocity.x -= (player.speed + 0.2);
-		}
-	}
-	if(player.falling && counter > 1){
-		player.velocity.y -= 0.6;
-	}
-	if(upCounter != 0 && !player.falling){
-		upCounter = 0;
-	}
-	cam.ProcessKeyboard(player.velocity, dt);
 };
 

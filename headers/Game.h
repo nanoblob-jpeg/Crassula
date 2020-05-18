@@ -5,6 +5,8 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 #include "Chunks.h"
+#include "Plant.h"
+#include "Bowl.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 
@@ -36,10 +38,15 @@ public:
 	//these are the 10x10 squares
 	std::vector<Chunks> chunks;
 
+	//list of the plants
+	std::vector<Plant> plants;
+	//list of bowls
+	std::vector<Bowl> bowls;
+
 	//Player object
 	Player player;
 	//movement variables:
-	int upCounter{};
+	float upCounter{};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
