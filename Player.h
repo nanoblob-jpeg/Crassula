@@ -4,13 +4,17 @@
 #include "Bowl.h"
 #include "GameObject.h"
 #include "Effect.h"
+#include "Bowl.h"
 
 #ifndef PLAYER
 #define PLAYER
 class Player : public GameObject{
 	//insert all of the stuff that the GameObject does not keep track of
 public:
+	//movement logic variables
 	bool falling;
+
+	//stats
 	int health;
 	int defense;
 	int attack;
@@ -19,12 +23,8 @@ public:
 	float recovery
 	float luck;
 
-	//animation Textures
-	std::vector<Texture> attackAnimation;
-	//animation frame counters
-	int frameCounter;
-
 	//type of bowl
+	//bowl also stores the textures/animation textures
 	Bowl bowl;
 
 	//plants

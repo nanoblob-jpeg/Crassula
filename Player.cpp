@@ -64,10 +64,13 @@ void Player::loadPlayer(const char *file){
 		bowl = ResourceManager::GetBowl(line);
 		std::getline(fstream, line);
 		sprite = ResourceManager::GetTexture(line.c_str());
-		std::getline(fstream, line);
-		size[0] = std::stof(line);
-		std::getline(fstream, line);
-		size[1] = std::stof(line);
+		//size comes from the bowl that is being used
+		//don't need this, don't need to set the dimensions in
+		//the gameobject parent class as we already have them in the bowl class
+		// std::getline(fstream, line);
+		// size[0] = std::stof(line);
+		// std::getline(fstream, line);
+		// size[1] = std::stof(line);
 	}else{
 		std::cout << "Player file could not be opened";
 	}
