@@ -4,6 +4,8 @@
 #include "Enemy.h"
 #include <glm/glm.hpp>
 #include "Texture.h"
+#include "GameObject.h"
+
 #ifndef PLANT
 #define PLANT
 class Plant : public GameObject{
@@ -19,5 +21,5 @@ public:
 	void addEffect(Effect effect);
 	void applyEffects(Enemy &e);
 	void applyDamage(Enemy &e);
-}
+};
 #endif

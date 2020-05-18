@@ -1,5 +1,6 @@
 #ifndef BLEED
 #define BLEED
+#include "Effect.h"
 class Bleed : public Effect {
 public:
 	int damage;

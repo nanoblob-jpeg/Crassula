@@ -1,5 +1,6 @@
 #include <vector>
 #include "GameObject.h"
+#include "Effect.h"
 
 #ifndef ENEMY
 #define ENEMY
@@ -19,11 +20,12 @@ public:
 	//gets added in the plant class, happens when collision happens
 	std::vector<Effect> effects;
 
-	virtual void attack();
+	virtual void attackFunc();
 	virtual void move();
 	void applyEffects(){
+		float temp = 0.0f;
 		for(int i{}; i < effects.size(); ++i){
-			effects[i].applyEffects(health, defense, attack, speed, 0);
+			effects[i].applyEffect(health, defense, attack, speed, temp);
 		}
 	};
 };
