@@ -78,6 +78,6 @@ void Player::loadPlayer(const char *file){
 
 void Player::applyEffects(){
 	for(int i{}; i < effects.size(); ++i){
-		effects[i].applyEffects(health, defense, attack, speed, recovery);
+		effects[i].applyEffect(health, defense, attack, speed, recovery);
 	}
 }

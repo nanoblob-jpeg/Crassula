@@ -1,6 +1,7 @@
 #include "Chunks.h"
+#include "ResourceManager.h"
 
-void Chunks::Load(const char *file){
+void Chunk::Load(const char *file){
 	std::vector<std::string> files;
 	/*
 	chunks written as:
@@ -24,7 +25,7 @@ void Chunks::Load(const char *file){
 		std::cout << "Parsed zero lines";
 }
 
-void Chunks::init(std::vector<std::string> names){
+void Chunk::init(std::vector<std::string> names){
 	if(names.size() == 0){
 		std::cout << "no files detected";
 		return;

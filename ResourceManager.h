@@ -10,7 +10,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "GameObject.h"
-#include "Chunk.h"
+#include "Chunks.h"
 
 
 class ResourceManager

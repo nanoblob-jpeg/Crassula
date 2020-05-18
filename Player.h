@@ -20,7 +20,7 @@ public:
 	int attack;
 	float attackSpeed;
 	float speed;
-	float recovery
+	float recovery;
 	float luck;
 
 	//type of bowl
@@ -30,10 +30,10 @@ public:
 	//plants
 	int numPlants{};
 	int currentPlant{-1}; // -1 represents the basic attack
-	Plant one;
-	Plant two;
-	Plant three;
-	Plant four; //only applicable for one of them
+	Plant *one = nullptr ;
+	Plant *two = nullptr;
+	Plant *three = nullptr;
+	Plant *four = nullptr; //only applicable for one of them
 
 	//if the player is currently on an interactalbe GameObject, this will store it
 	GameObject *interact;
@@ -41,7 +41,7 @@ public:
 	//effects
 	std::vector<Effect> effects;
 
-	Player(){};
+	//Player(){};
 	void loadPlayer(const char *file);
 	void applyEffects();
 };

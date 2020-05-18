@@ -7,6 +7,7 @@
 #include "Chunks.h"
 #include "Plant.h"
 #include "Bowl.h"
+#include "Player.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 
@@ -32,11 +33,6 @@ public:
 	unsigned int Width, Height;
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
-
-	//the entire scene for the main page
-	Chunks home_main;
-	//these are the 10x10 squares
-	std::vector<Chunks> chunks;
 
 	//list of the plants
 	std::vector<Plant> plants;

@@ -23,7 +23,7 @@ public:
 	int width;
 	int height;
 
-	Bowl(int h, int d, int a, float as, float s, float r, float l, int w, int h):
-	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, width{w}, height{h}{};
+	Bowl(int h, int d, int a, float as, float s, float r, float l, int w, int he):
+	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, width{w}, height{he}{};
 };
 #endif

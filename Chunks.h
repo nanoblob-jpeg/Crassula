@@ -4,13 +4,12 @@
 #include <vector>
 #include <string>
 #include "GameObject.h"
-#include "ResourceManager.h"
 
-class Chunks{
+class Chunk{
 public:
 	std::vector<GameObject*> objects;
 	std::string name;
-	Chunks(){}
+	Chunk(){}
 	void Load(const char *file);
 	void Draw(SpriteRenderer &renderer);
 private:
