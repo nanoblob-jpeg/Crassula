@@ -92,18 +92,18 @@ void Game::ProcessInput(float dt){
 		if(Keys[GLFW_KEY_A]){
 			player.velocity.x -= player.speed;
 			if(player.velocity.x < 0)
-				player.velocity.x = std::max(player.velocity.x, (-3.5) - (speed/4));
+				player.velocity.x = std::max(player.velocity.x, (-3.5) - (player.speed/4));
 		}
 		//move right, with correct acceleration
 		if(Keys[GLFW_KEY_D]){
 			player.velocity.x += player.speed;
 			if(player.velocity.x > 0)
-				player.velocity.x = std::min(player.velocity.x, 3.5 + (speed/4));
+				player.velocity.x = std::min(player.velocity.x, 3.5 + (player.speed/4));
 		}
 		//slowing down, correct acceleration
 		if(player.velocity.x > 0 && !player.velocity.x && !player.velocity.y){
 			if(player.velocity.x < 0){
-				if(player.velocity.x > -player.speed - 0.2;)
+				if(player.velocity.x > -player.speed - 0.2)
 					player.velocity.x = 0;
 				else
 					player.velocity.x += player.speed + 0.2;
@@ -114,7 +114,7 @@ void Game::ProcessInput(float dt){
 					player.velocity.x -= (player.speed + 0.2);
 			}
 		}
-		if(player.falling && counter > 1){
+		if(player.falling && upCounter > 1){
 			player.velocity.y -= 0.6;
 		}
 		if(upCounter != 0 && !player.falling){

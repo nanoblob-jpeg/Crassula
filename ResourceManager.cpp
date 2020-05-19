@@ -6,7 +6,11 @@
 
 std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
-std::map<std::string, Chunk> ResourceManage::Chunks;
+std::map<std::string, Chunk> ResourceManager::Chunks;
+std::map<std::string, GameObject> ResourceManager::Objects;
+std::map<std::string, Bowl> ResourceManager::Bowls;
+std::map<std::string, Plant> ResourceManager::Plants;
+std::map<std::string, Effect> ResourceManager::Effects;
 
 // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
 Shader& ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name){
@@ -143,12 +147,12 @@ void ResourceManager::LoadGameObject(const char *file){
     }
 }
 
-GameObject& GetGameObject(std::string name){
+GameObject& ResourceManager::GetGameObject(std::string name){
     return Objects[name];
 }
 
 void ResourceManager::LoadChunk(const char *chunkFile, bool list){
-    if(bool){
+    if(list){
         //parsing list of chunks for the 10x10 squares
         std::vector<std::string> chunk_list;
     
@@ -163,12 +167,12 @@ void ResourceManager::LoadChunk(const char *chunkFile, bool list){
         }
         //loading 10x10 squares
         for(int i{}; i < chunk_list.size(); ++i){
-            Chunks temp;
+            Chunk temp;
             temp.Load(chunk_list[i].c_str());
             Chunks[temp.name] = temp;
         }
     }else{
-        Chunks temp;
+        Chunk temp;
         temp.Load(chunkFile);
         Chunks[temp.name] = temp;
     }
@@ -354,7 +358,7 @@ void ResourceManager::LoadEffect(const char *file){
     */
 
     for(int i{}; i < effect_list.size(); ++i){
-        std::ifstream fstream2(plant_list[i]);
+        std::ifstream fstream2(effect_list[i]);
         std::string name;
         int dehealth, dedefense, deattack;
         float despeed, derecovery;
@@ -375,6 +379,6 @@ void ResourceManager::LoadEffect(const char *file){
     }
 }
 
-Effect& GetEffect(std::string name){
+Effect& ResourceManager::GetEffect(std::string name){
     return Effects[name];
 }

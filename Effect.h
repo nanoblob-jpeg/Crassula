@@ -14,7 +14,7 @@ public:
 		dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}{};
 
 	void applyEffect(int &health, int &defense, int &attack, float &speed, float &recovery){
-		health += dehalth;
+		health += dehealth;
 		defense += dedefense;
 		attack += deattack;
 		speed += despeed;
