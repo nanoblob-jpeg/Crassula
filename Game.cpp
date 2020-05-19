@@ -53,7 +53,9 @@ void Game::Init(){
 	*/
 	ResourceManager::LoadPlant("plant_list.txt");
 
-	player = new Player();
+	/*
+	load player
+	 */
 	player.loadPlayer("bin/player.txt");
 
 	
@@ -92,13 +94,13 @@ void Game::ProcessInput(float dt){
 		if(Keys[GLFW_KEY_A]){
 			player.velocity.x -= player.speed;
 			if(player.velocity.x < 0)
-				player.velocity.x = std::max(player.velocity.x, (-3.5) - (player.speed/4));
+				player.velocity.x = std::max(player.velocity.x, static_cast<float>((-3.5) - (player.speed/4)));
 		}
 		//move right, with correct acceleration
 		if(Keys[GLFW_KEY_D]){
 			player.velocity.x += player.speed;
 			if(player.velocity.x > 0)
-				player.velocity.x = std::min(player.velocity.x, 3.5 + (player.speed/4));
+				player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
 		}
 		//slowing down, correct acceleration
 		if(player.velocity.x > 0 && !player.velocity.x && !player.velocity.y){

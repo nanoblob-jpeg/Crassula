@@ -25,7 +25,7 @@ public:
 
 	//type of bowl
 	//bowl also stores the textures/animation textures
-	Bowl bowl;
+	Bowl *bowl = nullptr;
 
 	//plants
 	int numPlants{};
@@ -36,12 +36,12 @@ public:
 	Plant *four = nullptr; //only applicable for one of them
 
 	//if the player is currently on an interactalbe GameObject, this will store it
-	GameObject *interact;
+	GameObject *interact = nullptr;
 
 	//effects
 	std::vector<Effect> effects;
 
-	//Player(){};
+	Player(){};
 	void loadPlayer(const char *file);
 	void applyEffects();
 };
