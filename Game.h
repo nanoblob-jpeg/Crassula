@@ -8,6 +8,7 @@
 #include "Plant.h"
 #include "Bowl.h"
 #include "Player.h"
+#include "Effect.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 
@@ -33,11 +34,6 @@ public:
 	unsigned int Width, Height;
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
-
-	//list of the plants
-	std::vector<Plant> plants;
-	//list of bowls
-	std::vector<Bowl> bowls;
 
 	//Player object
 	Player player;

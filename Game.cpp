@@ -20,6 +20,8 @@ void Game::Init(){
 	/*
 	load textures
 	 */
+	//change this so that it runs on the one file names all of it and then 
+	//loads all in one function call
 	ResourceManager::LoadTexture("awesomeface.png", true, "face");
 
 	/*
@@ -33,11 +35,23 @@ void Game::Init(){
 	 */
 	//loading home_main chunk
 	ResourceManager::LoadChunk("home_main.txt", false);
-	//parsing list of chunks for the 10x10 squares
+	//loading chunks for the 10x10 squares
 	ResourceManager::LoadChunk("chunk_list.txt", true);
 
-	//todo  load in all of the possible plants and textures
-	//todo  load in all of the bowls and textures
+	/*
+	load effects
+	*/
+	ResourceManager::LoadEffect("effect_list.txt");
+
+	/*
+	load bowls
+	*/
+	ResourceManager::LoadBowl("bowl_list.txt");
+	
+	/*
+	load plants
+	*/
+	ResourceManager::LoadPlant("plant_list.txt");
 
 	player = new Player();
 	player.loadPlayer("bin/player.txt");

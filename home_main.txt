@@ -1,1 +1,1 @@
-home_main/test.txt
+bin/home_main/test.txt

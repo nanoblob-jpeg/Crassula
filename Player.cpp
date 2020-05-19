@@ -16,9 +16,6 @@ void Player::loadPlayer(const char *file){
 	recovery
 	luck
 	bowl name
-	Texture name
-	width
-	height
 	*/
 	//player doesn't start with any plants in the home page so there is no plant loading happening here
 	//player starts where the camera starts, so we don't need a position
@@ -62,8 +59,6 @@ void Player::loadPlayer(const char *file){
 		luck = std::stof(line);
 		std::getline(fstream, line);
 		bowl = ResourceManager::GetBowl(line);
-		std::getline(fstream, line);
-		sprite = ResourceManager::GetTexture(line.c_str());
 		//size comes from the bowl that is being used
 		//don't need this, don't need to set the dimensions in
 		//the gameobject parent class as we already have them in the bowl class

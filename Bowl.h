@@ -2,6 +2,7 @@
 #define BOWL
 #include <vector>
 #include "Texture.h"
+#include <glm/glm.hpp>
 
 class Bowl{
 public:
@@ -20,10 +21,9 @@ public:
 	float recovery;
 	float luck;
 
-	int width;
-	int height;
+	glm::vec2 size;
 
-	Bowl(int h, int d, int a, float as, float s, float r, float l, int w, int he):
-	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, width{w}, height{he}{};
+	Bowl(int h, int d, int a, float as, float s, float r, float l, glm::vec2 psize):
+	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, size(psize){};
 };
 #endif

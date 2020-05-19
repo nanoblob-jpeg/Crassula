@@ -1,2 +1,2 @@
-chunk_list/test.txt
-chunk_list/test2.txt
+bin/chunk_list/test.txt
+bin/chunk_list/test2.txt

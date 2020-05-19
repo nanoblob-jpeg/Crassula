@@ -11,6 +11,9 @@
 #include "Shader.h"
 #include "GameObject.h"
 #include "Chunks.h"
+#include "Bowl.h"
+#include "Plant.h"
+#include "Effect.h"
 
 
 class ResourceManager
@@ -21,8 +24,11 @@ public:
     static std::map<std::string, Texture> Textures;
     static std::map<std::string, Chunk> Chunks;
     static std::map<std::string, GameObject> Objects;
+    static std::map<std::string, Bowl> Bowls;
+    static std::map<std::string, Plant> Plants;
+    static std::map<std::string, Effect> Effects;
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
-    static Shader& LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name);
+    static Shader& LoadShader(const char *vShaderFilePlant, const char *fShaderFile, const char *gShaderFile, std::string name);
     // retrieves a stored sader
     static Shader& GetShader(std::string name);
     // loads (and generates) a texture from file
@@ -37,6 +43,18 @@ public:
     static void LoadGameObject(const char *file);
     // returns GameObjects
     static GameObject& GetGameObject(std::string name);
+    //loads the bowls
+    static void LoadBowl(const char *file);
+    //returns a bowl
+    static Bowl& GetBowl(std::string name);
+    //loads the plants
+    static void LoadPlant(const char *file);
+    //returns a plant
+    static Plant& GetPlant(std::string name);
+    //loads the effects
+    static void LoadEffect(const char *file);
+    //returns an effect
+    static Effect& GetEffect(std::string name);
     // properly de-allocates all loaded resources
     static void Clear();
 private:

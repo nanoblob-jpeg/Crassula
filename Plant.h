@@ -17,7 +17,7 @@ public:
 	std::vector<Effect> effects;
 	bool piercing;
 
-	Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture tex, glm::vec2 pos, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
+	Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture tex, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
 	void addEffect(Effect effect);
 	void applyEffects(Enemy &e);
 	void applyDamage(Enemy &e);

@@ -1,10 +1,9 @@
 #include "Plant.h"
-Plant::Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture tex, glm::vec2 pos, glm::vec2 psize, glm::vec3 pcolor)
+Plant::Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture tex, glm::vec2 psize, glm::vec3 pcolor)
 	: name(pname), level(plevel), attack(pattack), range(prange), piercing(ppiercing)
 	{
 		interactable = true;
 		sprite = tex;
-		position = pos;
 		size = psize;
 		color = pcolor;
 	};

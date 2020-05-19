@@ -108,6 +108,7 @@ void ResourceManager::LoadGameObject(const char *file){
     }else{
         std::cout << "gameObjectDirectory could not be found/opened";
     }
+    fstream.close();
 
     for(int i{}; i < gameobject_list.size(); ++i){
         std::string line2;
@@ -175,4 +176,205 @@ void ResourceManager::LoadChunk(const char *chunkFile, bool list){
 
 Chunk& ResourceManager::GetChunk(std::string name){
     return Chunks[name];
+}
+
+void ResourceManager::LoadBowl(const char *file){
+    std::vector<std::string> bowl_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            bowl_list.push_back(line);
+        }
+    }else{
+        std::cout << "Could not open bowl list file";
+    }
+
+    fstream.close();
+
+    /*
+    format for bowl files:
+    name
+    health
+    defense
+    attack
+    attackSpeed
+    speed
+    recovery
+    luck
+    width
+    height
+    number of attack animation frames
+    texture names of attack animations
+    */
+
+    for(int i{}; i < bowl_list.size(); ++i){
+        std::ifstream fstream2(bowl_list[i]);
+        std::string name;
+        //todo fix variables
+        int health, damage, attack, num;
+        float attackSpeed, speed, recovery, luck;
+        glm::vec2 size;
+        std::getline(fstream2, line);
+        name = line;
+        std::getline(fstream2, line);
+        health = std::stoi(line);
+        std::getline(fstream2, line);
+        damage = std::stoi(line);
+        std::getline(fstream2, line);
+        attack = std::stoi(line);
+        std::getline(fstream2, line);
+        attackSpeed = std::stof(line);
+        std::getline(fstream2, line);
+        speed = std::stof(line);
+        std::getline(fstream2, line);
+        recovery = std::stof(line);
+        std::getline(fstream2, line);
+        luck = std::stof(line);
+        std::getline(fstream2, line);
+        size[0] = std::stoi(line);
+        std::getline(fstream2, line);
+        size[1] = std::stoi(line);
+        std::getline(fstream2, line);
+        num = std::stoi(line);
+        Bowl temp = Bowl(health, damage, attack, attackSpeed, speed, recovery, luck, size);
+        for(int j{}; j < num; ++j){
+            std::getline(fstream2, line);
+            temp.attackAnimation.push_back(Textures[line]);
+        }
+        Bowls[name] = temp;
+        fstream2.close();
+    }
+}
+
+Bowl& ResourceManager::GetBowl(std::string name){
+    return Bowls[name];
+}
+
+void ResourceManager::LoadPlant(const char *file){
+    std::vector<std::string> plant_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            plant_list.push_back(line);
+        }
+    }else{
+        std::cout << "Could not open plant list file";
+    }
+
+    fstream.close();
+
+    /*
+    format for plant files:
+    name
+    level
+    attack
+    range
+    piercing
+    Texture name
+    width
+    height
+    color.r
+    color.g
+    color.b
+    number of effects
+    effect names
+    */
+
+    for(int i{}; i < plant_list.size(); ++i){
+        std::ifstream fstream2(plant_list[i]);
+        std::string name, tname;
+        int level, attack, range, num;
+        bool piercing;
+        glm::vec2 size;
+        glm::vec3 color;
+        std::getline(fstream2, line);
+        name = line;
+        std::getline(fstream2, line);
+        level = std::stoi(line);
+        std::getline(fstream2, line);
+        attack = std::stoi(line);
+        std::getline(fstream2, line);
+        range = std::stoi(line);
+        std::getline(fstream2, line);
+        piercing = static_cast<bool>(std::stoi(line));
+        std::getline(fstream2, line);
+        tname = line;
+        std::getline(fstream2, line);
+        size[0] = std::stof(line);
+        std::getline(fstream2, line);
+        size[1] = std::stof(line);
+        std::getline(fstream2, line);
+        color[0] = std::stoi(line);
+        std::getline(fstream2, line);
+        color[1] = std::stoi(line);
+        std::getline(fstream2, line);
+        color[2] = std::stof(line);
+        std::getline(fstream2, line);
+        num = std::stoi(line);
+        Plant temp = Plant(name, level, attack, range, piercing, Textures[tname], size, color);
+        for(int j{}; j < num; ++j){
+            std::getline(fstream2, line);
+            temp.addEffect(Effects[line]);
+        }
+        Plants[name] = temp;
+        fstream2.close();
+    }
+}
+
+Plant& ResourceManager::GetPlant(std::string name){
+    return Plants[name];
+}
+
+void ResourceManager::LoadEffect(const char *file){
+    std::vector<std::string> effect_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            effect_list.push_back(line);
+        }
+    }else{
+        std::cout << "Could not open plant list file";
+    }
+
+    fstream.close();
+
+    /*
+    for values that the effect does not effect, should be 0
+    negative is a debuff, positive is a buff
+    format for effect files:
+    name
+    dehealth
+    dedefense
+    deattack
+    despeed
+    derecovery
+    */
+
+    for(int i{}; i < effect_list.size(); ++i){
+        std::ifstream fstream2(plant_list[i]);
+        std::string name;
+        int dehealth, dedefense, deattack;
+        float despeed, derecovery;
+        std::getline(fstream2, line);
+        name = line;
+        std::getline(fstream2, line);
+        dehealth = std::stoi(line);
+        std::getline(fstream2, line);
+        dedefense = std::stoi(line);
+        std::getline(fstream2, line);
+        deattack = std::stoi(line);
+        std::getline(fstream2, line);
+        despeed = std::stof(line);
+        std::getline(fstream2, line);
+        derecovery = std::stof(line);
+        Effects[name] = Effect(dehealth, dedefense, deattack, despeed, derecovery);
+        fstream2.close();
+    }
+}
+
+Effect& GetEffect(std::string name){
+    return Effects[name];
 }
