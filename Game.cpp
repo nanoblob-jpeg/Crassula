@@ -22,7 +22,7 @@ void Game::Init(){
 	 */
 	//change this so that it runs on the one file names all of it and then 
 	//loads all in one function call
-	ResourceManager::LoadTexture("awesomeface.png", true, "face");
+	ResourceManager::LoadTexture("textureDirectory.txt");
 
 	/*
 	load GameObjects

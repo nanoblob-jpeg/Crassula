@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <tuple>
 
 std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
@@ -21,6 +22,33 @@ Shader& ResourceManager::LoadShader(const char *vShaderFile, const char *fShader
 Shader& ResourceManager::GetShader(std::string name){
     return Shaders[name];
 };
+// loads and generates a texture from a file that contains many textures
+void ResourceManager::LoadTexture2(const char *file){
+    std::vector<std::tuple<std::string, bool, std::string>> texturePaths;
+    /*
+    file format:
+    path name
+    alpha bool(either 0 or 1, zero for false, 1 for true)
+    name
+    (repeats)
+    */
+    std::ifstream fstream(file);
+    std::string line;
+    if(fstream){
+        while(std::getline(fstream, line)){
+            std::string path = line;
+            std::getline(fstream, line);
+            bool alpha = line.c_str()[0] - '0';
+            std::getline(fstream, line);
+            std::string name = line;
+            texturePaths.push_back(std::make_tuple(path, !alpha, name));
+        }
+    }
+
+    for(int i{}; i < texturePaths.size(); ++i){
+        LoadTexture(std::get<0>(texturePaths[i]), std::get<1>(texturePaths[i]), std::get<2>(texturePaths[i]));
+    }
+}
 // loads (and generates) a texture from file
 Texture& ResourceManager::LoadTexture(const char *file, bool alpha, std::string name){
     Textures[name] = loadTextureFromFile(file, alpha);
