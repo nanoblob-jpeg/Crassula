@@ -46,7 +46,7 @@ void ResourceManager::LoadTexture2(const char *file){
     }
 
     for(int i{}; i < texturePaths.size(); ++i){
-        LoadTexture(std::get<0>(texturePaths[i]), std::get<1>(texturePaths[i]), std::get<2>(texturePaths[i]));
+        LoadTexture(std::get<0>(texturePaths[i]).c_str(), std::get<1>(texturePaths[i]), std::get<2>(texturePaths[i]));
     }
 }
 // loads (and generates) a texture from file
