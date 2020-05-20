@@ -16,7 +16,8 @@ void Player::loadPlayer(const char *file){
 	//player doesn't start with any plants in the home page so there is no plant loading happening here
 	//player starts where the camera starts, so we don't need a position
 		//we can just set the position equal to the camera's position but in the 0 z axis
-	
+	velocity[0] = 0;
+	velocity[1] = 0;
 	std::string line;
 	std::ifstream fstream(file);
 	if(fstream){

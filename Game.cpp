@@ -72,7 +72,55 @@ void Game::Render(){
 	
 }
 
-void Game::Update(float dt){};
+void Game::Update(float dt){
+	//need to add moving logic here before the collision check logic
+	cam.ProcessKeyboard(player.velocity, dt);
+
+	if(state == HOME_MAIN){
+		Chunk *home_main = ResourceManager.getChunk("home_main");
+		for(int i{}; i < home_main->objects.size(); ++i){
+			if(home_main->object[i]->interactable){
+				//checking for collision
+				bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= home_main->object[i].position[0]
+					&& home_main->object[i].position[0] + home_main->object[i].size[0] >= cam.Position[0] - player.bowl->size[0]/2;
+				bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= home_main->object[i].position[0]
+					&& home_main->object[i].position[1] + home_main->object[i].size[1] >= cam.Positon[1] - player.bowl->size[1]/2;
+				if(collisionX && collisionY){
+					//setting the object as the one that the player can interact with
+					player.interact = &home_main->object[i];
+				} 
+			}else{
+				bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= home_main->object[i].position[0]
+					&& home_main->object[i].position[0] + home_main->object[i].size[0] >= cam.Position[0] - player.bowl->size[0]/2;
+				bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= home_main->object[i].position[0]
+					&& home_main->object[i].position[1] + home_main->object[i].size[1] >= cam.Positon[1] - player.bowl->size[1]/2;
+				if(collisionX && collisionY){
+					//need to also change the velocity of the player here to be zero in the direction
+					//of the collision
+					//getting previous location
+					short direction;
+					glm::vec2 prevPosition;
+					prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
+					prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
+					//finding which side the player is hitting the block
+					//0 is top side
+					//1 is right side
+					//2 is bottom side
+					//3 is left side
+					if(prevPosition[1] - player.bowl->size[1]/2 > home_main->object[i].position[1]){
+						if(-player.bowl->size[0]/2 < prevPosition[0] - home_main->object[i].position[0] < home_main->object[i].size[0] + player.bowl->size[0]/2){
+							direction = 0;
+						}
+					}
+
+
+					cam.Position[0] += home_main->object[i].position[0] - (cam.Position[0] - player.bowl->size[0]);
+					cam.Position[1] += home_main->object[i].position[1] - cam.Position[1];
+				}
+			}
+		}
+	}
+};
 
 void Game::ProcessInput(float dt){
 	if(m_state != START_SCREEN){
@@ -122,7 +170,6 @@ void Game::ProcessInput(float dt){
 		if(upCounter != 0 && !player.falling){
 			upCounter = 0;
 		}
-		cam.ProcessKeyboard(player.velocity, dt);
 	}else if(m_state = START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
 			m_state = HOME_MAIN;

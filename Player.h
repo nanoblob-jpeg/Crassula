@@ -13,6 +13,7 @@ class Player : public GameObject{
 public:
 	//movement logic variables
 	bool falling;
+	glm::vec2 velocity;
 
 	//general information
 	int level;

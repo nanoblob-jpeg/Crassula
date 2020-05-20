@@ -102,7 +102,7 @@ int main()
     		timeTracker = 0;
     		frameCounter = 0;
     	}
-
+        
     	processInput(window);
 
     	glfwPollEvents();
