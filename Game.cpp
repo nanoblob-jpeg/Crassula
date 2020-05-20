@@ -108,8 +108,27 @@ void Game::Update(float dt){
 					//2 is bottom side
 					//3 is left side
 					if(prevPosition[1] - player.bowl->size[1]/2 > home_main->object[i].position[1]){
+						//testing to see if the player with clearly above the block
 						if(-player.bowl->size[0]/2 < prevPosition[0] - home_main->object[i].position[0] < home_main->object[i].size[0] + player.bowl->size[0]/2){
 							direction = 0;
+						}else{
+							//testing the edge cases where the player is in the corner of the space around the block
+							//yet still collides with it this frame
+							//uses distance for each axis and the velocity in order to figure out which one
+							//hit first
+							float distanceX = prevPosition[0] < home_main->object.position[0]? home_main->object.position[0] - (prevPosition[0] + player.bowl->size[0]/2) 
+								: home_main->object.position[0] + home_main->object.size[0] - (prevPosition[0] - player.bowl->size[0]/2);
+							float distanceY = prevPosition[1] + player.bowl->size[1]/2 - home_main->object.position[1];
+
+							if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
+								if(prevPosition[0] < home_main->object.position[0]){
+									direction = 3;
+								}else{
+									direction = 1;
+								}
+							}else{
+								direction = 0;
+							}
 						}
 					}
 
