@@ -77,6 +77,7 @@ void Game::Update(float dt){
 	cam.ProcessKeyboard(player.velocity, dt);
 
 	if(state == HOME_MAIN){
+		//don't know what I'm doing here, need to set it to the chunk that is displayed
 		Chunk *home_main = ResourceManager.getChunk("home_main");
 		for(int i{}; i < home_main->objects.size(); ++i){
 			if(home_main->object[i]->interactable){
@@ -107,7 +108,9 @@ void Game::Update(float dt){
 					//1 is right side
 					//2 is bottom side
 					//3 is left side
-					if(prevPosition[1] - player.bowl->size[1]/2 > home_main->object[i].position[1]){
+
+					//testing when player is above the object
+					if(prevPosition[1] + player.bowl->size[1]/2 < home_main->object[i].position[1]){
 						//testing to see if the player with clearly above the block
 						if(-player.bowl->size[0]/2 < prevPosition[0] - home_main->object[i].position[0] < home_main->object[i].size[0] + player.bowl->size[0]/2){
 							direction = 0;
@@ -118,7 +121,7 @@ void Game::Update(float dt){
 							//hit first
 							float distanceX = prevPosition[0] < home_main->object.position[0]? home_main->object.position[0] - (prevPosition[0] + player.bowl->size[0]/2) 
 								: home_main->object.position[0] + home_main->object.size[0] - (prevPosition[0] - player.bowl->size[0]/2);
-							float distanceY = prevPosition[1] + player.bowl->size[1]/2 - home_main->object.position[1];
+							float distanceY = home_main->object.position[1] - (prevPosition[1] + player.bowl->size[1]/2);
 
 							if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
 								if(prevPosition[0] < home_main->object.position[0]){
@@ -132,13 +135,60 @@ void Game::Update(float dt){
 						}
 					}
 
+					//testing when the player is below the object
+					else if(prevPosition[1] - player.bowl->size[1]/2 > home_main->object[i].position[1] + home_main->object[i].size[1]){
+						//testing to see if the player with clearly above the block
+						if(-player.bowl->size[0]/2 < prevPosition[0] - home_main->object[i].position[0] < home_main->object[i].size[0] + player.bowl->size[0]/2){
+							direction = 2;
+						}else{
+							//testing the edge cases where the player is in the corner of the space around the block
+							//yet still collides with it this frame
+							//uses distance for each axis and the velocity in order to figure out which one
+							//hit first
+							float distanceX = prevPosition[0] < home_main->object.position[0]? home_main->object.position[0] - (prevPosition[0] + player.bowl->size[0]/2) 
+								: home_main->object.position[0] + home_main->object.size[0] - (prevPosition[0] - player.bowl->size[0]/2);
+							float distanceY = prevPosition[1] - player.bowl->size[1]/2 - home_main->object.position[1];
 
-					cam.Position[0] += home_main->object[i].position[0] - (cam.Position[0] - player.bowl->size[0]);
-					cam.Position[1] += home_main->object[i].position[1] - cam.Position[1];
+							if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
+								if(prevPosition[0] < home_main->object.position[0]){
+									direction = 3;
+								}else{
+									direction = 1;
+								}
+							}else{
+								direction = 2;
+							}
+						}
+					}
+
+					//testing when the rest of the situations where the block approaches from the side
+					//previous ifs have eliminated the top and bottom approaches
+					else if(prevPosition[0] < home_main->object.position[0]){
+						direction = 3;
+					}else{
+						direction = 1;
+					}
+					
+					//applying the corrections to the players position
+					//while also fixing the velocity in that direction
+					//to make it seem like they were stopped by the object
+					if(direction == 0){
+						cam.Position[1] -= cam.Position[1] + player.bowl->size[1]/2 - home_main->object.position[1];
+						player.velocity[1] = 0.0f;
+					}else if(direction == 1){
+						cam.Position[0] += home_main->object.position[0] + home_main->object.size[0] - (cam.Position[0] - player.bowl->size[0]/2);
+						player.velocity[0] = 0.0f;
+					}else if(direction == 2){
+						cam.Position[1] += home_main->object.position[1] + home_main->object.size[1] - (cam.Position[1] - player.bowl->size[1]/2);
+						player.velocity[1] = 0.0f;
+					}else{
+						cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - home_main->object.position[0];
+						player.velocity[0] = 0.0f;
+					}
 				}
 			}
 		}
-	}
+	}//test for the other states else if()
 };
 
 void Game::ProcessInput(float dt){
@@ -183,9 +233,12 @@ void Game::ProcessInput(float dt){
 					player.velocity.x -= (player.speed + 0.2);
 			}
 		}
-		if(player.falling && upCounter > 1){
-			player.velocity.y -= 0.6;
-		}
+		//always subtract 0.6 from the y velocity to simulate falling
+		//makes it so that whenever they walk off a block they also fall
+		//gets corrected to 0 in the collision detection if there is a collision
+		//between the bottom of the player and the top of the object
+		player.velocity.y -= 0.6;
+		
 		if(upCounter != 0 && !player.falling){
 			upCounter = 0;
 		}
