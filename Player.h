@@ -14,6 +14,11 @@ public:
 	//movement logic variables
 	bool falling;
 
+	//general information
+	int level;
+	float experience;
+	std::string name;
+
 	//stats
 	int health;
 	int defense;
@@ -41,8 +46,17 @@ public:
 	//effects
 	std::vector<Effect> effects;
 
+	//stat boost vector
+	//instantiate when the player enters the gate and starts a game
+	//add together all of the greenhouse plant buffs and the bowl buff
+	//then when we're calculating, just change the base stats based on
+	//these values which should be easy to access
+	//maybe change it to a map
+	std::vector<float> statBoosts;
+
 	Player(){};
 	void loadPlayer(const char *file);
 	void applyEffects();
+	void calculateStats(int level);
 };
 #endif
