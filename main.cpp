@@ -102,7 +102,7 @@ int main()
     		timeTracker = 0;
     		frameCounter = 0;
     	}
-        
+
     	processInput(window);
 
     	glfwPollEvents();
@@ -144,7 +144,24 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         Crassula.Keys[GLFW_KEY_A] = true;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KAY_D] = true;
+        Crassula.Keys[GLFW_KEY_D] = true;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KEY_SPACE] = true;
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+        Crassula.Keys[GLFW_KEY_I] = true;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_W] = false;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_S] = false;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_A] = false;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_D] = false;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_SPACE] = false;
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
+        Crassula.Keys[GLFW_KEY_I] = false;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

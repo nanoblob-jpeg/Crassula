@@ -11,6 +11,7 @@
 #include "Effect.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
+#include <deque>
 
 #ifndef GAME_H
 #define GAME_H
@@ -40,6 +41,9 @@ public:
 	//movement variables:
 	float upCounter{};
 	
+	//game storage system
+	std::deque<std::deque<Chunk>> board;
+
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
 	//loads all textures

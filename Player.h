@@ -42,6 +42,7 @@ public:
 	Plant *four = nullptr; //only applicable for one of them
 
 	//if the player is currently on an interactalbe GameObject, this will store it
+	//the interact key is currently "i"
 	GameObject *interact = nullptr;
 
 	//effects

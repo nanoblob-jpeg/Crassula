@@ -79,6 +79,7 @@ void Game::Update(float dt){
 	if(state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
 		Chunk *home_main = ResourceManager.getChunk("home_main");
+		player.interact = nullptr;
 		for(int i{}; i < home_main->objects.size(); ++i){
 			if(home_main->object[i]->interactable){
 				//checking for collision
@@ -241,6 +242,38 @@ void Game::ProcessInput(float dt){
 		
 		if(upCounter != 0 && !player.falling){
 			upCounter = 0;
+		}
+
+		if(m_state == HOME_MAIN){
+			if(Keys[GLFW_KEY_I]){
+				if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
+					m_state = GAME_ACTIVE_CLASSIC;
+					//insert function to start the game
+					//initialize the deque of the chunks
+					//have the generation of each chunk be a function so that we can use it again
+					//when we have to generate the chunks as they move
+
+					//should make a portal class
+					//need to have some function in there that can be called for
+					//all interactables
+					//like interact with or something
+				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
+					m_state = GAME_ACTIVE_BOSS;
+					//add in code here to prep for that
+				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
+					m_state = HOME_ARMORY;
+					//add in code later
+				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
+					m_state = HOME_NURSERY;
+					//add in code later
+				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
+					m_state = HOME_GREENHOUSE;
+					//add code later
+				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
+					m_state = HOME_CLOCK;
+				}
+			}
+
 		}
 	}else if(m_state = START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
