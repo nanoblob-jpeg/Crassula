@@ -175,6 +175,7 @@ void Game::Update(float dt){
 					if(direction == 0){
 						cam.Position[1] -= cam.Position[1] + player.bowl->size[1]/2 - home_main->objects[i]->position[1];
 						player.velocity[1] = 0.0f;
+						player.falling = false;
 					}else if(direction == 1){
 						cam.Position[0] += home_main->objects[i]->position[0] + home_main->objects[i]->size[0] - (cam.Position[0] - player.bowl->size[0]/2);
 						player.velocity[0] = 0.0f;
