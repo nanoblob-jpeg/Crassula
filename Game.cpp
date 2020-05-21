@@ -78,7 +78,7 @@ void Game::Update(float dt){
 
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
-		Chunk *home_main = ResourceManager.getChunk("home_main");
+		Chunk *home_main = ResourceManager::getChunk("home_main");
 		player.interact = nullptr;
 
 		for(int i{}; i < home_main->objects.size(); ++i){
