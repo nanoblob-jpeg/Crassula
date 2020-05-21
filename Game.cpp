@@ -78,12 +78,9 @@ void Game::Update(float dt){
 
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
-<<<<<<< HEAD
 		Chunk *home_main = ResourceManager.getChunk("home_main");
 		player.interact = nullptr;
-=======
-		Chunk *home_main = &ResourceManager::GetChunk("home_main");
->>>>>>> 3801e7b563e32f2f0ad3aa97ab8eb53af6a3e667
+
 		for(int i{}; i < home_main->objects.size(); ++i){
 			if(home_main->objects[i]->interactable){
 				//checking for collision
