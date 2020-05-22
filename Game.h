@@ -36,6 +36,8 @@ public:
 	bool Keys[1024];
 	unsigned int Width, Height;
 	unsigned int numOfChunks{40};
+	unsigned int numOfPlants{10};
+	unsigned int numOfEnemies{10};
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));

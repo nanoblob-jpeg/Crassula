@@ -263,9 +263,9 @@ void Game::ProcessInput(float dt){
 				if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
 					m_state = GAME_ACTIVE_CLASSIC;
 					for(int i{}; i < 3; ++i){
-						for(int j{}; j < 3; ++j){
-							generateChunk(i, j);
-						}
+						generateChunk(-1, 1);
+						generateChunk(0, -1);
+						generateChunk(0, -1);
 					}
 
 					//should make a portal class
@@ -303,6 +303,8 @@ void Game::generateChunk(int x, int y){
 	//just keep it as 3x3 and have replace/inserts where needed
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
+	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
+	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 	//creating a chunk to insert
 	std::vector<Chunk> temp;
 	//getting all the chunks
@@ -316,58 +318,94 @@ void Game::generateChunk(int x, int y){
 				if(!temp[i].locationOfObjects[j-10]){
 					int rnum = random(mersenne);
 					if(rnum <= 5){
-						//spawn a plant
+						//5% chance to spawn in a plant
+						//uses the plant object but puts a location
+						//copies non-important data into the stuff
+						int plantNum = plantPicker(mersenne);
+						auto it = ResourceManager::Plants.begin();
+						temp[i].plants.push_back((it + plantNum).second);
+						temp[i].plants[temp[i].plants.size() - 1].position.x = j/10;
+						temp[i].plants[temp[i].plants.size() - 1].position.y = j%10;
 					}else if(rnum <= 30){
-						//spawn an enemy
+						int enemyNum = enemyPicker(mersenne);
+						auto it = ResourceManager::Enemies.begin();
+						temp[i].enemies.push_back((it + enemyNum).second);
+						temp[i].enemies[temp[i].plants.size() - 1].position.x = j/10;
+						temp[i].enemies[temp[i].plants.size() - 1].position.y = j%10;
 					}
 				}
 			}
 		}
 	}
-	if(y == 0){
-		board[x].push_front(temp);
-		board[x].pop_back();
-	}else if(y == 2){
-		board[x].push_back(temp);
-		board[x].pop_back();
-	}
-	if(x == 0){
-		
-	}
-	
-/*
-	if(x == -1){
-		if(board.size() == 3){
-			board.push_front(std::deque<std::vector<Chunk>>{});
-			for(int i{}; i < y; ++i){
-				board[0].push_back(std::vector<Chunk>{});
-			}
-			board[0].push_back(temp);
-			for(int i = board[0].size(); i < board[1].size(); ++i){
-				board[0].push_back(std::vector<Chunk>{});
-			}
+	//-1 means inserting before things
+	//3 means appending to the end
+	if(y == -1){
+		if(x != -1 && x != 3){
+			board[x].push_front(temp);
+			board[x].pop_back();
 		}else{
-			board[0][y] = temp;
-		}
-	}else if(x == 3){
-		if(board.size() == 3){
-			board.push_back(std::deque<std::vector<Chunk>>{});
-			for(int i{}; i < y; ++i){
-				board[2].push_back(std::vector<Chunk>{});
+			if(x == -1){
+				board.push_front(std::deque<std::vector<Chunk>> {temp});
+				board.pop_back();
+				board[0].push_front(temp);
+				board[0].pop_back();
 			}
-			board[2].push_back(temp);
-			for(int i = board[2].size(); i < board[1].size(); ++i){
-				board[2].push_back(std::vector<Chunk>{});
+			if(x == 3){
+				board.push_back(std::deque<std::vector<Chunk>> {temp});
+				board.pop_front();
+				board[2].push_front(temp);
+				board[2].pop_back();
 			}
-		}else{
-			board[2][y] = temp;
 		}
-	}else if(y == -1){
-		board[x].push_front(temp);
 	}else if(y == 3){
-		board[x].push_back(temp);
+		if(x != -1 && x != 3){
+			board[x].push_back(temp);
+			board[x].pop_front();
+		}else{
+			if(x == -1){
+				board.push_front(std::deque<std::vector<Chunk>> {temp, temp, temp});
+				board.pop_back();
+			}
+			if(x == 3){
+				board.push_back(std::deque<std::vector<Chunk>> {temp, temp, temp});
+				board.pop_front();
+			}
+		}
+	}else if(x == -1){
+		//possible error here as it only inserts one area and not three 
+		//like they might be expecting
+		board.push_front(std::deque<std::vector<Chunk>> {temp, temp, temp});
+		board.pop_back();
+	}else if(x == 3){
+		board.push_back(std::deque<std::vector<Chunk>> {temp, temp, temp});
+		board.pop_front();
 	}else{
 		board[x][y] = temp;
 	}
-	*/
 }
+
+
+/*
+
+
+#include <iostream>
+
+class test{
+public:
+	int num;
+	test(int pnum){
+		num=pnum;
+	}
+};
+
+
+int main(){
+	test thing = test(5);
+	test& holder = thing;
+	test output = holder;
+	output.num = 7;
+	std::cout << thing.num << output.num;
+	return 0;
+}
+
+*/
