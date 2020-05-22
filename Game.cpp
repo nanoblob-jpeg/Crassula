@@ -66,9 +66,13 @@ Game::~Game(){
 }
 
 void Game::Render(){
-	Renderer->DrawSprite(ResourceManager::GetTexture("face"),
-		glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
-			45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	if(m_state == HOME_MAIN){
+		Renderer->DrawSprite(ResourceManager::GetTexture("face"),
+			glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
+				45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		//render the game stuff
+	}
 	
 }
 
