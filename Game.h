@@ -60,5 +60,6 @@ public:
 	void Render();
 private:
 	void generateChunk(int x, int y);
+	void loadEnemies();
 };
 #endif

@@ -58,6 +58,12 @@ void Game::Init(){
 	 */
 	player.loadPlayer("bin/player.txt");
 
+	/*
+	load the enemies
+	can't be loaded from a file as each of them have different attack functions
+	*/
+	loadEnemies();
+
 	//create board
 	for(int i{}; i < 3; ++i){
 		std::deque<std::vector<Chunk>> temp;
@@ -384,28 +390,9 @@ void Game::generateChunk(int x, int y){
 	}
 }
 
-
-/*
-
-
-#include <iostream>
-
-class test{
-public:
-	int num;
-	test(int pnum){
-		num=pnum;
-	}
-};
-
-
-int main(){
-	test thing = test(5);
-	test& holder = thing;
-	test output = holder;
-	output.num = 7;
-	std::cout << thing.num << output.num;
-	return 0;
+void Game::loadEnemies(){
+	//create the basic enemy here except don't have position set
+	//then save it to the map as a broad class enemy not
+	//as the specific one
+	//then they select it and set the position
 }
-
-*/

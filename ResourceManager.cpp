@@ -388,7 +388,7 @@ void ResourceManager::LoadEffect(const char *file){
             effect_list.push_back(line);
         }
     }else{
-        std::cout << "Could not open plant list file";
+        std::cout << "Could not open effect list file";
     }
 
     fstream.close();
@@ -429,4 +429,8 @@ void ResourceManager::LoadEffect(const char *file){
 
 Effect& ResourceManager::GetEffect(std::string name){
     return Effects[name];
+}
+
+Enemy& ResourceManager::GetEnemy(std::string name){
+    return Enemies[name];
 }

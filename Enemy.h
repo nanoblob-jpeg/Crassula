@@ -28,5 +28,12 @@ public:
 			effects[i].applyEffect(health, defense, attack, speed, temp);
 		}
 	};
+	void applyMultiplier(float multiplier){
+		health *= multiplier;
+		defense *= multiplier;
+		attack *= multiplier;
+		attackSpeed *= multiplier;
+		speed *= multiplier;
+	}
 };
 #endif
