@@ -46,7 +46,9 @@ public:
 	float upCounter{};
 	
 	//game storage system
-	std::deque<std::deque<std::vector<Chunk>>> board(3, std::deque(3, std::vector(100, Chunk)));
+	std::deque<std::deque<std::vector<Chunk*>>> board;
+	std::vector<Plant> objectsInGame;
+	std::vector<Enemy> enemiesInGame;
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
