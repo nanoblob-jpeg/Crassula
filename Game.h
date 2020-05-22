@@ -12,6 +12,8 @@
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <deque>
+#include <random>
+#include <ctime>
 
 #ifndef GAME_H
 #define GAME_H
@@ -34,6 +36,7 @@ public:
 	bool Keys[1024];
 	unsigned int Width, Height;
 	unsigned int numOfChunks{40};
+	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -43,7 +46,7 @@ public:
 	float upCounter{};
 	
 	//game storage system
-	std::deque<std::deque<Chunk>> board;
+	std::deque<std::deque<std::vector<Chunk>>> board(3, std::deque(3, std::vector(100, Chunk)));
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
@@ -53,5 +56,7 @@ public:
 	void ProcessInput(float dt);
 	void Update(float dt);
 	void Render();
+private:
+	void generateChunk(int x, int y);
 };
 #endif

@@ -250,10 +250,11 @@ void Game::ProcessInput(float dt){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
 					m_state = GAME_ACTIVE_CLASSIC;
-					//insert function to start the game
-					//initialize the deque of the chunks
-					//have the generation of each chunk be a function so that we can use it again
-					//when we have to generate the chunks as they move
+					for(int i{}; i < 3; ++i){
+						for(int j{}; j < 3; ++j){
+							generateChunk(i, j);
+						}
+					}
 
 					//should make a portal class
 					//need to have some function in there that can be called for
@@ -285,3 +286,56 @@ void Game::ProcessInput(float dt){
 	}
 };
 
+void Game::generateChunk(int x, int y){
+	std::uniform_int_distribution chunkSelector{1,numOfChunks};
+	std::uniform_int_distribution random{1, 100};
+	std::vector<Chunk*> temp;
+	for(int i{}; i < 100; ++i){
+		temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
+	}
+	//should add spawning logic here
+	for(int i{}; i < 100; ++i){
+		for(int j{10}; j < 100; ++j){
+			if(temp[i].locationOfObjects[j]){
+				if(!temp[i].locationOfObjects[j-10]){
+					int rnum = random(mersenne);
+					if(rnum <= 5){
+						//spawn a plant
+					}else if(rnum <= 30){
+						//spawn an enemy
+					}
+				}
+			}
+		}
+	}
+
+	if(x == -1){
+		if(board.size() == 3){
+			board.push_front(std::deque<Chunk>{});
+			for(int i{}; i < y; ++i){
+				board[0].push_back(std::vector<Chunk*>{});
+			}
+			board[0].push_back(temp);
+			for(int i = board[0].size(); i < board[1].size(); ++i){
+				board[0].push_back(std::vector<Chunk*>{});
+			}
+		}else{
+			board[0][y] = temp;
+		}
+	}else if(x == 3){
+		if(board.size() == 3){
+			board.push_back(std::deque<Chunk>{});
+			for(int i{}; i < y; ++i){
+				board[2].push_back(std::vector<Chunk*>{});
+			}
+			board[2].push_back(temp);
+			for(int i = board[2].size(); i < board[1].size(); ++i){
+				board[2].push_back(std::vector<Chunk*>{});
+			}
+		}else{
+			board[2][y] = temp;
+		}
+	}else{
+		board[x][y] = temp;
+	}
+}

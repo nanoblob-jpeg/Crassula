@@ -12,6 +12,7 @@ public:
 	Chunk(){}
 	void Load(const char *file);
 	void Draw(SpriteRenderer &renderer);
+	std::vector<bool> locationOfObjects(100);
 private:
 	void init(std::vector<std::string> files);
 };
