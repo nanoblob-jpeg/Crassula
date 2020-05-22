@@ -60,9 +60,9 @@ void Game::Init(){
 
 	//create board
 	for(int i{}; i < 3; ++i){
-		std::deque<std::vector<Chunk*>> temp;
+		std::deque<std::vector<Chunk>> temp;
 		for(int j{}; j < 3; ++j){
-			std::vector<Chunk*> temp2(100);
+			std::vector<Chunk> temp2(100);
 			temp.push_back(temp2);
 		}
 		board.push_back(temp);
@@ -299,17 +299,19 @@ void Game::ProcessInput(float dt){
 };
 
 void Game::generateChunk(int x, int y){
+	//todo change this so that we don't ever extend to 4 in any size
+	//just keep it as 3x3 and have replace/inserts where needed
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
-	std::vector<Chunk*> temp;
+	std::vector<Chunk> temp;
 	for(int i{}; i < 100; ++i){
-		temp.push_back(&ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
+		temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
 	}
 	//should add spawning logic here
 	for(int i{}; i < 100; ++i){
 		for(int j{10}; j < 100; ++j){
-			if(temp[i]->locationOfObjects[j]){
-				if(!temp[i]->locationOfObjects[j-10]){
+			if(temp[i].locationOfObjects[j]){
+				if(!temp[i].locationOfObjects[j-10]){
 					int rnum = random(mersenne);
 					if(rnum <= 5){
 						//spawn a plant
@@ -323,33 +325,33 @@ void Game::generateChunk(int x, int y){
 
 	if(x == -1){
 		if(board.size() == 3){
-			board.push_front(std::deque<std::vector<Chunk*>>{});
+			board.push_front(std::deque<std::vector<Chunk>>{});
 			for(int i{}; i < y; ++i){
-				board[0].push_back(std::vector<Chunk*>{});
+				board[0].push_back(std::vector<Chunk>{});
 			}
 			board[0].push_back(temp);
 			for(int i = board[0].size(); i < board[1].size(); ++i){
-				board[0].push_back(std::vector<Chunk*>{});
+				board[0].push_back(std::vector<Chunk>{});
 			}
 		}else{
 			board[0][y] = temp;
 		}
 	}else if(x == 3){
 		if(board.size() == 3){
-			board.push_back(std::deque<std::vector<Chunk*>>{});
+			board.push_back(std::deque<std::vector<Chunk>>{});
 			for(int i{}; i < y; ++i){
-				board[2].push_back(std::vector<Chunk*>{});
+				board[2].push_back(std::vector<Chunk>{});
 			}
 			board[2].push_back(temp);
 			for(int i = board[2].size(); i < board[1].size(); ++i){
-				board[2].push_back(std::vector<Chunk*>{});
+				board[2].push_back(std::vector<Chunk>{});
 			}
 		}else{
 			board[2][y] = temp;
 		}
 	}else if(y == -1){
 		board[x].push_front(temp);
-	}else if(y == 4){
+	}else if(y == 3){
 		board[x].push_back(temp);
 	}else{
 		board[x][y] = temp;
