@@ -303,11 +303,13 @@ void Game::generateChunk(int x, int y){
 	//just keep it as 3x3 and have replace/inserts where needed
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
+	//creating a chunk to insert
 	std::vector<Chunk> temp;
+	//getting all the chunks
 	for(int i{}; i < 100; ++i){
 		temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
 	}
-	//should add spawning logic here
+	//add spawning logic here
 	for(int i{}; i < 100; ++i){
 		for(int j{10}; j < 100; ++j){
 			if(temp[i].locationOfObjects[j]){
@@ -322,7 +324,18 @@ void Game::generateChunk(int x, int y){
 			}
 		}
 	}
-
+	if(y == 0){
+		board[x].push_front(temp);
+		board[x].pop_back();
+	}else if(y == 2){
+		board[x].push_back(temp);
+		board[x].pop_back();
+	}
+	if(x == 0){
+		
+	}
+	
+/*
 	if(x == -1){
 		if(board.size() == 3){
 			board.push_front(std::deque<std::vector<Chunk>>{});
@@ -356,4 +369,5 @@ void Game::generateChunk(int x, int y){
 	}else{
 		board[x][y] = temp;
 	}
+	*/
 }
