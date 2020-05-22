@@ -33,6 +33,7 @@ public:
 	GameState m_state;
 	bool Keys[1024];
 	unsigned int Width, Height;
+	unsigned int numOfChunks{40};
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 

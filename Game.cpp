@@ -275,7 +275,8 @@ void Game::ProcessInput(float dt){
 					m_state = HOME_CLOCK;
 				}
 			}
-
+		}else if(m_state == GAME_ACTIVE_CLASSIC){
+			
 		}
 	}else if(m_state = START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
