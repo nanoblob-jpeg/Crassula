@@ -329,13 +329,18 @@ void Game::generateChunk(int x, int y){
 						//copies non-important data into the stuff
 						int plantNum = plantPicker(mersenne);
 						auto it = ResourceManager::Plants.begin();
-						temp[i].plants.push_back((it + plantNum).second);
+						while(plantNum--){
+							++it;
+						}
+						temp[i].plants.push_back((it)->second);
 						temp[i].plants[temp[i].plants.size() - 1].position.x = j/10;
 						temp[i].plants[temp[i].plants.size() - 1].position.y = j%10;
 					}else if(rnum <= 30){
 						int enemyNum = enemyPicker(mersenne);
 						auto it = ResourceManager::Enemies.begin();
-						temp[i].enemies.push_back((it + enemyNum).second);
+						while(enemyNum--)
+							++it;
+						temp[i].enemies.push_back((it)->second);
 						temp[i].enemies[temp[i].plants.size() - 1].position.x = j/10;
 						temp[i].enemies[temp[i].plants.size() - 1].position.y = j%10;
 					}
