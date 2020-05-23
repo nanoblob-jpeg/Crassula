@@ -253,6 +253,7 @@ void Game::generateChunk(int x, int y){
 						temp[i].plants[temp[i].plants.size() - 1].position.x = j/10;
 						temp[i].plants[temp[i].plants.size() - 1].position.y = j%10;
 					}else if(rnum <= 30){
+						//todo need to add enemy to the game because it should be per game
 						int enemyNum = enemyPicker(mersenne);
 						auto it = ResourceManager::Enemies.begin();
 						while(enemyNum--)
