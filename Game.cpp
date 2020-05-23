@@ -100,7 +100,7 @@ void Game::Update(float dt){
 		player.interact = nullptr;
 
 		for(int i{}; i < home_main->objects.size(); ++i){
-			home_main_pAndOCollisions(home_main->objects[i]);
+			home_main_pAndOCollisions(home_main->objects[i], dt);
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		int height, width;
@@ -320,7 +320,7 @@ void Game::loadEnemies(){
 	//then they select it and set the position
 }
 
-void Game::home_main_pAndOCollisions(GameObject *test){
+void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 	if(test->interactable){
 		//checking for collision
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= test->position[0]
