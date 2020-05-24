@@ -13,7 +13,7 @@ public:
 	std::string name;
 	std::vector<bool> locationOfObjects;
 	std::vector<Plant> plants;
-	std::vector<Enemy> enemies;
+	
 	Chunk(){}
 	void Load(const char *file);
 	void Draw(SpriteRenderer &renderer);

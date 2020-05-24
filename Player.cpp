@@ -50,3 +50,10 @@ void Player::calculateStats(int level){
 	recovery = level * 0.1 + 0.1;
 	luck = level * 0.01 + 1;
 }
+
+void Player::switchPlant(){
+	if(currentPlant != -1){
+		currentPlant = (currentPlant + 1)%3;
+		//todo add in logic for bowl that can hold four plants
+	}
+}

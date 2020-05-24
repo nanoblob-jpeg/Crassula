@@ -103,26 +103,85 @@ void Game::Update(float dt){
 			home_main_pAndOCollisions(home_main->objects[i], dt);
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		//finding out which chunk the player is in using position
+		//the game is centered on the center of the middle section
+		//we need a system in order to find the exact 10x10 player is in
 		int height, width;
-		if(cam.Position[0] < -500.0){
-			width = 0;
-		}else if(cam.Position[0] > 500.0){
-			width = 2;
+		if(cam.Position[1] / 500 == 0){
+			if(cam.Position[1] < 0){
+				height = -1;
+			}else{
+				height = 0;
+			}
 		}else{
-			width = 1;
-		}
-		if(cam.Position[1] > 500.0){
-			height = 0;
-		}else if(cam.Position[1] < -500.0){
-			height = 2;
-		}else{
-			height = 1;
-		}
-		for(int i{}; i < board[height][width].size(); ++i){
-			for(int j{}; j < 100; ++j){
-				
+			if(cam.Position[1] < 0){
+				height = cam.Position[1]/500 -1;
+			}else{
+				height = cam.Position[1] / 500;
 			}
 		}
+		if(cam.Position[0] / 500 == 0){
+			if(cam.Position[0] < 0){
+				width = -1;
+			}else{
+				width = 0;
+			}
+		}else{
+			if(cam.Position[0] < 0){
+				width = cam.Positon[0]/500 -1;
+			}else{
+				width = cam.Position[0] / 500;
+			}
+		}
+
+		//collision detection between player and objects(the ground/plants/gates)
+		//since we have the player exact location, we only check the 9
+		//chunks that are right around it
+
+		//finding the chunks right next to the main chunk
+		short chunk_width_offset = width == -15 ? 0 : -1;
+		short max_width_chunk_offset = width == 14 ? 0 : 1;
+		short chunk_height_offset = height == -15 ? 0 : -1;
+		short max_height_chunk_offset = height == 14 ? 0 : 1;
+		//iterating through those chunks
+		for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
+			for(; chunk_height_offset <= max_height_chunk_offset; chunk_height_offset++){
+				//figuring out which chunk on the board it corresponds to
+				short index_x, index_y, index_chunk;
+				if(width <= -6){
+					index_y = 0;
+					index_chunk += width + 15;
+				}else if(width <= 4){
+					index_y = 1;
+					index_chunk += width + 5;
+				}else{
+					index_y = 2;
+					index_chunk += width - 5;
+				}
+				if(height <= -6){
+					index_x = 2;
+					index_chunk += (-6 - height) * 10;
+				}else if(height <= 4){
+					index_x = 1;
+					index_chunk += (4 - height) * 10;
+				}else{
+					index_x = 0;
+					index_chunk = (14 - height) * 10;
+				}
+
+
+			}
+		}
+
+
+
+		//collision detection between player projectiles and enemies
+
+
+
+
+		//collision detection between enemy projectile and player
+
 	}
 
 
@@ -137,13 +196,11 @@ void Game::ProcessInput(float dt){
 			//need to add code in the collision detector that will change falling to false
 			if(upCounter < 0.5){
 				upCounter += dt;
-				player.velocity.y = 3.5;
+				player.velocity.y = 4.1;
 			}
 		}
 		if(Keys[GLFW_KEY_S]){
-			//todo
-			//make this call a switch weapon method in the Player class
-			//for now it will do nothing
+			player.switchPlant();
 		}
 		//move left, with correct acceleration
 		if(Keys[GLFW_KEY_A]){
@@ -222,8 +279,6 @@ void Game::ProcessInput(float dt){
 };
 
 void Game::generateChunk(int x, int y){
-	//todo change this so that we don't ever extend to 4 in any size
-	//just keep it as 3x3 and have replace/inserts where needed
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
@@ -253,14 +308,17 @@ void Game::generateChunk(int x, int y){
 						temp[i].plants[temp[i].plants.size() - 1].position.x = j/10;
 						temp[i].plants[temp[i].plants.size() - 1].position.y = j%10;
 					}else if(rnum <= 30){
-						//todo need to add enemy to the game because it should be per game
+						//20% chance to spawn an enemy
+						//stored inside of a vector for the Game class
+						//might change this to have a certain percentage per enemy
+						//and then spawn that enemy in
 						int enemyNum = enemyPicker(mersenne);
 						auto it = ResourceManager::Enemies.begin();
 						while(enemyNum--)
 							++it;
-						temp[i].enemies.push_back((it)->second);
-						temp[i].enemies[temp[i].plants.size() - 1].position.x = j/10;
-						temp[i].enemies[temp[i].plants.size() - 1].position.y = j%10;
+						board_enemies.push_back((it)->second);
+						board_enemies[temp[i].plants.size() - 1].position.x = j/10;
+						board_enemies[temp[i].plants.size() - 1].position.y = j%10;
 					}
 				}
 			}

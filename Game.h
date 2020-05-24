@@ -49,6 +49,9 @@ public:
 	
 	//game storage system
 	std::deque<std::deque<std::vector<Chunk>>> board;
+	std::vector<Enemy> board_enemies;
+	std::vector<GameObject> enemy_projectiles;
+	std::vector<GameObject> player_projectiles;
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();

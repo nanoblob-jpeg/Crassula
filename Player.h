@@ -60,5 +60,6 @@ public:
 	void loadPlayer(const char *file);
 	void applyEffects();
 	void calculateStats(int level);
+	void switchPlant();
 };
 #endif
