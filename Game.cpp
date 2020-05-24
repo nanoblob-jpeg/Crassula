@@ -128,7 +128,7 @@ void Game::Update(float dt){
 			}
 		}else{
 			if(cam.Position[0] < 0){
-				width = cam.Positon[0]/500 -1;
+				width = cam.Position[0]/500 -1;
 			}else{
 				width = cam.Position[0] / 500;
 			}
@@ -145,7 +145,7 @@ void Game::Update(float dt){
 		short max_height_chunk_offset = height == 14 ? 0 : 1;
 		//iterating through those chunks
 		for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
-			for(; chunk_height_offset <= max_height_chunk_offset; chunk_height_offset++){
+			for(int i = chunk_height_offset; <= max_height_chunk_offset; i++){
 				//figuring out which chunk on the board it corresponds to
 				short index_x, index_y, index_chunk;
 				if(width <= -6){
@@ -166,7 +166,7 @@ void Game::Update(float dt){
 					index_chunk += (4 - height) * 10;
 				}else{
 					index_x = 0;
-					index_chunk = (14 - height) * 10;
+					index_chunk += (14 - height) * 10;
 				}
 
 
