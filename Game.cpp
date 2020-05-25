@@ -391,7 +391,7 @@ void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 		//checking for collision
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= test->position[0]
 			&& test->position[0] + test->size[0] >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[0]
+		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[1]
 			&& test->position[1] + test->size[1] >= cam.Position[1] - player.bowl->size[1]/2;
 		if(collisionX && collisionY){
 			//setting the object as the one that the player can interact with
@@ -400,7 +400,7 @@ void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= test->position[0]
 			&& test->position[0] + test->size[0] >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[0]
+		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[1]
 			&& test->position[1] + test->size[1] >= cam.Position[1] - player.bowl->size[1]/2;
 		if(collisionX && collisionY){
 			//need to also change the velocity of the player here to be zero in the direction
@@ -498,5 +498,112 @@ void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 }
 
 void Game::game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt){
+	if(object->interactable){
+		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
+		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y
+			&& object->position[1] + object->size[1] + gameobject_offset_y >= cam.Position[1] - player.bowl->size[1]/2;
+		if(collisionX && collisionY){
+			//set the object as the interactable object
+			player.interact = object;
+		}
+	}else{
+		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
+		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y
+			&& object->position[1] + object->size[1] + gameobject_offset_y >= cam.Position[1] - player.bowl->size[1]/2;
 
+		if(collisionX && collisionY){
+			//need to also change the velocity of the player here to be zero in the direction
+			//of the collision
+			//getting previous location
+			short direction;
+			glm::vec2 prevPosition;
+			prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
+			prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
+			//finding which side the player is hitting the block
+			//0 is top side
+			//1 is right side
+			//2 is bottom side
+			//3 is left side
+			
+			//testing when player is above the object
+			if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
+				//testing to see if the player with clearly above the block
+				if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
+					direction = 0;
+				}else{
+					//testing the edge cases where the player is in the corner of the space around the block
+					//yet still collides with it this frame
+					//uses distance for each axis and the velocity in order to figure out which one
+					//hit first
+					float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+						: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+					float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
+
+					if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
+						if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+							direction = 3;
+						}else{
+							direction = 1;
+						}
+					}else{
+						direction = 0;
+					}
+				}
+			}
+
+			//testing when the player is below the object
+			else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
+				//testing to see if the player with clearly above the block
+				if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
+					direction = 2;
+				}else{
+					//testing the edge cases where the player is in the corner of the space around the block
+					//yet still collides with it this frame
+					//uses distance for each axis and the velocity in order to figure out which one
+					//hit first
+					float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+						: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+					float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+
+					if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
+						if(prevPosition[0] < object->position[0]){
+							direction = 3;
+						}else{
+							direction = 1;
+						}
+					}else{
+						direction = 2;
+					}
+				}
+			}
+
+			//testing when the rest of the situations where the block approaches from the side
+			//previous ifs have eliminated the top and bottom approaches
+			else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+				direction = 3;
+			}else{
+				direction = 1;
+			}
+			
+			//applying the corrections to the players position
+			//while also fixing the velocity in that direction
+			//to make it seem like they were stopped by the object
+			if(direction == 0){
+				cam.Position[1] -= cam.Position[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+				player.velocity[1] = 0.0f;
+				player.falling = false;
+			}else if(direction == 1){
+				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+				player.velocity[0] = 0.0f;
+			}else if(direction == 2){
+				cam.Position[1] += object->position[1] + object->size[1] + gameobject_offset_y - (cam.Position[1] - player.bowl->size[1]/2);
+				player.velocity[1] = 0.0f;
+			}else{
+				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+				player.velocity[0] = 0.0f;
+			}
+		}
+	}
 }

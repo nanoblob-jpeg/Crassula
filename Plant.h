@@ -10,6 +10,7 @@
 #define PLANT
 class Plant : public GameObject{
 public:
+	//position for the game is in the 10x10 grid
 	std::string name;
 	int level;
 	int attack;

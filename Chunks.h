@@ -9,9 +9,11 @@
 
 class Chunk{
 public:
+	//these objects are stored in normal pixel coordinates, not 10x10 grid
 	std::vector<GameObject*> objects;
 	std::string name;
 	std::vector<bool> locationOfObjects;
+	//plants locations are in 10x10 grid
 	std::vector<Plant> plants;
 	
 	Chunk(){}
