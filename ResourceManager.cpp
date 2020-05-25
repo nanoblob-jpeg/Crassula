@@ -157,6 +157,7 @@ void ResourceManager::LoadGameObject(const char *file){
     position here should be in reference to the 10 by 10 grid most of the time
     for special screens like home_main, it will be in reference to that grid
     each square on the grid is equal to 50 by 50 pixels
+        changed it so that position is reflective to the position is by pixel, easier for collision
     since position is stored as a float, if need be, it can also be use as
         partial grid lengths in order to place things better
     name for the common building blocks is going to be their position in the

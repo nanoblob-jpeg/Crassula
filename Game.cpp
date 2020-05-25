@@ -145,31 +145,39 @@ void Game::Update(float dt){
 		short max_height_chunk_offset = height == 14 ? 0 : 1;
 		//iterating through those chunks
 		for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
-			for(int i = chunk_height_offset; <= max_height_chunk_offset; i++){
-				//figuring out which chunk on the board it corresponds to
-				short index_x, index_y, index_chunk;
-				if(width <= -6){
-					index_y = 0;
-					index_chunk += width + 15;
-				}else if(width <= 4){
-					index_y = 1;
-					index_chunk += width + 5;
-				}else{
-					index_y = 2;
-					index_chunk += width - 5;
-				}
+			//figuring out which chunk on the board it corresponds to
+			short index_x, index_y, index_chunk;
+			if(width <= -6){
+				index_y = 0;
+				index_chunk += width + chunk_width_offset + 15;
+			}else if(width <= 4){
+				index_y = 1;
+				index_chunk += width + chunk_width_offset + 5;
+			}else{
+				index_y = 2;
+				index_chunk += width + chunk_width_offset - 5;
+			}
+			for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
 				if(height <= -6){
 					index_x = 2;
-					index_chunk += (-6 - height) * 10;
+					index_chunk += (-6 - height + i) * 10;
 				}else if(height <= 4){
 					index_x = 1;
-					index_chunk += (4 - height) * 10;
+					index_chunk += (4 - height + i) * 10;
 				}else{
 					index_x = 0;
-					index_chunk += (14 - height) * 10;
+					index_chunk += (14 - height + i) * 10;
 				}
 
-
+				//check this chunk and loop through the gameobjects
+				//detect collisions between them and the player object
+				//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
+				//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
+				int gameobject_offset_y = (height + 1 + i) * 500;
+				int gameobject_offset_x = (width + chunk_width_offset) * 500;
+				for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+					game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
+				}
 			}
 		}
 
@@ -487,4 +495,8 @@ void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 			}
 		}
 	}
+}
+
+void Game::game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt){
+
 }

@@ -64,6 +64,7 @@ public:
 private:
 	void generateChunk(int x, int y);
 	void loadEnemies();
-	void home_main_pAndOCollisions(GameObject *test, float dt);
+	void home_main_pAndOCollisions(GameObject *object, float dt);
+	void game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt);
 };
 #endif
