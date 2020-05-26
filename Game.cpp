@@ -176,15 +176,27 @@ void Game::Update(float dt){
 				int gameobject_offset_y = (height + 1 + i) * 500;
 				int gameobject_offset_x = (width + chunk_width_offset) * 500;
 				for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+					//loop through all of the blocks in the chunk
 					game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
+				}
+				for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
+					//loop through all of the plants in the chunk
+					//todo clean up this method because it only has to test for interactability,
+					//not all of the stuff about pushing
+					//but should be fine if I leave it too as all plants should be interactable
+					//so it shouldn't go into the other block either way
+					gmae_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
 				}
 			}
 		}
-
-
-
 		//collision detection between player projectiles and enemies
-
+		//looping through all of the player projectiles
+		for(int i{}; i < player_projectiles.size(); ++i){
+			//todo make the height and width finding functions a method
+			//make it so that we can change the above part of the code
+			//into the method too
+			//will clean up code and make it more readable and debuggable
+		}
 
 
 
@@ -313,8 +325,10 @@ void Game::generateChunk(int x, int y){
 							++it;
 						}
 						temp[i].plants.push_back((it)->second);
-						temp[i].plants[temp[i].plants.size() - 1].position.x = j/10;
-						temp[i].plants[temp[i].plants.size() - 1].position.y = j%10;
+						//position also accounts for the plant being smaller than the block
+						//thus it would be offset a little bit
+						temp[i].plants[temp[i].plants.size() - 1].position.x = (j/10) * 50 + (50 - (it)->second.size[0])/2;
+						temp[i].plants[temp[i].plants.size() - 1].position.y = (j%10) * 50 + (50 - (it)->second.size[1])/2;
 					}else if(rnum <= 30){
 						//20% chance to spawn an enemy
 						//stored inside of a vector for the Game class

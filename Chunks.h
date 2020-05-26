@@ -13,7 +13,7 @@ public:
 	std::vector<GameObject*> objects;
 	std::string name;
 	std::vector<bool> locationOfObjects;
-	//plants locations are in 10x10 grid
+	//plants locations are in normal pixel coordinates for easier collision detection
 	std::vector<Plant> plants;
 	
 	Chunk(){}
