@@ -113,58 +113,8 @@ void Game::Update(float dt){
 		//collision detection between player and objects(the ground/plants/gates)
 		//since we have the player exact location, we only check the 9
 		//chunks that are right around it
+		nineBlockCollisionDetectionPAndO(width, height);
 
-		//finding the chunks right next to the main chunk
-		short chunk_width_offset = width == -15 ? 0 : -1;
-		short max_width_chunk_offset = width == 14 ? 0 : 1;
-		short chunk_height_offset = height == -15 ? 0 : -1;
-		short max_height_chunk_offset = height == 14 ? 0 : 1;
-		//iterating through those chunks
-		for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
-			//figuring out which chunk on the board it corresponds to
-			short index_x, index_y, index_chunk;
-			if(width <= -6){
-				index_y = 0;
-				index_chunk += width + chunk_width_offset + 15;
-			}else if(width <= 4){
-				index_y = 1;
-				index_chunk += width + chunk_width_offset + 5;
-			}else{
-				index_y = 2;
-				index_chunk += width + chunk_width_offset - 5;
-			}
-			for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
-				if(height <= -6){
-					index_x = 2;
-					index_chunk += (-6 - height + i) * 10;
-				}else if(height <= 4){
-					index_x = 1;
-					index_chunk += (4 - height + i) * 10;
-				}else{
-					index_x = 0;
-					index_chunk += (14 - height + i) * 10;
-				}
-
-				//check this chunk and loop through the gameobjects
-				//detect collisions between them and the player object
-				//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
-				//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
-				int gameobject_offset_y = (height + 1 + i) * 500;
-				int gameobject_offset_x = (width + chunk_width_offset) * 500;
-				for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
-					//loop through all of the blocks in the chunk
-					game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
-				}
-				for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
-					//loop through all of the plants in the chunk
-					//todo clean up this method because it only has to test for interactability,
-					//not all of the stuff about pushing
-					//but should be fine if I leave it too as all plants should be interactable
-					//so it shouldn't go into the other block either way
-					game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
-				}
-			}
-		}
 		//collision detection between player projectiles and enemies
 		//looping through all of the player projectiles
 		for(int i{}; i < player_projectiles.size(); ++i){
@@ -177,6 +127,15 @@ void Game::Update(float dt){
 					game_classic_two_object_collisions(board_enemies[j], player_projectiles[i]);
 			}
 		}
+		//collision detection between player projectiles and blocks
+		for(int i{}; i < player_projectiles.size(); ++i){
+			findLocationCoordinates(width, height, player_porjectiles[i].position[0], player_projectiles[i].position[1]);
+			if(nineBlockCollisionDetectionGeneral(width, height, player_projectiles[i])){
+				player_projectiles.erase(player_projectiles.begin() + i);
+				--i;
+			}
+		}
+
 		//collision detection between enemy projectile and player
 		for(int i{}; i < enemy_projectiles; ++i){
 			if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
@@ -622,7 +581,7 @@ void Game::game_classic_p_and_object_collisions(GameObject *object, int gameobje
 	}
 }
 
-void Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
+bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
 	bool collisionX =  projectile->position[0] + projectile->size[0] >= object->position[0]
 		&& object->position[0] + object->size[0] >= projectile->position[0];
 	bool collisionY = projectile->position[1] + projectile->size[1] >= object->position[1]
@@ -634,7 +593,18 @@ void Game::game_classic_two_object_collisions(GameObject *object, GameObject *pr
 		for(int i{}; i < projectile->effects.size(); ++i){
 			object->effects.push_back(projectile->effects[i]);
 		}
+		return true;
+	}else{
+		return false;
 	}
+}
+
+bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *object2, int gameobject_offset_x, int gameobject_offset_y){
+	bool collisionX =  object2->position[0] + object2->size[0] >= object->position[0] + gameobject_offset_x
+		&& object->position[0] + object->size[0] + gameobject_offset_x >= object2->position[0];
+	bool collisionY = object2->position[1] + object2->size[1] >= object->position[1] + gameobject_offset_y
+		&& object->position[1] + object->size[1] + gameobject_offset_y >= object->position[1];
+	return (collisionX && collisionY);
 }
 
 void Game::findLocationCoordinates(int &width, int &height, float x, float y){
@@ -666,4 +636,102 @@ void Game::findLocationCoordinates(int &width, int &height, float x, float y){
 			width = x/ 500;
 		}
 	}
+}
+
+void nineBlockCollisionDetectionPAndO(int width, int height){
+	//finding the chunks right next to the main chunk
+	short chunk_width_offset = width == -15 ? 0 : -1;
+	short max_width_chunk_offset = width == 14 ? 0 : 1;
+	short chunk_height_offset = height == -15 ? 0 : -1;
+	short max_height_chunk_offset = height == 14 ? 0 : 1;
+	//iterating through those chunks
+	for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
+		//figuring out which chunk on the board it corresponds to
+		short index_x, index_y, index_chunk;
+		if(width <= -6){
+			index_y = 0;
+			index_chunk += width + chunk_width_offset + 15;
+		}else if(width <= 4){
+			index_y = 1;
+			index_chunk += width + chunk_width_offset + 5;
+		}else{
+			index_y = 2;
+			index_chunk += width + chunk_width_offset - 5;
+		}
+		for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
+			if(height <= -6){
+				index_x = 2;
+				index_chunk += (-6 - height + i) * 10;
+			}else if(height <= 4){
+				index_x = 1;
+				index_chunk += (4 - height + i) * 10;
+			}else{
+				index_x = 0;
+				index_chunk += (14 - height + i) * 10;
+			}
+
+			//check this chunk and loop through the gameobjects
+			//detect collisions between them and the player object
+			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
+			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
+			int gameobject_offset_y = (height + 1 + i) * 500;
+			int gameobject_offset_x = (width + chunk_width_offset) * 500;
+			for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+				//loop through all of the blocks in the chunk
+				game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
+			}
+			for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
+				//loop through all of the plants in the chunk
+				game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
+			}
+		}
+	}
+}
+
+bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object){
+	//finding the chunks right next to the main chunk
+	short chunk_width_offset = width == -15 ? 0 : -1;
+	short max_width_chunk_offset = width == 14 ? 0 : 1;
+	short chunk_height_offset = height == -15 ? 0 : -1;
+	short max_height_chunk_offset = height == 14 ? 0 : 1;
+	//iterating through those chunks
+	for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
+		//figuring out which chunk on the board it corresponds to
+		short index_x, index_y, index_chunk;
+		if(width <= -6){
+			index_y = 0;
+			index_chunk += width + chunk_width_offset + 15;
+		}else if(width <= 4){
+			index_y = 1;
+			index_chunk += width + chunk_width_offset + 5;
+		}else{
+			index_y = 2;
+			index_chunk += width + chunk_width_offset - 5;
+		}
+		for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
+			if(height <= -6){
+				index_x = 2;
+				index_chunk += (-6 - height + i) * 10;
+			}else if(height <= 4){
+				index_x = 1;
+				index_chunk += (4 - height + i) * 10;
+			}else{
+				index_x = 0;
+				index_chunk += (14 - height + i) * 10;
+			}
+
+			//check this chunk and loop through the gameobjects
+			//detect collisions between them and the player object
+			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
+			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
+			int gameobject_offset_y = (height + 1 + i) * 500;
+			int gameobject_offset_x = (width + chunk_width_offset) * 500;
+			for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+				//loop through all of the blocks in the chunk
+				if(game_classic_two_object_collisions(board[index_x][index_y][index_chunk].objects[j], object, gameobject_offset_x, gameobject_offset_y))
+					return true;
+			}
+		}
+	}
+	return false;
 }
