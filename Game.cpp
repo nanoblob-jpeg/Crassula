@@ -93,11 +93,11 @@ void Game::Render(){
 void Game::Update(float dt){
 	//need to add moving logic here before the collision check logic
 	cam.ProcessKeyboard(player.velocity, dt);
+	player.interact = nullptr;
 
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
 		Chunk *home_main = &ResourceManager::GetChunk("home_main");
-		player.interact = nullptr;
 
 		for(int i{}; i < home_main->objects.size(); ++i){
 			home_main_pAndOCollisions(home_main->objects[i], dt);
@@ -116,35 +116,13 @@ void Game::Update(float dt){
 		nineBlockCollisionDetectionPAndO(width, height);
 
 		//collision detection between player projectiles and enemies
+		//collision detection between the projectile and blocks
 		//looping through all of the player projectiles
-		for(int i{}; i < player_projectiles.size(); ++i){
-			for(int j{}; j < board_enemies.size(); ++j){
-				if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500)
-					continue;
-				else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
-					continue;
-				else
-					game_classic_two_object_collisions(board_enemies[j], player_projectiles[i]);
-			}
-		}
-		//collision detection between player projectiles and blocks
-		for(int i{}; i < player_projectiles.size(); ++i){
-			findLocationCoordinates(width, height, player_porjectiles[i].position[0], player_projectiles[i].position[1]);
-			if(nineBlockCollisionDetectionGeneral(width, height, player_projectiles[i])){
-				player_projectiles.erase(player_projectiles.begin() + i);
-				--i;
-			}
-		}
-
+		player_projectile_collision_detection();
+	
 		//collision detection between enemy projectile and player
-		for(int i{}; i < enemy_projectiles; ++i){
-			if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
-				continue;
-			else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
-				continue;
-			else
-				game_classic_two_object_collisions(player, enemey_projectiles[i]);
-		}
+		//collision detection between the projectile and the blocks
+		enemy_projectile_collision_detection();
 
 
 		//looping to see if any enemies have died
@@ -638,7 +616,7 @@ void Game::findLocationCoordinates(int &width, int &height, float x, float y){
 	}
 }
 
-void nineBlockCollisionDetectionPAndO(int width, int height){
+void Game::nineBlockCollisionDetectionPAndO(int width, int height){
 	//finding the chunks right next to the main chunk
 	short chunk_width_offset = width == -15 ? 0 : -1;
 	short max_width_chunk_offset = width == 14 ? 0 : 1;
@@ -688,7 +666,7 @@ void nineBlockCollisionDetectionPAndO(int width, int height){
 	}
 }
 
-bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object){
+bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object){
 	//finding the chunks right next to the main chunk
 	short chunk_width_offset = width == -15 ? 0 : -1;
 	short max_width_chunk_offset = width == 14 ? 0 : 1;
@@ -734,4 +712,57 @@ bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *objec
 		}
 	}
 	return false;
+}
+
+void Game::player_projectile_collision_detection(){
+	for(int i{}; i < player_projectiles.size(); ++i){
+		bool deletionTracker{false};
+		for(int j{}; j < board_enemies.size(); ++j){
+			if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500)
+				continue;
+			else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
+				continue;
+			else
+				if(game_classic_two_object_collisions(board_enemies[j], player_projectiles[i])){
+					if(!player_projectiles[i].piercing){
+						player_projectiles.erase(player_projectiles.begin() + i);
+						--i;
+						deletionTracker = true;
+						break;
+					}
+				}
+		}
+		//collision detection between the projectile and blocks
+		if(!deletionTracker){
+			findLocationCoordinates(width, height, player_porjectiles[i].position[0], player_projectiles[i].position[1]);
+			if(nineBlockCollisionDetectionGeneral(width, height, player_projectiles[i])){
+				player_projectiles.erase(player_projectiles.begin() + i);
+				--i;
+			}
+		}
+	}
+}
+
+void Game::enemy_projectile_collision_detection(){
+	for(int i{}; i < enemy_projectiles; ++i){
+		bool deletionTracker{false};
+		if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
+			continue;
+		else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
+			continue;
+		else
+			if(game_classic_two_object_collisions(player, enemey_projectiles[i])){
+				enemy_projectiles.erase(enemy_projectiles.begin() + i);
+				--i;
+				deletionTracker = true;
+			}
+		//collision detection between the projectile and the blocks
+		if(!deletionTracker){
+			findLocationCoordinates(width, height, enemey_projectiles[i].position[0], enemy_projectiles.position[1]);
+			if(nineBlockCollisionDetectionGeneral(width, height, enemy_projectiles[i])){
+				enemy_projectiles.erase(enemy_projectiles.begin() + i);
+				--i;
+			}
+		}
+	}
 }

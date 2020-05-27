@@ -67,9 +67,12 @@ private:
 	void loadEnemies();
 	void home_main_pAndOCollisions(GameObject *object, float dt);
 	void game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt);
-	void game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
+	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
+	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, int width_offset, int height_offset);
 	void findLocationCoordinates(int &width, int &height, float x, float y);
 	void nineBlockCollisionDetectionPAndO(int width, int height);
 	bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object);
+	void player_projectile_collision_detection();
+	void enemy_projectile_collision_detection();
 };
 #endif
