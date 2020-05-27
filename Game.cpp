@@ -106,33 +106,9 @@ void Game::Update(float dt){
 		//finding out which chunk the player is in using position
 		//the game is centered on the center of the middle section
 		//we need a system in order to find the exact 10x10 player is in
-		int height, width;
-		if(cam.Position[1] / 500 == 0){
-			if(cam.Position[1] < 0){
-				height = -1;
-			}else{
-				height = 0;
-			}
-		}else{
-			if(cam.Position[1] < 0){
-				height = cam.Position[1]/500 -1;
-			}else{
-				height = cam.Position[1] / 500;
-			}
-		}
-		if(cam.Position[0] / 500 == 0){
-			if(cam.Position[0] < 0){
-				width = -1;
-			}else{
-				width = 0;
-			}
-		}else{
-			if(cam.Position[0] < 0){
-				width = cam.Position[0]/500 -1;
-			}else{
-				width = cam.Position[0] / 500;
-			}
-		}
+		int width, height;
+		//function returns which square the player is in
+		findLocationCoordinates(width, height, cam.Position[0], cam.Position[1]);
 
 		//collision detection between player and objects(the ground/plants/gates)
 		//since we have the player exact location, we only check the 9
@@ -185,23 +161,47 @@ void Game::Update(float dt){
 					//not all of the stuff about pushing
 					//but should be fine if I leave it too as all plants should be interactable
 					//so it shouldn't go into the other block either way
-					gmae_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
+					game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
 				}
 			}
 		}
 		//collision detection between player projectiles and enemies
 		//looping through all of the player projectiles
 		for(int i{}; i < player_projectiles.size(); ++i){
-			//todo make the height and width finding functions a method
-			//make it so that we can change the above part of the code
-			//into the method too
-			//will clean up code and make it more readable and debuggable
+			for(int j{}; j < board_enemies.size(); ++j){
+				if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500)
+					continue;
+				else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
+					continue;
+				else
+					game_classic_two_object_collisions(board_enemies[j], player_projectiles[i]);
+			}
+		}
+		//collision detection between enemy projectile and player
+		for(int i{}; i < enemy_projectiles; ++i){
+			if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
+				continue;
+			else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
+				continue;
+			else
+				game_classic_two_object_collisions(player, enemey_projectiles[i]);
 		}
 
 
+		//looping to see if any enemies have died
+		for(int i{}; i < board_enemies.size(); ++i){
+			//apply effects first
+			board_enemies[i].applyEffects();
+			if(board_enemies[i].health <= 0){
+				board_enemies.erase(board_enemies.begin() + i);
+				--i;
+			}
+		}
 
-		//collision detection between enemy projectile and player
-
+		//check if the player has died
+		if(player.health <= 0){
+			m_state = DEATH_SCREEN;
+		}
 	}
 
 
@@ -618,6 +618,52 @@ void Game::game_classic_p_and_object_collisions(GameObject *object, int gameobje
 				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
 				player.velocity[0] = 0.0f;
 			}
+		}
+	}
+}
+
+void Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
+	bool collisionX =  projectile->position[0] + projectile->size[0] >= object->position[0]
+		&& object->position[0] + object->size[0] >= projectile->position[0];
+	bool collisionY = projectile->position[1] + projectile->size[1] >= object->position[1]
+		&& object->position[1] + object->size[1] >= projectile->position[1];
+	if(collisionX && collisionY){
+		//deal damage
+		object->health -= projectile->attack;
+		//add effects
+		for(int i{}; i < projectile->effects.size(); ++i){
+			object->effects.push_back(projectile->effects[i]);
+		}
+	}
+}
+
+void Game::findLocationCoordinates(int &width, int &height, float x, float y){
+	//this changes the variables to the index
+	//no returns, just changes the variables passed to it
+	if(y / 500 == 0){
+		if(y < 0){
+			height = -1;
+		}else{
+			height = 0;
+		}
+	}else{
+		if(y < 0){
+			height = y/500 -1;
+		}else{
+			height = y/ 500;
+		}
+	}
+	if(x / 500 == 0){
+		if(x < 0){
+			width = -1;
+		}else{
+			width = 0;
+		}
+	}else{
+		if(x < 0){
+			width = x/500 -1;
+		}else{
+			width = x/ 500;
 		}
 	}
 }

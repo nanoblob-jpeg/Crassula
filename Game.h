@@ -66,5 +66,7 @@ private:
 	void loadEnemies();
 	void home_main_pAndOCollisions(GameObject *object, float dt);
 	void game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt);
+	void game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
+	void findLocationCoordinates(int &width, int &height, float x, float y);
 };
 #endif

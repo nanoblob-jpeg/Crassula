@@ -35,7 +35,7 @@ void Chunk::init(std::vector<std::string> names){
 	}
 	locationOfObjects.reserve(100);
 	for(int i{}; i < objects.size(); ++i){
-		locationOfObjects[objects[i]->position.x * 10 + objects[i]->position.y] = true;
+		locationOfObjects[(objects[i]->position.x/50) * 10 + (objects[i]->position.y/50)] = true;
 	}
 }
 
