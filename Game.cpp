@@ -100,7 +100,7 @@ void Game::Update(float dt){
 		Chunk *home_main = &ResourceManager::GetChunk("home_main");
 
 		for(int i{}; i < home_main->objects.size(); ++i){
-			home_main_pAndOCollisions(home_main->objects[i], dt);
+			player_and_object_collisions(home_main->objects[i], dt);
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		//finding out which chunk the player is in using position
@@ -121,13 +121,8 @@ void Game::Update(float dt){
 		//collision detection between the projectile and the blocks
 		enemy_projectile_collision_detection();
 
-<<<<<<< HEAD
-		//remove dead enemies
-		removeDeadEnemies();
-=======
 		//looping to see if any enemies have died
 		clearDeadEnemies();
->>>>>>> 438e88d8b1d26ed3cd862eb91002a5c258087eff
 
 		//check if the player has died
 		if(player.health <= 0){
@@ -258,8 +253,9 @@ void Game::generateChunk(int x, int y){
 						temp[i].plants.push_back((it)->second);
 						//position also accounts for the plant being smaller than the block
 						//thus it would be offset a little bit
-						temp[i].plants[temp[i].plants.size() - 1].position.x = (j/10) * 50 + (50 - (it)->second.size[0])/2;
-						temp[i].plants[temp[i].plants.size() - 1].position.y = (j%10) * 50 + (50 - (it)->second.size[1])/2;
+						auto end = temp[i].plants.rbegin();
+						end->position.x = (j/10) * 50 + (50 - (it)->second.size[0])/2;
+						end->position.y = (j%10) * 50 + (50 - (it)->second.size[1])/2;
 					}else if(rnum <= 30){
 						//20% chance to spawn an enemy
 						//stored inside of a vector for the Game class
@@ -270,8 +266,11 @@ void Game::generateChunk(int x, int y){
 						while(enemyNum--)
 							++it;
 						board_enemies.push_back((it)->second);
-						board_enemies[temp[i].plants.size() - 1].position.x = j/10;
-						board_enemies[temp[i].plants.size() - 1].position.y = j%10;
+						auto end = board_enemies.rbegin();
+						//todo fix this position placing
+						//needs to take into account the chunk it is going into
+						end->position.x = j/10;
+						end->position.y = j%10;
 					}
 				}
 			}
@@ -331,118 +330,7 @@ void Game::loadEnemies(){
 	//then they select it and set the position
 }
 
-void Game::home_main_pAndOCollisions(GameObject *test, float dt){
-	if(test->interactable){
-		//checking for collision
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= test->position[0]
-			&& test->position[0] + test->size[0] >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[1]
-			&& test->position[1] + test->size[1] >= cam.Position[1] - player.bowl->size[1]/2;
-		if(collisionX && collisionY){
-			//setting the object as the one that the player can interact with
-			player.interact = test;
-		} 
-	}else{
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= test->position[0]
-			&& test->position[0] + test->size[0] >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= test->position[1]
-			&& test->position[1] + test->size[1] >= cam.Position[1] - player.bowl->size[1]/2;
-		if(collisionX && collisionY){
-			//need to also change the velocity of the player here to be zero in the direction
-			//of the collision
-			//getting previous location
-			short direction;
-			glm::vec2 prevPosition;
-			prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
-			prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
-			//finding which side the player is hitting the block
-			//0 is top side
-			//1 is right side
-			//2 is bottom side
-			//3 is left side
-			
-			//testing when player is above the object
-			if(prevPosition[1] + player.bowl->size[1]/2 < test->position[1]){
-				//testing to see if the player with clearly above the block
-				if(-player.bowl->size[0]/2 < prevPosition[0] - test->position[0] < test->size[0] + player.bowl->size[0]/2){
-					direction = 0;
-				}else{
-					//testing the edge cases where the player is in the corner of the space around the block
-					//yet still collides with it this frame
-					//uses distance for each axis and the velocity in order to figure out which one
-					//hit first
-					float distanceX = prevPosition[0] < test->position[0]? test->position[0] - (prevPosition[0] + player.bowl->size[0]/2) 
-						: test->position[0] + test->size[0] - (prevPosition[0] - player.bowl->size[0]/2);
-					float distanceY = test->position[1] - (prevPosition[1] + player.bowl->size[1]/2);
-
-					if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
-						if(prevPosition[0] < test->position[0]){
-							direction = 3;
-						}else{
-							direction = 1;
-						}
-					}else{
-						direction = 0;
-					}
-				}
-			}
-
-			//testing when the player is below the object
-			else if(prevPosition[1] - player.bowl->size[1]/2 > test->position[1] + test->size[1]){
-				//testing to see if the player with clearly above the block
-				if(-player.bowl->size[0]/2 < prevPosition[0] - test->position[0] < test->size[0] + player.bowl->size[0]/2){
-					direction = 2;
-				}else{
-					//testing the edge cases where the player is in the corner of the space around the block
-					//yet still collides with it this frame
-					//uses distance for each axis and the velocity in order to figure out which one
-					//hit first
-					float distanceX = prevPosition[0] < test->position[0]? test->position[0] - (prevPosition[0] + player.bowl->size[0]/2) 
-						: test->position[0] + test->size[0] - (prevPosition[0] - player.bowl->size[0]/2);
-					float distanceY = prevPosition[1] - player.bowl->size[1]/2 - test->position[1];
-
-					if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
-						if(prevPosition[0] < test->position[0]){
-							direction = 3;
-						}else{
-							direction = 1;
-						}
-					}else{
-						direction = 2;
-					}
-				}
-			}
-
-			//testing when the rest of the situations where the block approaches from the side
-			//previous ifs have eliminated the top and bottom approaches
-			else if(prevPosition[0] < test->position[0]){
-				direction = 3;
-			}else{
-				direction = 1;
-			}
-			
-			//applying the corrections to the players position
-			//while also fixing the velocity in that direction
-			//to make it seem like they were stopped by the object
-			if(direction == 0){
-				cam.Position[1] -= cam.Position[1] + player.bowl->size[1]/2 - test->position[1];
-				player.velocity[1] = 0.0f;
-				player.falling = false;
-			}else if(direction == 1){
-				cam.Position[0] += test->position[0] + test->size[0] - (cam.Position[0] - player.bowl->size[0]/2);
-				player.velocity[0] = 0.0f;
-			}else if(direction == 2){
-				cam.Position[1] += test->position[1] + test->size[1] - (cam.Position[1] - player.bowl->size[1]/2);
-				player.velocity[1] = 0.0f;
-			}else{
-				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - test->position[0];
-				player.velocity[0] = 0.0f;
-			}
-		}
-	}
-}
-
-void Game::player_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt){
+void Game::player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
 	if(object->interactable){
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
 			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
@@ -644,11 +532,11 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 			int gameobject_offset_x = (width + chunk_width_offset) * 500;
 			for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
-				game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
+				player_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
 			}
 			for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
 				//loop through all of the plants in the chunk
-				game_classic_p_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk].plants[j]), gameobject_offset_x, gameobject_offset_y, dt);
+				player_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk].plants[j]), gameobject_offset_x, gameobject_offset_y, dt);
 			}
 		}
 	}
@@ -763,10 +651,6 @@ void Game::enemy_projectile_collision_detection(){
 	}
 }
 
-<<<<<<< HEAD
-void Game::removeDeadEnemies(){
-	//looping to see if any enemies have died
-=======
 void Game::clearDeadEnemies(){
 >>>>>>> 438e88d8b1d26ed3cd862eb91002a5c258087eff
 	for(int i{}; i < board_enemies.size(); ++i){
