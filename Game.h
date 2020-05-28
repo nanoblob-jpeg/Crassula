@@ -70,9 +70,10 @@ private:
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, int width_offset, int height_offset);
 	void findLocationCoordinates(int &width, int &height, float x, float y);
-	void nineBlockCollisionDetectionPAndO(int width, int height);
+	void nineBlockCollisionDetectionPAndO(int width, int height, float dt);
 	bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object);
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
+	void clearDeadEnemies();
 };
 #endif

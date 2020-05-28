@@ -104,8 +104,6 @@ void Game::Update(float dt){
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		//finding out which chunk the player is in using position
-		//the game is centered on the center of the middle section
-		//we need a system in order to find the exact 10x10 player is in
 		int width, height;
 		//function returns which square the player is in
 		findLocationCoordinates(width, height, cam.Position[0], cam.Position[1]);
@@ -113,27 +111,18 @@ void Game::Update(float dt){
 		//collision detection between player and objects(the ground/plants/gates)
 		//since we have the player exact location, we only check the 9
 		//chunks that are right around it
-		nineBlockCollisionDetectionPAndO(width, height);
+		nineBlockCollisionDetectionPAndO(width, height, dt);
 
 		//collision detection between player projectiles and enemies
 		//collision detection between the projectile and blocks
-		//looping through all of the player projectiles
 		player_projectile_collision_detection();
 	
 		//collision detection between enemy projectile and player
 		//collision detection between the projectile and the blocks
 		enemy_projectile_collision_detection();
 
-
 		//looping to see if any enemies have died
-		for(int i{}; i < board_enemies.size(); ++i){
-			//apply effects first
-			board_enemies[i].applyEffects();
-			if(board_enemies[i].health <= 0){
-				board_enemies.erase(board_enemies.begin() + i);
-				--i;
-			}
-		}
+		clearDeadEnemies();
 
 		//check if the player has died
 		if(player.health <= 0){
@@ -565,12 +554,6 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *pr
 	bool collisionY = projectile->position[1] + projectile->size[1] >= object->position[1]
 		&& object->position[1] + object->size[1] >= projectile->position[1];
 	if(collisionX && collisionY){
-		//deal damage
-		object->health -= projectile->attack;
-		//add effects
-		for(int i{}; i < projectile->effects.size(); ++i){
-			object->effects.push_back(projectile->effects[i]);
-		}
 		return true;
 	}else{
 		return false;
@@ -616,7 +599,7 @@ void Game::findLocationCoordinates(int &width, int &height, float x, float y){
 	}
 }
 
-void Game::nineBlockCollisionDetectionPAndO(int width, int height){
+void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 	//finding the chunks right next to the main chunk
 	short chunk_width_offset = width == -15 ? 0 : -1;
 	short max_width_chunk_offset = width == 14 ? 0 : 1;
@@ -660,7 +643,7 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height){
 			}
 			for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
 				//loop through all of the plants in the chunk
-				game_classic_p_and_object_collisions(board[index_x][index_y][index_chunk].plants[j], gameobject_offset_x, gameobject_offset_y, dt);
+				game_classic_p_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk].plants[j]), gameobject_offset_x, gameobject_offset_y, dt);
 			}
 		}
 	}
@@ -715,6 +698,7 @@ bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject 
 }
 
 void Game::player_projectile_collision_detection(){
+	int width, height;
 	for(int i{}; i < player_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		for(int j{}; j < board_enemies.size(); ++j){
@@ -723,7 +707,13 @@ void Game::player_projectile_collision_detection(){
 			else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
 				continue;
 			else
-				if(game_classic_two_object_collisions(board_enemies[j], player_projectiles[i])){
+				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), &(player_projectiles[i]))){
+					//deal damage
+					board_enemies[j].health -= player_projectiles[i].attack;
+					//add effects
+					for(int i{}; i < projectile->effects.size(); ++i){
+						board_enemies[j].effects.push_back(player_projectiles[i].effects[i]);
+					}
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
@@ -734,8 +724,8 @@ void Game::player_projectile_collision_detection(){
 		}
 		//collision detection between the projectile and blocks
 		if(!deletionTracker){
-			findLocationCoordinates(width, height, player_porjectiles[i].position[0], player_projectiles[i].position[1]);
-			if(nineBlockCollisionDetectionGeneral(width, height, player_projectiles[i])){
+			findLocationCoordinates(width, height, player_projectiles[i].position[0], player_projectiles[i].position[1]);
+			if(nineBlockCollisionDetectionGeneral(width, height, &(player_projectiles[i]))){
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 			}
@@ -744,25 +734,37 @@ void Game::player_projectile_collision_detection(){
 }
 
 void Game::enemy_projectile_collision_detection(){
-	for(int i{}; i < enemy_projectiles; ++i){
+	int width, height;
+	for(int i{}; i < enemy_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
 			continue;
 		else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
 			continue;
 		else
-			if(game_classic_two_object_collisions(player, enemey_projectiles[i])){
+			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
 			}
 		//collision detection between the projectile and the blocks
 		if(!deletionTracker){
-			findLocationCoordinates(width, height, enemey_projectiles[i].position[0], enemy_projectiles.position[1]);
-			if(nineBlockCollisionDetectionGeneral(width, height, enemy_projectiles[i])){
+			findLocationCoordinates(width, height, enemy_projectiles[i].position[0], enemy_projectiles[i].position[1]);
+			if(nineBlockCollisionDetectionGeneral(width, height, &(enemy_projectiles[i]))){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 			}
+		}
+	}
+}
+
+void Game::clearDeadEnemies(){
+	for(int i{}; i < board_enemies.size(); ++i){
+		//apply effects first
+		board_enemies[i].applyEffects();
+		if(board_enemies[i].health <= 0){
+			board_enemies.erase(board_enemies.begin() + i);
+			--i;
 		}
 	}
 }
