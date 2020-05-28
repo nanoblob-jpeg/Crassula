@@ -124,16 +124,8 @@ void Game::Update(float dt){
 		//collision detection between the projectile and the blocks
 		enemy_projectile_collision_detection();
 
-
-		//looping to see if any enemies have died
-		for(int i{}; i < board_enemies.size(); ++i){
-			//apply effects first
-			board_enemies[i].applyEffects();
-			if(board_enemies[i].health <= 0){
-				board_enemies.erase(board_enemies.begin() + i);
-				--i;
-			}
-		}
+		//remove dead enemies
+		removeDeadEnemies();
 
 		//check if the player has died
 		if(player.health <= 0){
@@ -448,7 +440,7 @@ void Game::home_main_pAndOCollisions(GameObject *test, float dt){
 	}
 }
 
-void Game::game_classic_p_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt){
+void Game::player_and_object_collisions(GameObject *object, int gameobject_offset_x, int gameobject_offset_y, float dt){
 	if(object->interactable){
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
 			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
@@ -763,6 +755,18 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 			}
+		}
+	}
+}
+
+void Game::removeDeadEnemies(){
+	//looping to see if any enemies have died
+	for(int i{}; i < board_enemies.size(); ++i){
+		//apply effects first
+		board_enemies[i].applyEffects();
+		if(board_enemies[i].health <= 0){
+			board_enemies.erase(board_enemies.begin() + i);
+			--i;
 		}
 	}
 }
