@@ -652,7 +652,6 @@ void Game::enemy_projectile_collision_detection(){
 }
 
 void Game::clearDeadEnemies(){
->>>>>>> 438e88d8b1d26ed3cd862eb91002a5c258087eff
 	for(int i{}; i < board_enemies.size(); ++i){
 		//apply effects first
 		board_enemies[i].applyEffects();
