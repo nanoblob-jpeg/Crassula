@@ -53,7 +53,18 @@ void Player::calculateStats(int level){
 
 void Player::switchPlant(){
 	if(currentPlant != -1){
-		currentPlant = (currentPlant + 1)%3;
-		//todo add in logic for bowl that can hold four plants
+		if(bowl->numOfPlants == 3){
+			currentPlant = (currentPlant + 1)%min(numPlants, 3);
+		}else if(bowl->numOfPlants == 4){
+			currentPlant = (currentPlant + 1)%min(numPlants, 4);
+		}
 	}
+}
+
+int Player::getHealthBoost(){
+	return static_cast<int>(statBoosts[0]);
+}
+
+int Player::getDefenseBoost(){
+	return static_cast<int>(statBoosts[1]);
 }

@@ -275,6 +275,7 @@ void ResourceManager::LoadBowl(const char *file){
     luck
     width
     height
+    numOfPlants
     number of attack animation frames
     texture names of attack animations
     */
@@ -283,7 +284,7 @@ void ResourceManager::LoadBowl(const char *file){
         std::ifstream fstream2(bowl_list[i]);
         std::string name;
         //todo fix variables
-        int health, damage, attack, num;
+        int health, damage, attack, num, numOfPlants;
         float attackSpeed, speed, recovery, luck;
         glm::vec2 size;
         std::getline(fstream2, line);
@@ -307,8 +308,10 @@ void ResourceManager::LoadBowl(const char *file){
         std::getline(fstream2, line);
         size[1] = std::stoi(line);
         std::getline(fstream2, line);
+        numOfPlants = std::stoi(line);
+        std::getline(fstream2, line);
         num = std::stoi(line);
-        Bowl temp = Bowl(health, damage, attack, attackSpeed, speed, recovery, luck, size);
+        Bowl temp = Bowl(health, damage, attack, attackSpeed, speed, recovery, luck, numOfPlants, size);
         for(int j{}; j < num; ++j){
             std::getline(fstream2, line);
             temp.attackAnimation.push_back(Textures[line]);

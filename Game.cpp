@@ -124,7 +124,7 @@ void Game::Update(float dt){
 		clearDeadEnemies();
 
 		//check if the player has died
-		if(player.health + player.bowl->health <= 0){
+		if(player.health + player.getHealthBoost() <= 0){
 			//todo update the state of player so it returns to normal
 			m_state = DEATH_SCREEN;
 		}
@@ -643,7 +643,7 @@ void Game::enemy_projectile_collision_detection(){
 			continue;
 		else
 			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
-				player.health -= (enemy_projectiles[i].damage) - (player.defense + player.bowl->defense) / 2;
+				player.health -= (enemy_projectiles[i].damage) - player.getDefenseBoost();
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;

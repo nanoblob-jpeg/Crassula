@@ -16,6 +16,7 @@ public:
 	int health;
 	int defense;
 	int attack;
+	int numOfPlants;
 	float attackSpeed;
 	float speed;
 	float recovery;
@@ -23,7 +24,7 @@ public:
 
 	glm::vec2 size;
 
-	Bowl(int h, int d, int a, float as, float s, float r, float l, glm::vec2 psize):
-	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, size(psize){};
+	Bowl(int h, int d, int a, float as, float s, float r, float l, int nop, glm::vec2 psize):
+	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, numOfPlants{nop}, size(psize){};
 };
 #endif

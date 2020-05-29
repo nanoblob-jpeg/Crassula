@@ -35,10 +35,7 @@ public:
 	//plants
 	int numPlants{};
 	int currentPlant{-1}; // -1 represents the basic attack
-	Plant *one = nullptr ;
-	Plant *two = nullptr;
-	Plant *three = nullptr;
-	Plant *four = nullptr; //only applicable for one of them
+	std::vector<Plant *> plants(4, nullptr);
 
 	//if the player is currently on an interactalbe GameObject, this will store it
 	//the interact key is currently "i"
@@ -60,5 +57,7 @@ public:
 	void applyEffects();
 	void calculateStats(int level);
 	void switchPlant();
+	int getDefenseBoost();
+	int getHealthBoost();
 };
 #endif
