@@ -429,7 +429,7 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 	}
 }
 
-short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, gameobject_offset_y){
+short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
 	short direction;
 	glm::vec2 prevPosition;
 	prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
