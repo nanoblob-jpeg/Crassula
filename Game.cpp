@@ -188,11 +188,7 @@ void Game::ProcessInput(float dt){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
 					m_state = GAME_ACTIVE_CLASSIC;
-					for(int i{}; i < 3; ++i){
-						generateChunk(-1, 1);
-						generateChunk(0, -1);
-						generateChunk(0, -1);
-					}
+					initializeGame();
 
 					//should make a portal class
 					//need to have some function in there that can be called for
@@ -224,102 +220,164 @@ void Game::ProcessInput(float dt){
 	}
 };
 
-void Game::generateChunk(int x, int y){
+void Game::initializeGame(){
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
-	//creating a chunk to insert
-	std::vector<Chunk> temp;
-	//getting all the chunks
-	for(int i{}; i < 100; ++i){
-		temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
-	}
-	//add spawning logic here
-	for(int i{}; i < 100; ++i){
-		for(int j{10}; j < 100; ++j){
-			if(temp[i].locationOfObjects[j]){
-				if(!temp[i].locationOfObjects[j-10]){
-					int rnum = random(mersenne);
-					if(rnum <= 5){
-						//5% chance to spawn in a plant
-						//uses the plant object but puts a location
-						//copies non-important data into the stuff
-						int plantNum = plantPicker(mersenne);
-						auto it = ResourceManager::Plants.begin();
-						while(plantNum--){
-							++it;
+	for(int k{}; k < 9; ++k){
+		std::vector<Chunk> temp;
+		//getting all the chunks
+		for(int i{}; i < 100; ++i){
+			temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
+		}
+		//add spawning logic here
+		for(int i{}; i < 100; ++i){
+			for(int j{10}; j < 100; ++j){
+				if(temp[i].locationOfObjects[j]){
+					if(!temp[i].locationOfObjects[j-10]){
+						int rnum = random(mersenne);
+						if(rnum <= 5){
+							//5% chance to spawn in a plant
+							//uses the plant object but puts a location
+							//copies non-important data into the stuff
+							int plantNum = plantPicker(mersenne);
+							auto it = ResourceManager::Plants.begin();
+							while(plantNum--){
+								++it;
+							}
+							temp[i].plants.push_back((it)->second);
+							//position also accounts for the plant being smaller than the block
+							//thus it would be offset a little bit
+							auto end = temp[i].plants.rbegin();
+							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
+							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
+						}else if(rnum <= 30){
+							//20% chance to spawn an enemy
+							//stored inside of a vector for the Game class
+							//might change this to have a certain percentage per enemy
+							//and then spawn that enemy in
+							int enemyNum = enemyPicker(mersenne);
+							auto it = ResourceManager::Enemies.begin();
+							while(enemyNum--)
+								++it;
+							board_enemies.push_back((it)->second);
+							auto end = board_enemies.rbegin();
+							//todo fix this position placing
+							//needs to take into account the chunk it is going into
+							end->position.x = j/10;
+							end->position.y = j%10;
 						}
-						temp[i].plants.push_back((it)->second);
-						//position also accounts for the plant being smaller than the block
-						//thus it would be offset a little bit
-						auto end = temp[i].plants.rbegin();
-						end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
-						end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
-					}else if(rnum <= 30){
-						//20% chance to spawn an enemy
-						//stored inside of a vector for the Game class
-						//might change this to have a certain percentage per enemy
-						//and then spawn that enemy in
-						int enemyNum = enemyPicker(mersenne);
-						auto it = ResourceManager::Enemies.begin();
-						while(enemyNum--)
-							++it;
-						board_enemies.push_back((it)->second);
-						auto end = board_enemies.rbegin();
-						//todo fix this position placing
-						//needs to take into account the chunk it is going into
-						end->position.x = j/10;
-						end->position.y = j%10;
 					}
 				}
 			}
 		}
+		board[k%3][k/3] = temp;
 	}
-	//-1 means inserting before things
-	//3 means appending to the end
-	if(y == -1){
-		if(x != -1 && x != 3){
-			board[x].push_front(temp);
-			board[x].pop_back();
-		}else{
-			if(x == -1){
-				board.push_front(std::deque<std::vector<Chunk>> {temp});
-				board.pop_back();
-				board[0].push_front(temp);
-				board[0].pop_back();
+}
+
+void Game::generateChunks(int direction){
+	//0 is up
+	//1 is right
+	//2 is down
+	//3 is left
+	switch(direction){
+		case 0 :
+			board.pop_back();
+			std::deque<std::vector<Chunk>> temp;
+			for(int j{}; j < 3; ++j){
+				std::vector<Chunk> temp2(100);
+				temp.push_back(temp2);
 			}
-			if(x == 3){
-				board.push_back(std::deque<std::vector<Chunk>> {temp});
-				board.pop_front();
-				board[2].push_front(temp);
-				board[2].pop_back();
+			board.push_front(temp);
+			break;
+		case 1:
+			board[0].pop_front();
+			board[1].pop_front();
+			board[2].pop_front();
+			break;
+		case 2:
+			board.pop_front();
+			std::deque<std::vector<Chunk>> temp;
+			for(int j{}; j < 3; ++j){
+				std::vector<Chunk> temp2(100);
+				temp.push_back(temp2);
+			}
+			board.push_back(temp);
+			break;
+		case 3:
+			board[0].pop_back();
+			board[1].pop_back();
+			board[2].pop_back();
+			break;
+	}
+
+	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
+	std::uniform_int_distribution random{1, 100};
+	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
+	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
+
+	for(int k{}; k < 3; ++k){
+		std::vector<Chunk> temp;
+		//getting all the chunks
+		for(int i{}; i < 100; ++i){
+			temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
+		}
+		//add spawning logic here
+		for(int i{}; i < 100; ++i){
+			for(int j{10}; j < 100; ++j){
+				if(temp[i].locationOfObjects[j]){
+					if(!temp[i].locationOfObjects[j-10]){
+						int rnum = random(mersenne);
+						if(rnum <= 5){
+							//5% chance to spawn in a plant
+							//uses the plant object but puts a location
+							//copies non-important data into the stuff
+							int plantNum = plantPicker(mersenne);
+							auto it = ResourceManager::Plants.begin();
+							while(plantNum--){
+								++it;
+							}
+							temp[i].plants.push_back((it)->second);
+							//position also accounts for the plant being smaller than the block
+							//thus it would be offset a little bit
+							auto end = temp[i].plants.rbegin();
+							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
+							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
+						}else if(rnum <= 30){
+							//20% chance to spawn an enemy
+							//stored inside of a vector for the Game class
+							//might change this to have a certain percentage per enemy
+							//and then spawn that enemy in
+							int enemyNum = enemyPicker(mersenne);
+							auto it = ResourceManager::Enemies.begin();
+							while(enemyNum--)
+								++it;
+							board_enemies.push_back((it)->second);
+							auto end = board_enemies.rbegin();
+							//todo fix this position placing
+							//needs to take into account the chunk it is going into
+							end->position.x = j/10;
+							end->position.y = j%10;
+						}
+					}
+				}
 			}
 		}
-	}else if(y == 3){
-		if(x != -1 && x != 3){
-			board[x].push_back(temp);
-			board[x].pop_front();
-		}else{
-			if(x == -1){
-				board.push_front(std::deque<std::vector<Chunk>> {temp, temp, temp});
-				board.pop_back();
-			}
-			if(x == 3){
-				board.push_back(std::deque<std::vector<Chunk>> {temp, temp, temp});
-				board.pop_front();
-			}
+		switch(direction){
+			case 0 :
+				board[0][k] = temp;
+				break;
+			case 1:
+				board[k].push_back(temp);
+				break;
+			case 2:
+				board[2][k] = temp;
+				break;
+			case 3:
+				board[k].push_front(temp);
+				break;
 		}
-	}else if(x == -1){
-		//possible error here as it only inserts one area and not three 
-		//like they might be expecting
-		board.push_front(std::deque<std::vector<Chunk>> {temp, temp, temp});
-		board.pop_back();
-	}else if(x == 3){
-		board.push_back(std::deque<std::vector<Chunk>> {temp, temp, temp});
-		board.pop_front();
-	}else{
-		board[x][y] = temp;
 	}
 }
 
