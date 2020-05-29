@@ -281,10 +281,10 @@ void Game::generateChunks(int direction){
 	//1 is right
 	//2 is down
 	//3 is left
-	switch(direction){
+	std::deque<std::vector<Chunk>> temp;
+	switch(direction){	
 		case 0 :
 			board.pop_back();
-			std::deque<std::vector<Chunk>> temp;
 			for(int j{}; j < 3; ++j){
 				std::vector<Chunk> temp2(100);
 				temp.push_back(temp2);
@@ -298,7 +298,6 @@ void Game::generateChunks(int direction){
 			break;
 		case 2:
 			board.pop_front();
-			std::deque<std::vector<Chunk>> temp;
 			for(int j{}; j < 3; ++j){
 				std::vector<Chunk> temp2(100);
 				temp.push_back(temp2);
