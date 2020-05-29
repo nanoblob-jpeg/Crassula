@@ -65,7 +65,9 @@ public:
 	void Update(float dt);
 	void Render();
 private:
-	void generateChunk(int x, int y);
+	void generateChunks(int direction);
+	void initializeGame();
+
 	void loadEnemies();
 	void player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
