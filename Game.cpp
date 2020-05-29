@@ -124,7 +124,7 @@ void Game::Update(float dt){
 		clearDeadEnemies();
 
 		//check if the player has died
-		if(player.health <= 0){
+		if(player.health + player.bowl->health <= 0){
 			//todo update the state of player so it returns to normal
 			m_state = DEATH_SCREEN;
 		}
@@ -614,6 +614,14 @@ void Game::player_projectile_collision_detection(){
 					}
 				}
 		}
+		//collision detection between the projectile and the edge
+		if(!deletionTracker){
+			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1])){
+				player_projectiles.erase(player_projectiles.begin() + i);
+				--i;
+				deletionTracker = true;
+			}
+		}
 		//collision detection between the projectile and blocks
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, player_projectiles[i].position[0], player_projectiles[i].position[1]);
@@ -635,11 +643,19 @@ void Game::enemy_projectile_collision_detection(){
 			continue;
 		else
 			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
-				player.health -= enemy_projectiles[i].damage;
+				player.health -= (enemy_projectiles[i].damage) - (player.defense + player.bowl->defense) / 2;
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
 			}
+		//collision detection between the projectile and the edge
+		if(!deletionTracker){
+			if(abs(enemy_projectiles[i].position[0]) > 7500 || abs(enemy_projectiles[i].position[1]) > 7500){
+				enemy_projectiles.erase(enemy_projectiles.begin() + i);
+				--i;
+				deletionTracker = true;
+			}
+		}
 		//collision detection between the projectile and the blocks
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, enemy_projectiles[i].position[0], enemy_projectiles[i].position[1]);
