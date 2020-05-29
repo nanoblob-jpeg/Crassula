@@ -20,7 +20,6 @@ void Game::Init(){
 	/*
 	load textures
 	 */
-	//change this so that it runs on the one file names all of it and then 
 	//loads all in one function call
 	ResourceManager::LoadTexture2("textureDirectory.txt");
 
@@ -91,7 +90,7 @@ void Game::Render(){
 }
 
 void Game::Update(float dt){
-	//need to add moving logic here before the collision check logic
+	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
 	player.interact = nullptr;
 
@@ -126,6 +125,7 @@ void Game::Update(float dt){
 
 		//check if the player has died
 		if(player.health <= 0){
+			//todo update the state of player so it returns to normal
 			m_state = DEATH_SCREEN;
 		}
 	}
@@ -135,7 +135,7 @@ void Game::Update(float dt){
 };
 
 void Game::ProcessInput(float dt){
-	if(m_state != START_SCREEN){
+	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
 		if(Keys[GLFW_KEY_W]){
 			if(upCounter == 0)
 				player.falling = true;
@@ -161,7 +161,7 @@ void Game::ProcessInput(float dt){
 				player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
 		}
 		//slowing down, correct acceleration
-		if(player.velocity.x > 0 && !player.velocity.x && !player.velocity.y){
+		if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
 			if(player.velocity.x < 0){
 				if(player.velocity.x > -player.speed - 0.2)
 					player.velocity.x = 0;
@@ -254,8 +254,8 @@ void Game::generateChunk(int x, int y){
 						//position also accounts for the plant being smaller than the block
 						//thus it would be offset a little bit
 						auto end = temp[i].plants.rbegin();
-						end->position.x = (j/10) * 50 + (50 - (it)->second.size[0])/2;
-						end->position.y = (j%10) * 50 + (50 - (it)->second.size[1])/2;
+						end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
+						end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
 					}else if(rnum <= 30){
 						//20% chance to spawn an enemy
 						//stored inside of a vector for the Game class
@@ -347,78 +347,8 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 			&& object->position[1] + object->size[1] + gameobject_offset_y >= cam.Position[1] - player.bowl->size[1]/2;
 
 		if(collisionX && collisionY){
-			//need to also change the velocity of the player here to be zero in the direction
-			//of the collision
 			//getting previous location
-			short direction;
-			glm::vec2 prevPosition;
-			prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
-			prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
-			//finding which side the player is hitting the block
-			//0 is top side
-			//1 is right side
-			//2 is bottom side
-			//3 is left side
-			
-			//testing when player is above the object
-			if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
-				//testing to see if the player with clearly above the block
-				if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
-					direction = 0;
-				}else{
-					//testing the edge cases where the player is in the corner of the space around the block
-					//yet still collides with it this frame
-					//uses distance for each axis and the velocity in order to figure out which one
-					//hit first
-					float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-						: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-					float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
-
-					if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
-						if(prevPosition[0] < object->position[0] + gameobject_offset_x){
-							direction = 3;
-						}else{
-							direction = 1;
-						}
-					}else{
-						direction = 0;
-					}
-				}
-			}
-
-			//testing when the player is below the object
-			else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
-				//testing to see if the player with clearly above the block
-				if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
-					direction = 2;
-				}else{
-					//testing the edge cases where the player is in the corner of the space around the block
-					//yet still collides with it this frame
-					//uses distance for each axis and the velocity in order to figure out which one
-					//hit first
-					float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-						: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-					float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
-
-					if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
-						if(prevPosition[0] < object->position[0]){
-							direction = 3;
-						}else{
-							direction = 1;
-						}
-					}else{
-						direction = 2;
-					}
-				}
-			}
-
-			//testing when the rest of the situations where the block approaches from the side
-			//previous ifs have eliminated the top and bottom approaches
-			else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
-				direction = 3;
-			}else{
-				direction = 1;
-			}
+			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
 			
 			//applying the corrections to the players position
 			//while also fixing the velocity in that direction
@@ -441,16 +371,85 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 	}
 }
 
+short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, gameobject_offset_y){
+	short direction;
+	glm::vec2 prevPosition;
+	prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
+	prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
+	//finding which side the player is hitting the block
+	//0 is top side
+	//1 is right side
+	//2 is bottom side
+	//3 is left side
+			
+	//testing when player is above the object
+	if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
+		//testing to see if the player with clearly above the block
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
+			direction = 0;
+		}else{
+			//testing the edge cases where the player is in the corner of the space around the block
+			//yet still collides with it this frame
+			//uses distance for each axis and the velocity in order to figure out which one
+			//hit first
+			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+			float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
+
+			if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
+				if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+					direction = 3;
+				}else{
+					direction = 1;
+				}
+			}else{
+				direction = 0;
+			}
+		}
+	}
+
+	//testing when the player is below the object
+	else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
+		//testing to see if the player with clearly above the block
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
+			direction = 2;
+		}else{
+			//testing the edge cases where the player is in the corner of the space around the block
+			//yet still collides with it this frame
+			//uses distance for each axis and the velocity in order to figure out which one
+			//hit first
+			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+			float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+
+			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
+				if(prevPosition[0] < object->position[0]){
+					direction = 3;
+				}else{
+					direction = 1;
+				}
+			}else{
+				direction = 2;
+			}
+		}
+	}
+
+	//testing when the rest of the situations where the block approaches from the side
+	//previous ifs have eliminated the top and bottom approaches
+	else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+		direction = 3;
+	}else{
+		direction = 1;
+	}
+	return direction;
+}
+
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
 	bool collisionX =  projectile->position[0] + projectile->size[0] >= object->position[0]
 		&& object->position[0] + object->size[0] >= projectile->position[0];
 	bool collisionY = projectile->position[1] + projectile->size[1] >= object->position[1]
 		&& object->position[1] + object->size[1] >= projectile->position[1];
-	if(collisionX && collisionY){
-		return true;
-	}else{
-		return false;
-	}
+	return (collisionX && collisionY);
 }
 
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *object2, int gameobject_offset_x, int gameobject_offset_y){
@@ -600,12 +599,12 @@ void Game::player_projectile_collision_detection(){
 			else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
 				continue;
 			else
-				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), &(player_projectiles[i]))){
+				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					board_enemies[j].health -= player_projectiles[i].attack;
+					board_enemies[j].health -= player_projectiles[i].damage;
 					//add effects
-					for(int i{}; i < projectile->effects.size(); ++i){
-						board_enemies[j].effects.push_back(player_projectiles[i].effects[i]);
+					for(auto k = player_projectiles[i].effects->begin(); k != player_projectiles[i].effects->end(); ++k){
+						board_enemies[j].effects.push_back(*k);
 					}
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
@@ -618,7 +617,7 @@ void Game::player_projectile_collision_detection(){
 		//collision detection between the projectile and blocks
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, player_projectiles[i].position[0], player_projectiles[i].position[1]);
-			if(nineBlockCollisionDetectionGeneral(width, height, &(player_projectiles[i]))){
+			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(player_projectiles[i]))){
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 			}
@@ -636,6 +635,7 @@ void Game::enemy_projectile_collision_detection(){
 			continue;
 		else
 			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
+				player.health -= enemy_projectiles[i].damage;
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -643,7 +643,7 @@ void Game::enemy_projectile_collision_detection(){
 		//collision detection between the projectile and the blocks
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, enemy_projectiles[i].position[0], enemy_projectiles[i].position[1]);
-			if(nineBlockCollisionDetectionGeneral(width, height, &(enemy_projectiles[i]))){
+			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(enemy_projectiles[i]))){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 			}

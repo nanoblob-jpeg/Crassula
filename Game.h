@@ -9,11 +9,13 @@
 #include "Bowl.h"
 #include "Player.h"
 #include "Effect.h"
+#include "Projectile.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <deque>
 #include <random>
 #include <ctime>
+
 
 #ifndef GAME_H
 #define GAME_H
@@ -51,8 +53,8 @@ public:
 	//game storage system
 	std::deque<std::deque<std::vector<Chunk>>> board;
 	std::vector<Enemy> board_enemies;
-	std::vector<GameObject> enemy_projectiles;
-	std::vector<GameObject> player_projectiles;
+	std::vector<Projectile> enemy_projectiles;
+	std::vector<Projectile> player_projectiles;
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
@@ -74,6 +76,7 @@ private:
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
 	void clearDeadEnemies();
+	short findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
 
 };
 #endif

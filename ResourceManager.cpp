@@ -41,7 +41,7 @@ void ResourceManager::LoadTexture2(const char *file){
             bool alpha = line.c_str()[0] - '0';
             std::getline(fstream, line);
             std::string name = line;
-            texturePaths.push_back(std::make_tuple(path, !alpha, name));
+            texturePaths.push_back(std::make_tuple(path, alpha, name));
         }
     }
 
@@ -65,6 +65,24 @@ void ResourceManager::Clear(){
     }
     for(auto iter : Textures){
         glDeleteTextures(1, &iter.second.ID);
+    }
+    for(auto iter : Chunks){
+        delete iter;
+    }
+    for(auto iter : Objects){
+        delete iter;
+    }
+    for(auto iter : Bowls){
+        delete iter;
+    }
+    for(auto iter : Plants){
+        delete iter;
+    }
+    for(auto iter : Effects){
+        delete iter;
+    }
+    for(auto iter : Enemies){
+        delete iter;
     }
 };
 // loads and generates a shader from file
