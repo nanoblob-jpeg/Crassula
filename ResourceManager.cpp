@@ -67,22 +67,22 @@ void ResourceManager::Clear(){
         glDeleteTextures(1, &iter.second.ID);
     }
     for(auto iter : Chunks){
-        delete iter;
+        delete &iter.second;
     }
     for(auto iter : Objects){
-        delete iter;
+        delete &iter.second;
     }
     for(auto iter : Bowls){
-        delete iter;
+        delete &iter.second;
     }
     for(auto iter : Plants){
-        delete iter;
+        delete &iter.second;
     }
     for(auto iter : Effects){
-        delete iter;
+        delete &iter.second;
     }
     for(auto iter : Enemies){
-        delete iter;
+        delete &iter.second;
     }
 };
 // loads and generates a shader from file
@@ -425,13 +425,15 @@ void ResourceManager::LoadEffect(const char *file){
     deattack
     despeed
     derecovery
+    time
+    frameTimeCounter
     */
 
     for(int i{}; i < effect_list.size(); ++i){
         std::ifstream fstream2(effect_list[i]);
         std::string name;
         int dehealth, dedefense, deattack;
-        float despeed, derecovery;
+        float despeed, derecovery, time, frameTimeCounter;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
@@ -444,7 +446,11 @@ void ResourceManager::LoadEffect(const char *file){
         despeed = std::stof(line);
         std::getline(fstream2, line);
         derecovery = std::stof(line);
-        Effects[name] = Effect(dehealth, dedefense, deattack, despeed, derecovery);
+        std::getline(fstream2, line);
+        time = std::stof(line);
+        std::getline(fstream2, line);
+        frameTimeCounter = std::stof(line);
+        Effects[name] = Effect(dehealth, dedefense, deattack, despeed, derecovery, time, frameTimeCounter);
         fstream2.close();
     }
 }

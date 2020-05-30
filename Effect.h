@@ -9,16 +9,41 @@ public:
 	int deattack;
 	float despeed;
 	float derecovery;
+	//counts number of times this activates
+	float time;
+	//counts the time that has passed
+	float timeCounter{};
+	//this is how often it does it
+	float frameTimeCounter;
+	//will activate once more after it surpasses this
+	/*
+	ex:
+	time = 3;
+	frameTimeCounter = 20;
+	timeCounter goes to t - frameTimeCounter after it runs
+	 */
 
-	Effect(int dh, int dd, int da, float ds, float dr):
-		dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}{};
+	Effect(int dh, int dd, int da, float ds, float dr, float ptime, float pframeTimeCounter):
+		dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}, time{ptime}, frameTimeCounter{pframeTimeCounter}{};
 
-	void applyEffect(int &health, int &defense, int &attack, float &speed, float &recovery){
-		health += dehealth;
-		defense += dedefense;
-		attack += deattack;
-		speed += despeed;
-		recovery += derecovery;
+	//false if it can still run
+	//true if it can't run anymore
+	bool applyEffect(int &health, int &defense, int &attack, float &speed, float &recovery, float dt){
+		timeCounter += dt;
+		if(timeCounter >= frameTimeCounter){
+			health += dehealth;
+			defense += dedefense;
+			attack += deattack;
+			speed += despeed;
+			recovery += derecovery;
+			timeCounter -= frameTimeCounter;
+			if(!(--time))
+				return true;
+			else
+				return false;
+		}else{
+			return false;
+		}
 	};
 };
 #endif

@@ -112,6 +112,12 @@ void Game::Update(float dt){
 		//chunks that are right around it
 		nineBlockCollisionDetectionPAndO(width, height, dt);
 
+		//process effects for enemies
+		processEffectsForEnemies(dt);
+
+		//process effects for player
+		processEffectsForPlayer(dt);
+
 		//collision detection between player projectiles and enemies
 		//collision detection between the projectile and blocks
 		player_projectile_collision_detection();
@@ -658,7 +664,7 @@ void Game::player_projectile_collision_detection(){
 			else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					board_enemies[j].health -= player_projectiles[i].damage;
+					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[i].defense);
 					//add effects
 					for(auto k = player_projectiles[i].effects->begin(); k != player_projectiles[i].effects->end(); ++k){
 						board_enemies[j].effects.push_back(*k);
@@ -704,6 +710,9 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
+				for(auto k = enemy_projectiles[i].effects->begin(); k != enemy_projectiles[i].effects->end(); ++k){
+					player.effects.push_back(*k);
+				}
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
@@ -726,11 +735,21 @@ void Game::enemy_projectile_collision_detection(){
 
 void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
-		//apply effects first
-		board_enemies[i].applyEffects();
 		if(board_enemies[i].health <= 0){
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
 		}
 	}
+}
+
+void Game::processEffectsForEnemies(float dt){
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].effects.size() > 0){
+			board_enemies[i].applyEffects(dt);
+		}
+	}
+}
+
+void Game::processEffectsForPlayer(float dt){
+	player.applyEffects(dt);
 }

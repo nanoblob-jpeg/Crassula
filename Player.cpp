@@ -35,9 +35,9 @@ void Player::loadPlayer(const char *file){
 	}
 }
 
-void Player::applyEffects(){
+void Player::applyEffects(float dt){
 	for(int i{}; i < effects.size(); ++i){
-		effects[i].applyEffect(health, defense, attack, speed, recovery);
+		effects[i].applyEffect(health, defense, attack, speed, recovery, dt);
 	}
 }
 
@@ -54,9 +54,9 @@ void Player::calculateStats(int level){
 void Player::switchPlant(){
 	if(currentPlant != -1){
 		if(bowl->numOfPlants == 3){
-			currentPlant = (currentPlant + 1)%min(numPlants, 3);
+			currentPlant = (currentPlant + 1)%std::min(numPlants, 3);
 		}else if(bowl->numOfPlants == 4){
-			currentPlant = (currentPlant + 1)%min(numPlants, 4);
+			currentPlant = (currentPlant + 1)%std::min(numPlants, 4);
 		}
 	}
 }

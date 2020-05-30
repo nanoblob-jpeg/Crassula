@@ -79,6 +79,7 @@ private:
 	void enemy_projectile_collision_detection();
 	void clearDeadEnemies();
 	short findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
-
+	void processEffectsForEnemies(float dt);
+	void processEffectsForPlayer(float dt);
 };
 #endif

@@ -54,7 +54,7 @@ public:
 
 	Player(){};
 	void loadPlayer(const char *file);
-	void applyEffects();
+	void applyEffects(float dt);
 	void calculateStats(int level);
 	void switchPlant();
 	int getDefenseBoost();

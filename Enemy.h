@@ -20,12 +20,17 @@ public:
 	//gets added in the plant class, happens when collision happens
 	std::vector<Effect> effects;
 
+	std::vector<Effect> attackEffects;
+
 	virtual void attackFunc();
 	virtual void move();
-	void applyEffects(){
+	void applyEffects(float dt){
 		float temp = 0.0f;
 		for(int i{}; i < effects.size(); ++i){
-			effects[i].applyEffect(health, defense, attack, speed, temp);
+			if(effects[i].applyEffect(health, defense, attack, speed, temp, dt)){
+				effects.erase(effects.begin() + i);
+				--i;
+			}
 		}
 	};
 	void applyMultiplier(float multiplier){
