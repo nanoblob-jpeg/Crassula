@@ -228,7 +228,7 @@ void Game::ProcessInput(float dt){
 
 void Game::initializeGame(){
 	//this is to make the fix enemy location function work as intended
-	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2}
+	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
 	
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
