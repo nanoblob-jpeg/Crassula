@@ -317,6 +317,8 @@ void Game::generateChunks(int direction){
 			break;
 	}
 
+	despawnEnemiesFromDeletedChunks(direction);
+
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
@@ -347,8 +349,8 @@ void Game::generateChunks(int direction){
 							//position also accounts for the plant being smaller than the block
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
-							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
-							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
+							end->position.x = ((j-10)%10) * 50 + (50 - (it)->second.size[0])/2;
+							end->position.y = ((j-10)/10) * 50 + (50 - (it)->second.size[1])/2;
 						}else if(rnum <= 30){
 							//20% chance to spawn an enemy
 							//stored inside of a vector for the Game class
@@ -360,9 +362,16 @@ void Game::generateChunks(int direction){
 								++it;
 							board_enemies.push_back((it)->second);
 							auto end = board_enemies.rbegin();
-							//todo fix this position placing
-							//needs to take into account the chunk it is going into
-							end->position.x = j/10;
+							//i is the mini chunk inside the larger chunk
+							//i/10 gives the row
+							//i%10 gives the column
+							//
+							//j is the location of the block inside the mini chunk
+							//j/10 gives the row
+							//j%10 gives the column
+							//
+							//k is the chunk being generated
+							end->position.x = ;
 							end->position.y = j%10;
 						}
 					}
@@ -752,4 +761,45 @@ void Game::processEffectsForEnemies(float dt){
 
 void Game::processEffectsForPlayer(float dt){
 	player.applyEffects(dt);
+}
+
+void Game::despawnEnemiesFromDeletedChunks(int direction){
+	//0 is up
+	//1 is right
+	//2 is down
+	//3 is left
+	int min_x, max_x, min_y, max_y;
+	switch(direction){
+		case 0 :
+			min_y = -7500;
+			max_y = -2500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 1 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = -2500;
+			break;
+		case 2 :
+			min_y = 2500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 3 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = 2500;
+			max_x = 7500;
+			break;
+	}
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].position[0] >= min_x && board_enemies[i].position[0] <= max_x 
+			&& board_enemies[i].position[1] >= min_y && board_enemies[i].position[1] <= max_y){
+			board_enemies.erase(board_enemies.begin() + i);
+			--i;
+		}
+	}
 }
