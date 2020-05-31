@@ -165,8 +165,8 @@ void ResourceManager::LoadGameObject(const char *file){
     name
     pos x
     pos y
-    width
     height
+    width
     color r
     color g
     color b
@@ -192,9 +192,9 @@ void ResourceManager::LoadGameObject(const char *file){
             std::getline(fstream2, line2);
             vname = line2;
             std::getline(fstream2, line2);
-            pos[0] = std::stof(line2);
-            std::getline(fstream2, line2);
             pos[1] = std::stof(line2);
+            std::getline(fstream2, line2);
+            pos[0] = std::stof(line2);
             std::getline(fstream2, line2);
             size[0] = std::stof(line2);
             std::getline(fstream2, line2);

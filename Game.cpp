@@ -227,6 +227,9 @@ void Game::ProcessInput(float dt){
 };
 
 void Game::initializeGame(){
+	//this is to make the fix enemy location function work as intended
+	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2}
+	
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
@@ -257,7 +260,7 @@ void Game::initializeGame(){
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
 							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
-							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1])/2;
+							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1]);
 						}else if(rnum <= 30){
 							//20% chance to spawn an enemy
 							//stored inside of a vector for the Game class
@@ -268,11 +271,7 @@ void Game::initializeGame(){
 							while(enemyNum--)
 								++it;
 							board_enemies.push_back((it)->second);
-							auto end = board_enemies.rbegin();
-							//todo fix this position placing
-							//needs to take into account the chunk it is going into
-							end->position.x = j/10;
-							end->position.y = j%10;
+							fixLastEnemiesPosition(i, j, k%3, generationCode[k]);
 						}
 					}
 				}
@@ -361,18 +360,7 @@ void Game::generateChunks(int direction){
 							while(enemyNum--)
 								++it;
 							board_enemies.push_back((it)->second);
-							auto end = board_enemies.rbegin();
-							//i is the mini chunk inside the larger chunk
-							//i/10 gives the row
-							//i%10 gives the column
-							//
-							//j is the location of the block inside the mini chunk
-							//j/10 gives the row
-							//j%10 gives the column
-							//
-							//k is the chunk being generated
-							end->position.x = ;
-							end->position.y = j%10;
+							fixLastEnemiesPosition(i, j, k, direction);
 						}
 					}
 				}
@@ -392,6 +380,52 @@ void Game::generateChunks(int direction){
 				board[k].push_front(temp);
 				break;
 		}
+	}
+}
+
+void Game::fixLastEnemiesPosition(int i, int j, int k, int direction){
+	auto end = board_enemies.rbegin();
+	//i is the mini chunk inside the larger chunk
+	//i/10 gives the row
+	//i%10 gives the column
+	//
+	//j is the location of the block inside the mini chunk
+	//j/10 gives the row
+	//j%10 gives the column
+	//
+	//k is the chunk being generated
+	end->position.x = ((i/10)-5)*500 + ((j/10) * 50);
+	end->position.y = (4-(i%10))*500 - ((j%10) * 50);
+
+	switch(direction){
+		case 0 :
+			end->position.y += 5000;
+			if(k == 0)
+				end->position.x -= 5000;
+			else if(k == 2)
+				end->position.x += 5000;
+			break;
+		case 1 :
+			end->position.x += 5000;
+			if(k == 0)
+				end->position.y += 5000;
+			else if(k == 2)
+				end->position.y -= 5000;
+			break;
+		case 2 :
+			end->position.y -= 5000;
+			if(k == 0)
+				end->position.x -= 5000;
+			else if(k == 2)
+				end->position.x += 5000;
+			break;
+		case 3 :
+			end->position.x -= 5000;
+			if(k == 0)
+				end->position.y += 5000;
+			else if(k == 2)
+				end->position.y -= 5000;
+			break;
 	}
 }
 
