@@ -131,6 +131,7 @@ void Game::Update(float dt){
 
 		//check if the player has died
 		if(player.health + player.getHealthBoost() <= 0){
+			clearAndResetGameBoard();
 			//todo update the state of player so it returns to normal
 			m_state = DEATH_SCREEN;
 		}
@@ -835,5 +836,19 @@ void Game::despawnEnemiesFromDeletedChunks(int direction){
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
 		}
+	}
+}
+
+void clearAndResetGameBoard(){
+	for(int i{}; i < 2; ++i){
+		board.erase(board.begin());
+	}
+	for(int i{}; i < 3; ++i){
+		std::deque<std::vector<Chunk>> temp;
+		for(int j{}; j < 3; ++j){
+			std::vector<Chunk> temp2(100);
+			temp.push_back(temp2);
+		}
+		board.push_back(temp);
 	}
 }
