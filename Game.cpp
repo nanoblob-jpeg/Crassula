@@ -277,7 +277,7 @@ void Game::initializeGame(){
 				}
 			}
 		}
-		board[k%3][k/3] = temp;
+		board[k/3][k%3] = temp;
 	}
 }
 
