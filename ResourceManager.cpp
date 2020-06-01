@@ -163,8 +163,8 @@ void ResourceManager::LoadGameObject(const char *file){
     /*
     format of the file:
     name
-    pos x
     pos y
+    pos x
     height
     width
     color r

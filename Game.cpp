@@ -102,6 +102,8 @@ void Game::Update(float dt){
 			player_and_object_collisions(home_main->objects[i], dt);
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		//moving the projectiles
+		moveAllProjectiles(dt);
 		//finding out which chunk the player is in using position
 		int width, height;
 		//function returns which square the player is in
@@ -227,14 +229,12 @@ void Game::ProcessInput(float dt){
 	}
 };
 
-void Game::initializeGame(){
 	//this is to make the fix enemy location function work as intended
 	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
+void Game::initializeGame(){
 	
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
-	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
-	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 	for(int k{}; k < 9; ++k){
 		std::vector<Chunk> temp;
 		//getting all the chunks
@@ -248,6 +248,7 @@ void Game::initializeGame(){
 					if(!temp[i].locationOfObjects[j-10]){
 						int rnum = random(mersenne);
 						if(rnum <= 5){
+							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
 							//uses the plant object but puts a location
 							//copies non-important data into the stuff
@@ -263,6 +264,7 @@ void Game::initializeGame(){
 							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
 							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1]);
 						}else if(rnum <= 30){
+							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
 							//stored inside of a vector for the Game class
 							//might change this to have a certain percentage per enemy
@@ -316,13 +318,12 @@ void Game::generateChunks(int direction){
 			board[2].pop_back();
 			break;
 	}
-
+	delete temp;
 	despawnEnemiesFromDeletedChunks(direction);
+	fixRemainingEnemyPosition(direction);
 
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
-	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
-	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 
 	for(int k{}; k < 3; ++k){
 		std::vector<Chunk> temp;
@@ -337,6 +338,7 @@ void Game::generateChunks(int direction){
 					if(!temp[i].locationOfObjects[j-10]){
 						int rnum = random(mersenne);
 						if(rnum <= 5){
+							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
 							//uses the plant object but puts a location
 							//copies non-important data into the stuff
@@ -352,6 +354,7 @@ void Game::generateChunks(int direction){
 							end->position.x = ((j-10)%10) * 50 + (50 - (it)->second.size[0])/2;
 							end->position.y = ((j-10)/10) * 50 + (50 - (it)->second.size[1])/2;
 						}else if(rnum <= 30){
+							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
 							//stored inside of a vector for the Game class
 							//might change this to have a certain percentage per enemy
@@ -361,7 +364,7 @@ void Game::generateChunks(int direction){
 							while(enemyNum--)
 								++it;
 							board_enemies.push_back((it)->second);
-							fixLastEnemiesPosition(i, j, k, direction);
+							fixGeneratedEnemiesPosition(i, j, k, direction);
 						}
 					}
 				}
@@ -384,7 +387,7 @@ void Game::generateChunks(int direction){
 	}
 }
 
-void Game::fixLastEnemiesPosition(int i, int j, int k, int direction){
+void Game::fixGeneratedEnemiesPosition(int i, int j, int k, int direction){
 	auto end = board_enemies.rbegin();
 	//i is the mini chunk inside the larger chunk
 	//i/10 gives the row
@@ -395,8 +398,8 @@ void Game::fixLastEnemiesPosition(int i, int j, int k, int direction){
 	//j%10 gives the column
 	//
 	//k is the chunk being generated
-	end->position.x = ((i/10)-5)*500 + ((j/10) * 50);
-	end->position.y = (4-(i%10))*500 - ((j%10) * 50);
+	end->position.x = ((i%10)-5)*500 + ((j%10) * 50);
+	end->position.y = (4-(i/10))*500 - ((j/10) * 50);
 
 	switch(direction){
 		case 0 :
@@ -708,7 +711,7 @@ void Game::player_projectile_collision_detection(){
 			else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[i].defense);
+					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
 					//add effects
 					for(auto k = player_projectiles[i].effects->begin(); k != player_projectiles[i].effects->end(); ++k){
 						board_enemies[j].effects.push_back(*k);
@@ -723,7 +726,7 @@ void Game::player_projectile_collision_detection(){
 		}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
-			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1])){
+			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1]) > 7500){
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -850,5 +853,42 @@ void clearAndResetGameBoard(){
 			temp.push_back(temp2);
 		}
 		board.push_back(temp);
+	}
+}
+
+void fixRemainingEnemyPosition(int direction){
+	//0 up
+	//1 right
+	//2 down
+	//3 left
+	bool vert{false};
+	if(direction % 2 == 0)
+		vert = true;
+	int adder = findAddingAmountForEnemiesWhenGeneratingChunks(direction);
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(vert)
+			board_enemies[1] += adder;
+		else
+			board_enemies[0] += adder;
+	}
+}
+
+int findAddingAmountForEnemiesWhenGeneratingChunks(int direction){
+	switch(direction){
+		case 0 :
+		case 2 :
+			return 5000;
+		case 1 :
+		case 3 :
+			return -5000;
+	}
+}
+
+void moveAllProjectiles(float dt){
+	for(int i{}; i < player_projectiles.size(); ++i){
+		player.projectiles[i].move(dt);
+	}
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		enemy_projectiles[i].move(dt);
 	}
 }

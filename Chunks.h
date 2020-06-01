@@ -10,7 +10,9 @@
 class Chunk{
 public:
 	//these objects are stored in normal pixel coordinates, not 10x10 grid
+	//these are the blocks
 	std::vector<GameObject*> objects;
+	
 	std::string name;
 	std::vector<bool> locationOfObjects;
 	//plants locations are in normal pixel coordinates for easier collision detection

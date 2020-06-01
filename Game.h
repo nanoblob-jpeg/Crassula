@@ -82,6 +82,9 @@ private:
 	void processEffectsForEnemies(float dt);
 	void processEffectsForPlayer(float dt);
 	void despawnEnemiesFromDeletedChunks(int direction);
-	void fixLastEnemiesPosition(int i, int j, int k, int direction);
+	void fixGeneratedEnemiesPosition(int i, int j, int k, int direction);
+	void fixRemainingEnemyPosition(int direction);
+	int findAddingAmountForEnemiesWhenGeneratingChunks(int direction);
+	void moveAllProjectiles(float dt);
 };
 #endif

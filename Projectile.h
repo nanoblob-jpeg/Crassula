@@ -22,5 +22,9 @@ public:
 
 			effects = effectPointer;
 	};
+
+	void move(float dt){
+		position[0] += velocity[0] * dt;
+	}
 };
 #endif
