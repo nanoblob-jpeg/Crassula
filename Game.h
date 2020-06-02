@@ -55,6 +55,11 @@ public:
 	std::vector<Enemy> board_enemies;
 	std::vector<Projectile> enemy_projectiles;
 	std::vector<Projectile> player_projectiles;
+	
+	//render logic stuff
+	glm::vec2* blockOffsets = new glm::vec2[90000];
+	int numBlocks{};
+	bool generatedChunks{false};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();

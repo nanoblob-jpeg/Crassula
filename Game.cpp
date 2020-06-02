@@ -84,12 +84,27 @@ void Game::Render(){
 			glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
 				45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
-		//render the game stuff
+		//prepping data for the block rendering
+		if(generatedChunks){
+			//only need to recalculate every time that we generate new chunks
+			for(int i{}; i < 9; ++i){
+				for(int j{}; j < 100; ++j){
+
+				}
+			}
+
+		}
+		//don't forget to update the view matrix
+
+		
 	}
 	
 }
 
 void Game::Update(float dt){
+	//todo once I add achievements, I need to add the checks here
+
+
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
 	player.interact = nullptr;
@@ -157,6 +172,10 @@ void Game::Update(float dt){
 				plants[i] = nullptr;
 			}
 			player.effects.clear();
+			player.position[0] = 0;
+			player.position[1] = 0;
+			player.velocity[0] = 0;
+			player.velocity[1] = 0;
 
 			m_state = DEATH_SCREEN;
 		}
@@ -255,7 +274,7 @@ void Game::ProcessInput(float dt){
 	//this is to make the fix enemy location function work as intended
 	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
 void Game::initializeGame(){
-	
+	generatedChunks = true;
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 	for(int k{}; k < 9; ++k){
@@ -308,6 +327,7 @@ void Game::initializeGame(){
 }
 
 void Game::generateChunks(int direction){
+	generatedChunks = true;
 	//0 is up
 	//1 is right
 	//2 is down
