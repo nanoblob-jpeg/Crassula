@@ -84,7 +84,9 @@ private:
 	void despawnEnemiesFromDeletedChunks(int direction);
 	void fixGeneratedEnemiesPosition(int i, int j, int k, int direction);
 	void fixRemainingEnemyPosition(int direction);
-	int findAddingAmountForEnemiesWhenGeneratingChunks(int direction);
+	int findAddingAmountOffsetWhenGeneratingChunks(int direction);
 	void moveAllProjectiles(float dt);
+	void despawnProjectilesFromDeletedChunks(int direction);
+	void fixRemainingProjectilePosition(int direction);
 };
 #endif

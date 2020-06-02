@@ -27,7 +27,7 @@ void Player::loadPlayer(const char *file){
 		level = std::stoi(line);
 		std::getline(fstream, line);
 		experience = std::stof(line);
-		calculateStats(level);
+		calculateStats();
 		std::getline(fstream, line);
 		bowl = &ResourceManager::GetBowl(line);
 	}else{
@@ -41,7 +41,7 @@ void Player::applyEffects(float dt){
 	}
 }
 
-void Player::calculateStats(int level){
+void Player::calculateStats(){
 	health = level * 2 + 5;
 	defense = level * 0.25 + 2;
 	attack = level * 0.5 + 1;
@@ -67,4 +67,12 @@ int Player::getHealthBoost(){
 
 int Player::getDefenseBoost(){
 	return static_cast<int>(statBoosts[1]);
+}
+
+void dealDamage(int damage){
+	health -= std::max(damage - getDefenseBoost(), 1);
+}
+
+bool isDead(){
+	return health + getHealthBoost() > 0;
 }

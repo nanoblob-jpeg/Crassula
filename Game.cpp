@@ -104,6 +104,22 @@ void Game::Update(float dt){
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		//moving the projectiles
 		moveAllProjectiles(dt);
+
+		//testing if it is time to generate new chunks
+		//0 up
+		//1 right
+		//2 down
+		//3 left
+		if(player.position[0] >= 4500)
+			generateChunks(1);
+		else if(player.position[0] <= -4500)
+			generateChunks(3);
+
+		if(player.position[1] >= 4500)
+			generateChunks(0);
+		else if(player.position[1] <= -4500)
+			generateChunks(2);
+
 		//finding out which chunk the player is in using position
 		int width, height;
 		//function returns which square the player is in
@@ -132,9 +148,16 @@ void Game::Update(float dt){
 		clearDeadEnemies();
 
 		//check if the player has died
-		if(player.health + player.getHealthBoost() <= 0){
+		if(player.isDead()){
 			clearAndResetGameBoard();
-			//todo update the state of player so it returns to normal
+			
+			player.calculateStats();
+			player.interact = nullptr;
+			for(int i{}; i < plants.size(); ++i){
+				plants[i] = nullptr;
+			}
+			player.effects.clear();
+
 			m_state = DEATH_SCREEN;
 		}
 	}
@@ -220,7 +243,7 @@ void Game::ProcessInput(float dt){
 				}
 			}
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
-			
+
 		}
 	}else if(m_state = START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
@@ -321,6 +344,8 @@ void Game::generateChunks(int direction){
 	delete temp;
 	despawnEnemiesFromDeletedChunks(direction);
 	fixRemainingEnemyPosition(direction);
+	despawnProjectilesFromDeletedChunks(direction);
+	fixRemainingProjectilePosition(direction);
 
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
@@ -753,7 +778,7 @@ void Game::enemy_projectile_collision_detection(){
 			continue;
 		else
 			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
-				player.health -= (enemy_projectiles[i].damage) - player.getDefenseBoost();
+				player.dealDamage(enemy_projectiles[i].damage);
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -864,7 +889,7 @@ void fixRemainingEnemyPosition(int direction){
 	bool vert{false};
 	if(direction % 2 == 0)
 		vert = true;
-	int adder = findAddingAmountForEnemiesWhenGeneratingChunks(direction);
+	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(vert)
 			board_enemies[1] += adder;
@@ -873,7 +898,7 @@ void fixRemainingEnemyPosition(int direction){
 	}
 }
 
-int findAddingAmountForEnemiesWhenGeneratingChunks(int direction){
+int findAddingAmountOffsetWhenGeneratingChunks(int direction){
 	switch(direction){
 		case 0 :
 		case 2 :
@@ -890,5 +915,66 @@ void moveAllProjectiles(float dt){
 	}
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemy_projectiles[i].move(dt);
+	}
+}
+
+void despawnProjectilesFromDeletedChunks(int direction){
+	//0 is up
+	//1 is right
+	//2 is down
+	//3 is left
+	int min_x, max_x, min_y, max_y;
+	switch(direction){
+		case 0 :
+			min_y = -7500;
+			max_y = -2500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 1 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = -2500;
+			break;
+		case 2 :
+			min_y = 2500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 3 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = 2500;
+			max_x = 7500;
+			break;
+	}
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		if(enemy_projectiles[i].position[0] >= min_x && enemy_projectiles[i].position[0] <= max_x 
+			&& enemy_projectiles[i].position[1] >= min_y && enemy_projectiles[i].position[1] <= max_y){
+			enemy_projectiles.erase(enemy_projectiles.begin() + i);
+			--i;
+		}
+	}
+	for(int i{}; i < player_projectiles.size(); ++i){
+		if(player_projectiles[i].position[0] >= min_x && player_projectiles[i].position[0] <= max_x 
+			&& player_projectiles[i].position[1] >= min_y && player_projectiles[i].position[1] <= max_y){
+			player_projectiles.erase(player_projectiles.begin() + i);
+			--i;
+		}
+	}
+}
+
+void fixRemainingProjectilePosition(int direction){
+	bool vert{false};
+	if(direction % 2 == 0)
+		vert = true;
+	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(vert)
+			board_enemies[1] += adder;
+		else
+			board_enemies[0] += adder;
 	}
 }

@@ -55,8 +55,11 @@ public:
 	Player(){};
 	void loadPlayer(const char *file);
 	void applyEffects(float dt);
-	void calculateStats(int level);
+	void calculateStats();
 	void switchPlant();
+	void dealDamage(int damage);
+	bool isDead();
+private:
 	int getDefenseBoost();
 	int getHealthBoost();
 };
