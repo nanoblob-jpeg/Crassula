@@ -168,8 +168,8 @@ void Game::Update(float dt){
 			
 			player.calculateStats();
 			player.interact = nullptr;
-			for(int i{}; i < plants.size(); ++i){
-				plants[i] = nullptr;
+			for(int i{}; i < player.plants.size(); ++i){
+				player.plants[i] = nullptr;
 			}
 			player.effects.clear();
 			player.position[0] = 0;
@@ -316,7 +316,7 @@ void Game::initializeGame(){
 							while(enemyNum--)
 								++it;
 							board_enemies.push_back((it)->second);
-							fixLastEnemiesPosition(i, j, k%3, generationCode[k]);
+							fixGeneratedEnemiesPosition(i, j, k%3, generationCode[k]);
 						}
 					}
 				}
@@ -361,7 +361,7 @@ void Game::generateChunks(int direction){
 			board[2].pop_back();
 			break;
 	}
-	delete temp;
+	delete &temp;
 	despawnEnemiesFromDeletedChunks(direction);
 	fixRemainingEnemyPosition(direction);
 	despawnProjectilesFromDeletedChunks(direction);
@@ -887,7 +887,7 @@ void Game::despawnEnemiesFromDeletedChunks(int direction){
 	}
 }
 
-void clearAndResetGameBoard(){
+void Game::clearAndResetGameBoard(){
 	for(int i{}; i < 2; ++i){
 		board.erase(board.begin());
 	}
@@ -901,7 +901,7 @@ void clearAndResetGameBoard(){
 	}
 }
 
-void fixRemainingEnemyPosition(int direction){
+void Game::fixRemainingEnemyPosition(int direction){
 	//0 up
 	//1 right
 	//2 down
@@ -912,13 +912,13 @@ void fixRemainingEnemyPosition(int direction){
 	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(vert)
-			board_enemies[1] += adder;
+			board_enemies[i].position[1] += adder;
 		else
-			board_enemies[0] += adder;
+			board_enemies[i].position[0] += adder;
 	}
 }
 
-int findAddingAmountOffsetWhenGeneratingChunks(int direction){
+int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
 	switch(direction){
 		case 0 :
 		case 2 :
@@ -929,16 +929,16 @@ int findAddingAmountOffsetWhenGeneratingChunks(int direction){
 	}
 }
 
-void moveAllProjectiles(float dt){
+void Game::moveAllProjectiles(float dt){
 	for(int i{}; i < player_projectiles.size(); ++i){
-		player.projectiles[i].move(dt);
+		player_projectiles[i].move(dt);
 	}
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemy_projectiles[i].move(dt);
 	}
 }
 
-void despawnProjectilesFromDeletedChunks(int direction){
+void Game::despawnProjectilesFromDeletedChunks(int direction){
 	//0 is up
 	//1 is right
 	//2 is down
@@ -986,15 +986,18 @@ void despawnProjectilesFromDeletedChunks(int direction){
 	}
 }
 
-void fixRemainingProjectilePosition(int direction){
+void Game::fixRemainingProjectilePosition(int direction){
 	bool vert{false};
 	if(direction % 2 == 0)
 		vert = true;
 	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(vert)
-			board_enemies[1] += adder;
-		else
-			board_enemies[0] += adder;
+		if(vert){
+			player_projectiles[i].position[1] += adder;
+			enemy_projectiles[i].position[1] += adder;
+		}else{
+			player_projectiles[i].position[0] += adder;
+			enemy_projectiles[i].position[0] += adder;
+		}
 	}
 }

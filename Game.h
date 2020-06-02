@@ -93,5 +93,6 @@ private:
 	void moveAllProjectiles(float dt);
 	void despawnProjectilesFromDeletedChunks(int direction);
 	void fixRemainingProjectilePosition(int direction);
+	void clearAndResetGameBoard();
 };
 #endif
