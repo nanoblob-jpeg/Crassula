@@ -1,21 +1,32 @@
 #include "Game.h"
 
 SpriteRenderer *Renderer;
+SpriteRenderer *BlockRenderer;
 
 void Game::Init(){
 	//load shaders
-	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "sprite");
+	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
+	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
 		-400.0f , 400.0f, -1.0f, 1.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	Shader sProgram;
-	sProgram = ResourceManager::GetShader("sprite");
+	sProgram = ResourceManager::GetShader("player");
 	sProgram.use();
 	sProgram.setInt("image", 0);
 	sProgram.setMat4("projection", projection);
 	sProgram.setMat4("view", view);
-	Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+	Renderer = new SpriteRenderer(ResourceManager::GetShader("player"));
+
+
+	Shader bProgram;
+	bProgram = ResourceManager::GetShader("block");
+	bProgram.use();
+	bProgram.setInt("image", 0);
+	bProgram.setMat4("projection", projection);
+	bProgram.setMat4("view", view);
+	BlockRenderer = new SpriteRenderer(ResourceManager::GetShader("block"));
 
 	/*
 	load textures
@@ -153,14 +164,24 @@ void Game::Render(){
 						temp[1] += board[i/3][i%3][j].objects[k].position[1];
 
 						blockOffsets.push_back(temp);
+
+						numBlocks++;
 					}
 				}
 			}
 			generatedChunks = false;
+			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 		}
+		glm::mat4 view = cam.GetViewMatrix();
+		BlockRenderer->setViewMatrix("view", view);
 		//don't forget to update the view matrix every time this loop runs
+		BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
+			glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
 		
-		
+		float tempSize = std::max(player->bowl.size[0], player->bowl.size[1]);
+		Renderer->DrawSprite(player->bowl.attackAnimation[player->bowl.frameCounter], 
+			glm::vec2(cam.position[0] - player->bowl.size[0], cam.position[1] + player->bowl.size[1]),
+			glm::vec2(tempSize, tempSize));
 	}
 	
 }
