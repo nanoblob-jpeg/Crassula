@@ -75,7 +75,7 @@ void SpriteRenderer::setViewMatrix(std::string &name, glm::mat4 &viewMatrix){
 	m_shader.setMat4(name, viewMatrix);
 }
 
-void SpriteRenderer::DrawSprite(int num, Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color){
+void SpriteRenderer::DrawInstancedSprites(int num, Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color){
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position, 0.0f));
