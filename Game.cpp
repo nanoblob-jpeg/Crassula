@@ -178,9 +178,9 @@ void Game::Render(){
 		BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
 			glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
 		
-		float tempSize = std::max(player->bowl.size[0], player->bowl.size[1]);
-		Renderer->DrawSprite(player->bowl.attackAnimation[player->bowl.frameCounter], 
-			glm::vec2(cam.position[0] - player->bowl.size[0], cam.position[1] + player->bowl.size[1]),
+		float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
+		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
 			glm::vec2(tempSize, tempSize));
 	}
 	

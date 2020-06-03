@@ -71,7 +71,7 @@ void SpriteRenderer::bindInstanceBuffer(glm::vec2 *data, int numOfBlocks){
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void SpriteRenderer::setViewMatrix(std::string &name, glm::mat4 &viewMatrix){
+void SpriteRenderer::setViewMatrix(const std::string &name, glm::mat4 &viewMatrix) const{
 	m_shader.setMat4(name, viewMatrix);
 }
 

@@ -34,7 +34,7 @@ public:
 		glm::vec3 color = glm::vec3(1.0f)
 	);
 	void bindInstanceBuffer(glm::vec2 *data, int numOfBlocks);
-	void setViewMatrix(std::string &name, glm::mat4 &viewMatrix);
+	void setViewMatrix(const std::string &name, glm::mat4 &viewMatrix) const;
 private:
 	void initRenderData();
 };
