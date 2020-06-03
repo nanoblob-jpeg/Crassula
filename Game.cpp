@@ -89,10 +89,12 @@ void Game::Render(){
 			//only need to recalculate every time that we generate new chunks
 			for(int i{}; i < 9; ++i){
 				for(int j{}; j < 100; ++j){
-
+					for(int k{}; k < board[i/3][i%3][j].objects.size(); ++k){
+						
+					}
 				}
 			}
-
+			generatedChunks = false;
 		}
 		//don't forget to update the view matrix
 
