@@ -132,7 +132,7 @@ void Game::Render(){
 						//then add for each little box in a chunk
 						temp[0] += (j % 10) * 500;
 						//then add per block offset
-						temp[0] += board[i/3][i%3][j].objects[k].position[0];
+						temp[0] += board[i/3][i%3][j].objects[k]->position[0];
 
 						//calculating the y offset
 						//set offset initially for chunks themselves
@@ -150,7 +150,7 @@ void Game::Render(){
 						//subtracting for each little box in a chunk
 						temp[1] -= (j / 10) * 500;
 						//adding position per block which is already negative
-						temp[1] += board[i/3][i%3][j].objects[k].position[1];
+						temp[1] += board[i/3][i%3][j].objects[k]->position[1];
 
 						blockOffsets.push_back(temp);
 					}
