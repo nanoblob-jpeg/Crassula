@@ -57,7 +57,7 @@ public:
 	std::vector<Projectile> player_projectiles;
 	
 	//render logic stuff
-	glm::vec2* blockOffsets = new glm::vec2[90000];
+	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
 	bool generatedChunks{false};
 

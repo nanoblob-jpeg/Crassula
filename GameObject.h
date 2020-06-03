@@ -8,8 +8,8 @@
 
 class GameObject{
 public:
-	//0,0 is the top left corner
-	//max,max is the bottom right corner
+	//-300, 400 is the top left corner
+	//300, -400 is the bottom right corner
 	//x is horizontal
 	//y is vertical
 	glm::vec2 position, size, velocity;

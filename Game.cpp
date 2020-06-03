@@ -6,8 +6,8 @@ void Game::Init(){
 	//load shaders
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "sprite");
 	//configure shaders
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),
-		static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
+		-400.0f , 400.0f, -1.0f, 1.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	Shader sProgram;
 	sProgram = ResourceManager::GetShader("sprite");
@@ -72,6 +72,8 @@ void Game::Init(){
 		}
 		board.push_back(temp);
 	}
+
+	blockOffsets.reserve(30000);
 }
 
 Game::~Game(){
@@ -79,6 +81,25 @@ Game::~Game(){
 }
 
 void Game::Render(){
+	/*
+	camera is already at center of the player for the collision detection part
+	that means that the constant offset value for the player is
+	-player->bowl.size[0]/2 and player->bowl.size[1]/2
+	position for player is also changing every frame, calculated from camera
+
+	screen is centered on the player
+	player starts with at -player->bowl.size[0]/2 and player->bowl.size[1]/2
+	meaning camera starts centered at 0,0 and on the player
+	means that the horizontal edge of the starting screen is equal to
+	-300 and 300
+	vertical is then at 
+	-400 and 400
+
+	perception vector has been changed to match this change
+	now runs from -300 to 300 horizontally and -400 to 400 vertically
+	thus we can specify coordinates using this and have them translated for us
+	*/
+
 	if(m_state == HOME_MAIN){
 		Renderer->DrawSprite(ResourceManager::GetTexture("face"),
 			glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
@@ -86,18 +107,59 @@ void Game::Render(){
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		//prepping data for the block rendering
 		if(generatedChunks){
+			//clear already existing offset data
+			blockOffsets.clear();
 			//only need to recalculate every time that we generate new chunks
 			for(int i{}; i < 9; ++i){
 				for(int j{}; j < 100; ++j){
 					for(int k{}; k < board[i/3][i%3][j].objects.size(); ++k){
-						
+						glm::vec2 temp{};
+						//calculating the x offset
+						//the object is going to be normally rendered at 0,0 with
+						//bottom right corner at 50, -50
+						//setting offset initially for chunks themselves
+						switch(i % 3){
+							case 0 :
+								temp[0] = -7500;
+								break;
+							case 1 :
+								temp[0] = -2500;
+								break;
+							case 2 :
+								temp[0] = 2500;
+								break;
+						}
+						//then add for each little box in a chunk
+						temp[0] += (j % 10) * 500;
+						//then add per block offset
+						temp[0] += board[i/3][i%3][j].objects[k].position[0];
+
+						//calculating the y offset
+						//set offset initially for chunks themselves
+						switch(i / 3){
+							case 0 :
+								temp[1] = 7500;
+								break;
+							case 1 :
+								temp[1] = 2500;
+								break;
+							case 2 :
+								temp[1] = -2500;
+								break;
+						}
+						//subtracting for each little box in a chunk
+						temp[1] -= (j / 10) * 500;
+						//adding position per block which is already negative
+						temp[1] += board[i/3][i%3][j].objects[k].position[1];
+
+						blockOffsets.push_back(temp);
 					}
 				}
 			}
 			generatedChunks = false;
 		}
-		//don't forget to update the view matrix
-
+		//don't forget to update the view matrix every time this loop runs
+		
 		
 	}
 	
