@@ -226,6 +226,9 @@ void Game::Render(){
 					}
 				}
 			}
+			for(int i{}; i < board_enemies.size(); ++i){
+				
+			}
 			generatedChunks = false;
 			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 			PlantRenderer->setOffset(&plantOffsets[0], numPlants);
@@ -237,8 +240,10 @@ void Game::Render(){
 		BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
 			glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
 
+		PlantRenderer->setViewMatrix("view", view);
 		PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"));
 		
+		Renderer.setViewMatrix("view", view);
 		float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
