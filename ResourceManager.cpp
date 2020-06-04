@@ -347,6 +347,9 @@ void ResourceManager::LoadPlant(const char *file){
     range
     piercing
     Texture name
+    projectile texture name
+    texture width position
+    texture height position
     width
     height
     color.r
@@ -355,14 +358,16 @@ void ResourceManager::LoadPlant(const char *file){
     number of effects
     effect names
     */
-
+    //texture width needs to be top left corner
+    //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < plant_list.size(); ++i){
         std::ifstream fstream2(plant_list[i]);
-        std::string name, tname;
+        std::string name, tname, pname;
         int level, attack, range, num;
         bool piercing;
         glm::vec2 size;
         glm::vec3 color;
+        glm::vec2 texCoord;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
@@ -376,6 +381,12 @@ void ResourceManager::LoadPlant(const char *file){
         std::getline(fstream2, line);
         tname = line;
         std::getline(fstream2, line);
+        pname = line;
+        std::getline(fstream2, line);
+        texCoord[0] = std::stof(line);
+        std::getline(fstream2, line);
+        texCoord[1] = std::stof(line);
+        std::getline(fstream2, line);
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
@@ -387,11 +398,12 @@ void ResourceManager::LoadPlant(const char *file){
         color[2] = std::stof(line);
         std::getline(fstream2, line);
         num = std::stoi(line);
-        Plant temp = Plant(name, level, attack, range, piercing, Textures[tname], size, color);
+        Plant temp = Plant(name, level, attack, range, piercing, Textures[tname], size, texCoord, color);
         for(int j{}; j < num; ++j){
             std::getline(fstream2, line);
             temp.addEffect(Effects[line]);
         }
+        temp.projectileName = pname;
         Plants[name] = temp;
         fstream2.close();
     }

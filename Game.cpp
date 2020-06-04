@@ -2,11 +2,13 @@
 
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
+TexSampRenderer *PlantRenderer;
 
 void Game::Init(){
 	//load shaders
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
 	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
 		-400.0f , 400.0f, -1.0f, 1.0f);
@@ -28,6 +30,13 @@ void Game::Init(){
 	bProgram.setMat4("view", view);
 	BlockRenderer = new SpriteRenderer(ResourceManager::GetShader("block"));
 
+	Shader cProgram;
+	cProgram = ResourceManager::GetShader("plant");
+	cProgram.use();
+	cProgram.setInt("image", 0);
+	cProgram.setMat4("projection", projection);
+	cProgram.setMat4("view", view);
+	PlantRenderer = new TexSampRenderer(ResourceManager::GetShader("plant"));
 	/*
 	load textures
 	 */
@@ -85,6 +94,8 @@ void Game::Init(){
 	}
 
 	blockOffsets.reserve(30000);
+	plantOffsets.reserve(30000);
+	plantTexCoords.reserve(30000);
 }
 
 Game::~Game(){
@@ -120,6 +131,7 @@ void Game::Render(){
 		if(generatedChunks){
 			//clear already existing offset data
 			blockOffsets.clear();
+			plantOffsets.clear();
 			//only need to recalculate every time that we generate new chunks
 			for(int i{}; i < 9; ++i){
 				for(int j{}; j < 100; ++j){
@@ -167,16 +179,65 @@ void Game::Render(){
 
 						numBlocks++;
 					}
+					for(int k{}; k < board[i/3][i%3][j].plants.size(); ++k){
+						glm::vec2 temp{};
+						//calculating the x offset
+						//setting offset initially for chunks themselves
+						switch(i % 3){
+							case 0 :
+								temp[0] = -7500;
+								break;
+							case 1 :
+								temp[0] = -2500;
+								break;
+							case 2 :
+								temp[0] = 2500;
+								break;
+						}
+						//then add for each little box in a chunk
+						temp[0] += (j % 10) * 500;
+						//then add the plants position
+						temp[0] += board[i/3][i%3][j].plants[k].position[0];
+
+						//calculating the y offset
+						//set offset initially for chunks themselves
+						switch(i / 3){
+							case 0 :
+								temp[1] = 7500;
+								break;
+							case 1 :
+								temp[1] = 2500;
+								break;
+							case 2 :
+								temp[1] = -2500;
+								break;
+						}
+						//subtracting for each little box in a chunk
+						temp[1] -= (j / 10) * 500;
+						temp[1] -= board[i/3][i%3][j].plants[k].position[1];
+
+						plantOffsets.push_back(temp);
+
+						numPlants++;
+
+						for(int l{}; l < 6; l++){
+							plantTexCoords.push_back(board[i/3][i%3][j].plants[k].texturePosition[l]);
+						}
+					}
 				}
 			}
 			generatedChunks = false;
 			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
+			PlantRenderer->setOffset(&plantOffsets[0], numPlants);
+			PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
 		}
 		glm::mat4 view = cam.GetViewMatrix();
 		BlockRenderer->setViewMatrix("view", view);
 		//don't forget to update the view matrix every time this loop runs
 		BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
 			glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
+
+		PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"));
 		
 		float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 

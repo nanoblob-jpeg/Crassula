@@ -60,6 +60,9 @@ public:
 	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
 	bool generatedChunks{false};
+	std::vector<glm::vec2> plantOffsets{};
+	int numPlants{};
+	std::vector<glm::vec2> plantTexCoords{};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
