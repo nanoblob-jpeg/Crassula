@@ -13,18 +13,11 @@ public:
 	//position for the game is in the 10x10 grid
 	std::string name;
 	int level;
-	int attack;
-	int range;
-	std::vector<Effect> effects;
-	bool piercing;
+	
 	std::vector<glm::vec2> texturePosition;
 
-	std::string projectileName;
-	std::vector<glm::vec2> projectileTexturePosition;
+	std::vector<std::string> projectileName;
 
-	Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
-	void addEffect(Effect effect);
-	void applyEffects(Enemy &e);
-	void applyDamage(Enemy &e);
+	Plant(std::string pname, int plevel, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
 };
 #endif

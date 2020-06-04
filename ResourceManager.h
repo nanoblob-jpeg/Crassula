@@ -62,6 +62,10 @@ public:
     //need to load the enemy by just adding it to the map
     //returns an enemy
     static Enemy& GetEnemy(std::string name);
+    //loads projectiles
+    static void LoadProjectiles(const char *file);
+    //returns a projectile
+    static Projectile& GetProjectile(std::string name);
     // properly de-allocates all loaded resources
     static void Clear();
 private:

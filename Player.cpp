@@ -69,10 +69,10 @@ int Player::getDefenseBoost(){
 	return static_cast<int>(statBoosts[1]);
 }
 
-void dealDamage(int damage){
+void Player::dealDamage(int damage){
 	health -= std::max(damage - getDefenseBoost(), 1);
 }
 
-bool isDead(){
+bool Player::isDead(){
 	return health + getHealthBoost() > 0;
 }

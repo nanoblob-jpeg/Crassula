@@ -342,12 +342,11 @@ void ResourceManager::LoadPlant(const char *file){
     /*
     format for plant files:
     name
-    level
-    attack
-    range
-    piercing
     Texture name
     projectile texture name
+    projectile texture name 2
+    projectile texture name 3
+    projectile texture name 4
     texture width position
     texture height position
     width
@@ -355,33 +354,28 @@ void ResourceManager::LoadPlant(const char *file){
     color.r
     color.g
     color.b
-    number of effects
-    effect names
     */
     //texture width needs to be top left corner
     //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < plant_list.size(); ++i){
         std::ifstream fstream2(plant_list[i]);
-        std::string name, tname, pname;
-        int level, attack, range, num;
-        bool piercing;
+        std::string name, tname, pname, pname2, pname3, pname4;
+        int num;
         glm::vec2 size;
         glm::vec3 color;
         glm::vec2 texCoord;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
-        level = std::stoi(line);
-        std::getline(fstream2, line);
-        attack = std::stoi(line);
-        std::getline(fstream2, line);
-        range = std::stoi(line);
-        std::getline(fstream2, line);
-        piercing = static_cast<bool>(std::stoi(line));
-        std::getline(fstream2, line);
         tname = line;
         std::getline(fstream2, line);
         pname = line;
+        std::getline(fstream2, line);
+        pname2 = line;
+        std::getline(fstream2, line);
+        pname3 = line;
+        std::getline(fstream2, line);
+        pname4 = line;
         std::getline(fstream2, line);
         texCoord[0] = std::stof(line);
         std::getline(fstream2, line);
@@ -396,14 +390,11 @@ void ResourceManager::LoadPlant(const char *file){
         color[1] = std::stoi(line);
         std::getline(fstream2, line);
         color[2] = std::stof(line);
-        std::getline(fstream2, line);
-        num = std::stoi(line);
-        Plant temp = Plant(name, level, attack, range, piercing, Textures[tname], size, texCoord, color);
-        for(int j{}; j < num; ++j){
-            std::getline(fstream2, line);
-            temp.addEffect(Effects[line]);
-        }
-        temp.projectileName = pname;
+        Plant temp = Plant(name, Textures[tname], size, texCoord, color);
+        temp.projectileName.push_back(pname);
+        temp.projectileName.push_back(pname2);
+        temp.projectileName.push_back(pname3);
+        temp.projectileName.push_back(pname4);
         Plants[name] = temp;
         fstream2.close();
     }
@@ -473,4 +464,74 @@ Effect& ResourceManager::GetEffect(std::string name){
 
 Enemy& ResourceManager::GetEnemy(std::string name){
     return Enemies[name];
+}
+
+void LoadProjectiles(const char *file){
+    std::vector<std::string> projectile_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            plant_list.push_back(line);
+        }
+    }else{
+        std::cout << "Could not open projectile list file";
+    }
+
+    fstream.close();
+
+    /*
+    format for projectile files:
+    name
+    damage
+    range
+    piercing
+    Texture name
+    texture width position
+    texture height position
+    width
+    height
+    */
+    //texture width needs to be top left corner
+    //needs also to be specified starting from the lower left hand corner of the texture
+    for(int i{}; i < plant_list.size(); ++i){
+        std::ifstream fstream2(plant_list[i]);
+        std::string name, tname;
+        int num;
+        glm::vec2 size;
+        glm::vec2 texCoord;
+        std::getline(fstream2, line);
+        name = line;
+        std::getline(fstream2, line);
+        tname = line;
+        std::getline(fstream2, line);
+        pname = line;
+        std::getline(fstream2, line);
+        pname2 = line;
+        std::getline(fstream2, line);
+        pname3 = line;
+        std::getline(fstream2, line);
+        pname4 = line;
+        std::getline(fstream2, line);
+        texCoord[0] = std::stof(line);
+        std::getline(fstream2, line);
+        texCoord[1] = std::stof(line);
+        std::getline(fstream2, line);
+        size[0] = std::stof(line);
+        std::getline(fstream2, line);
+        size[1] = std::stof(line);
+        std::getline(fstream2, line);
+        color[0] = std::stoi(line);
+        std::getline(fstream2, line);
+        color[1] = std::stoi(line);
+        std::getline(fstream2, line);
+        color[2] = std::stof(line);
+        Plant temp = Plant(name, Textures[tname], size, texCoord, color);
+        temp.projectileName.push_back(pname);
+        temp.projectileName.push_back(pname2);
+        temp.projectileName.push_back(pname3);
+        temp.projectileName.push_back(pname4);
+        Plants[name] = temp;
+        fstream2.close();
+    }
 }
