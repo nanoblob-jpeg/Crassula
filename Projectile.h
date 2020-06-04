@@ -11,6 +11,7 @@ public:
 	bool piercing;
 	int range;
 	std::vector<Effect> *effects;
+	std::vector<glm::vec2> texturePosition;
 
 	Projectile(glm::vec2 startPosition, glm::vec2 size, float direction, Texture sprite, int pdamage, std::vector<Effect> *effectPointer, int prange, bool ppiercing = false)
 		: GameObject(startPosition, size, sprite), damage{pdamage}, piercing{ppiercing}, range{prange}{

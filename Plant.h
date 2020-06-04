@@ -17,8 +17,10 @@ public:
 	int range;
 	std::vector<Effect> effects;
 	bool piercing;
-	std::string projectileName;
 	std::vector<glm::vec2> texturePosition;
+
+	std::string projectileName;
+	std::vector<glm::vec2> projectileTexturePosition;
 
 	Plant(std::string pname, int plevel, int pattack, int prange, bool ppiercing, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
 	void addEffect(Effect effect);

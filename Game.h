@@ -61,8 +61,13 @@ public:
 	int numBlocks{};
 	bool generatedChunks{false};
 	std::vector<glm::vec2> plantOffsets{};
-	int numPlants{};
 	std::vector<glm::vec2> plantTexCoords{};
+	int numPlants{};
+	std::vector<glm::vec2> enemyProjectileOffsets{};
+	std::vector<glm::vec2> enemyProjectileTexCoords{};
+	std::vector<glm::vec2> playerProjectileOffsets{};
+	std::vector<glm::vec2> playerProjectileTexCoords{};
+
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
