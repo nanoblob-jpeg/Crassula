@@ -29,6 +29,7 @@ public:
     static std::map<std::string, Plant> Plants;
     static std::map<std::string, Effect> Effects;
     static std::map<std::string, Enemy> Enemies;
+    static std::map<std::string, Projectile> Projectiles;
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     static Shader& LoadShader(const char *vShaderFilePlant, const char *fShaderFile, const char *gShaderFile, std::string name);
     // retrieves a stored sader

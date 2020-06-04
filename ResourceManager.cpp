@@ -491,27 +491,28 @@ void LoadProjectiles(const char *file){
     texture height position
     width
     height
+    effect num
+    effects
     */
     //texture width needs to be top left corner
     //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < plant_list.size(); ++i){
         std::ifstream fstream2(plant_list[i]);
         std::string name, tname;
-        int num;
+        int damage, range, num;
+        bool piercing;
         glm::vec2 size;
         glm::vec2 texCoord;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
+        damage = std::stoi(line);
+        std::getline(fstream2, line);
+        range = std::stoi(line);
+        std::getline(fstream2, line);
+        piercing = static_cast<bool>(std::stoi(line));
+        std::getline(fstream2, line);
         tname = line;
-        std::getline(fstream2, line);
-        pname = line;
-        std::getline(fstream2, line);
-        pname2 = line;
-        std::getline(fstream2, line);
-        pname3 = line;
-        std::getline(fstream2, line);
-        pname4 = line;
         std::getline(fstream2, line);
         texCoord[0] = std::stof(line);
         std::getline(fstream2, line);
@@ -520,18 +521,18 @@ void LoadProjectiles(const char *file){
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
+        Projectile temp = Projectile(size, Textures[tname], damage, range, piercing)
         std::getline(fstream2, line);
-        color[0] = std::stoi(line);
-        std::getline(fstream2, line);
-        color[1] = std::stoi(line);
-        std::getline(fstream2, line);
-        color[2] = std::stof(line);
-        Plant temp = Plant(name, Textures[tname], size, texCoord, color);
-        temp.projectileName.push_back(pname);
-        temp.projectileName.push_back(pname2);
-        temp.projectileName.push_back(pname3);
-        temp.projectileName.push_back(pname4);
-        Plants[name] = temp;
+        num = std::stoi(line);
+        for(int i{}; i < num; ++i){
+            std::getline(fstream2, line);
+            temp.addEffect(Effects[line]);
+        }
+        Projectiles[name] = temp;
         fstream2.close();
     }
+}
+
+Projectile& ResourceManager::GetProjectile(std::string name){
+    return Projectiles[name];
 }
