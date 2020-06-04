@@ -132,6 +132,8 @@ void Game::Render(){
 			//clear already existing offset data
 			blockOffsets.clear();
 			plantOffsets.clear();
+			numBlocks = 0;
+			numPlants = 0;
 			//only need to recalculate every time that we generate new chunks
 			for(int i{}; i < 9; ++i){
 				for(int j{}; j < 100; ++j){
@@ -227,7 +229,7 @@ void Game::Render(){
 				}
 			}
 			for(int i{}; i < board_enemies.size(); ++i){
-				
+
 			}
 			generatedChunks = false;
 			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
@@ -327,6 +329,10 @@ void Game::Update(float dt){
 			player.position[1] = 0;
 			player.velocity[0] = 0;
 			player.velocity[1] = 0;
+
+			board_enemies.clear();
+			enemy_projectiles.clear();
+			player_projectiles.clear();
 
 			m_state = DEATH_SCREEN;
 		}
