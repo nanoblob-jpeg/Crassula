@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Effect.h"
 #include "Projectile.h"
+#include "TexSampRenderer.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <deque>

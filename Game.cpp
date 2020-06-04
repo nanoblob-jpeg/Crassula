@@ -246,7 +246,7 @@ void Game::Render(){
 		for(int i{}; i < enemy_projectiles.size(); ++i){
 			enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
 			for(int j{}; j < 6; ++j){
-				enemyProjectilTexCoords.push_back(enemyprojectiles[i].texturePosition[j]);
+				enemyProjectileTexCoords.push_back(enemy_projectiles[i].texturePosition[j]);
 			}
 		}
 
@@ -270,7 +270,7 @@ void Game::Render(){
 		//render enemy projectiles
 		ProjectileRenderer->setViewMatrix("view", view);
 		ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-		ProjectileRenderer->setTextureCoords(&enemyProjectilTexCoords[0], enemy_projectiles.size());
+		ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
 		ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"));
 
 		//render player projectiles
@@ -279,7 +279,7 @@ void Game::Render(){
 		ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"));
 
 		//render player
-		Renderer.setViewMatrix("view", view);
+		Renderer->setViewMatrix("view", view);
 		float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),

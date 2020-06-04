@@ -22,6 +22,7 @@ public:
 	void DrawSprites(
 		int num,
 		Texture &texture,
+		float size,
 		glm::vec2 position = glm::vec2(0.0f, 0.0f)
 	);
 
