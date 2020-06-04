@@ -16,6 +16,8 @@ public:
 	std::vector<Texture> attackAnimation;
 	int frameCounter;
 
+	std::vector<glm::vec2> texturePosition;
+
 	//stores effects that are influencing the enemy
 	//gets added in the plant class, happens when collision happens
 	std::vector<Effect> effects;

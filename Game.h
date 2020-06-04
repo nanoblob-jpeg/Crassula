@@ -26,6 +26,7 @@ class Game
 public:
 	const maxPlantSize{50};
 	const maxProjectileSize{50};
+	const maxEnemySize{50};
 
 	enum GameState{
 		START_SCREEN,
@@ -71,7 +72,8 @@ public:
 	std::vector<glm::vec2> enemyProjectileTexCoords{};
 	std::vector<glm::vec2> playerProjectileOffsets{};
 	std::vector<glm::vec2> playerProjectileTexCoords{};
-
+	std::vector<glm::vec2> enemyOffsets{};
+	std::vector<glm::vec2> enemyTexCoords{};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();

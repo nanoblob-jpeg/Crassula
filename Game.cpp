@@ -6,6 +6,7 @@ SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
+TexSampRenderer *EnemyRenderer;
 
 void Game::Init(){
 	//load shaders
@@ -13,6 +14,7 @@ void Game::Init(){
 	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
 		-400.0f , 400.0f, -1.0f, 1.0f);
@@ -49,6 +51,14 @@ void Game::Init(){
 	dProgram.setMat4("projection", projection);
 	dProgram.setMat4("view", view);
 	ProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("projectiles"));
+	
+	Shader eProgram;
+	eProgram = ResourceManager::GetShader("enemy");
+	eProgram.use();
+	eProgram.setInt("image", 0);
+	eProgram.setMat4("projection", projection);
+	eProgram.setMat4("view", view);
+	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
 	/*
 	load textures
 	 */
@@ -243,7 +253,7 @@ void Game::Render(){
 			generatedChunks = false;
 			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 			PlantRenderer->setOffset(&plantOffsets[0], numPlants);
-			PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
+			PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
 		}
 		for(int i{}; i < enemy_projectiles.size(); ++i){
 			enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
@@ -256,6 +266,13 @@ void Game::Render(){
 			playerProjectileOffsets.push_back(player_projectiles[i].position);
 			for(int j{}; j < 6; ++j){
 				playerProjectileTexCoords.push_back(player_projectiles[i].texturePosition[j]);
+			}
+		}
+
+		for(int i{}; i < board_enemies.size(); ++i){
+			enemyOffsets.push_back(board_enemies[i].position);
+			for(int j{}; j < 6; ++j){
+				enemyTexCoords.push_back(board_enemies[i].texturePosition[j]);
 			}
 		}
 
@@ -272,13 +289,19 @@ void Game::Render(){
 		//render enemy projectiles
 		ProjectileRenderer->setViewMatrix("view", view);
 		ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-		ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
+		ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
 		ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
 
 		//render player projectiles
 		ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
-		ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
+		ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
 		ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
+
+		//render enemies
+		EnemyRenderer->setViewMatrix("view", view);
+		EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
+		EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
+		EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
 
 		//render player
 		Renderer->setViewMatrix("view", view);
