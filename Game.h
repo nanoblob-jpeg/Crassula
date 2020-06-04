@@ -24,6 +24,9 @@
 class Game
 {
 public:
+	const maxPlantSize{50};
+	const maxProjectileSize{50};
+
 	enum GameState{
 		START_SCREEN,
 		GAME_ACTIVE_CLASSIC,

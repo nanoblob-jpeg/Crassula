@@ -1,6 +1,8 @@
 #include "Game.h"
 
 SpriteRenderer *Renderer;
+//all block, plant, and projectile textures need to have the
+//same space or else I can't load the model matrix
 SpriteRenderer *BlockRenderer;
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
@@ -265,18 +267,18 @@ void Game::Render(){
 
 		//render plants
 		PlantRenderer->setViewMatrix("view", view);
-		PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"));
+		PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
 		
 		//render enemy projectiles
 		ProjectileRenderer->setViewMatrix("view", view);
 		ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 		ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-		ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"));
+		ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
 
 		//render player projectiles
 		ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
 		ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
-		ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"));
+		ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
 
 		//render player
 		Renderer->setViewMatrix("view", view);
