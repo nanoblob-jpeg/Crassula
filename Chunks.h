@@ -20,7 +20,6 @@ public:
 	
 	Chunk(){}
 	void Load(const char *file);
-	void Draw(SpriteRenderer &renderer);
 private:
 	void init(std::vector<std::string> files);
 };

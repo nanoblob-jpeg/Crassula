@@ -42,7 +42,7 @@ public:
 		texturePosition.push_back(texturePosition[1]);
 	};
 
-	void setDirection(glm::vec2 startPosition, float direction){
+	void setDirection(glm::vec2 startPosition, short direction){
 		if(direction < 0){
 			velocity[0] = -5;
 		}else{

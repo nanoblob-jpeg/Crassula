@@ -18,6 +18,8 @@ public:
 	int level;
 	float experience;
 	std::string name;
+	//false for left, true for right
+	bool facing;
 
 	//stats
 	int health;

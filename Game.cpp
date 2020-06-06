@@ -422,12 +422,14 @@ void Game::ProcessInput(float dt){
 		}
 		//move left, with correct acceleration
 		if(Keys[GLFW_KEY_A]){
+			player.facing = false;
 			player.velocity.x -= player.speed;
 			if(player.velocity.x < 0)
 				player.velocity.x = std::max(player.velocity.x, static_cast<float>((-3.5) - (player.speed/4)));
 		}
 		//move right, with correct acceleration
 		if(Keys[GLFW_KEY_D]){
+			player.facing = true;
 			player.velocity.x += player.speed;
 			if(player.velocity.x > 0)
 				player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
@@ -458,32 +460,39 @@ void Game::ProcessInput(float dt){
 
 		if(m_state == HOME_MAIN){
 			if(Keys[GLFW_KEY_I]){
-				if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
-					m_state = GAME_ACTIVE_CLASSIC;
-					initializeGame();
+				if(player.interact){
+					if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
+						m_state = GAME_ACTIVE_CLASSIC;
+						initializeGame();
 
-					//should make a portal class
-					//need to have some function in there that can be called for
-					//all interactables
-					//like interact with or something
-				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
-					m_state = GAME_ACTIVE_BOSS;
-					//add in code here to prep for that
-				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
-					m_state = HOME_ARMORY;
-					//add in code later
-				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
-					m_state = HOME_NURSERY;
-					//add in code later
-				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
-					m_state = HOME_GREENHOUSE;
-					//add code later
-				}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
-					m_state = HOME_CLOCK;
+						//should make a portal class
+						//need to have some function in there that can be called for
+						//all interactables
+						//like interact with or something
+					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
+						m_state = GAME_ACTIVE_BOSS;
+						//add in code here to prep for that
+					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
+						m_state = HOME_ARMORY;
+						//add in code later
+					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
+						m_state = HOME_NURSERY;
+						//add in code later
+					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
+						m_state = HOME_GREENHOUSE;
+						//add code later
+					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
+						m_state = HOME_CLOCK;
+					}
 				}
 			}
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
-
+			if(Keys[GLFW_KEY_SPACE]){
+				spawnPlayerProjectile();
+			}
+			if(Keys[GLFW_KEY_I]){
+				
+			}
 		}
 	}else if(m_state = START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
@@ -1137,11 +1146,11 @@ void Game::fixRemainingEnemyPosition(int direction){
 
 int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
 	switch(direction){
-		case 0 :
 		case 2 :
-			return 5000;
-		case 1 :
 		case 3 :
+			return 5000;
+		case 0 :
+		case 1 :
 			return -5000;
 	}
 }
@@ -1217,4 +1226,32 @@ void Game::fixRemainingProjectilePosition(int direction){
 			enemy_projectiles[i].position[0] += adder;
 		}
 	}
+}
+
+void Game::spawnPlayerProjectile(){
+	if(player.currentPlant == -1){
+		player_projectiles.push_back(ResourceManager::GetProjectile("basic"));
+		auto it = player_projectiles.rbegin();
+		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
+		short direction = player.facing ? 1 : -1;
+		it->setDirection(startPosition, direction);
+	}else{
+		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[currentPlant]->projectileName[level]));
+		auto it = player_projectiles.rbegin();
+		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
+		short direction = player.facing ? 1 : -1;
+		it->setDirection(startPosition, direction);
+	}
+}
+
+glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
+	glm::vec2 output;
+	if(facing){
+		output[0] = cam.Position[0] + player.size[0]/2;
+		output[1] = cam.Position[1] + p.size[1]/2;
+	}else{
+		output[0] = cam.Position[0] - player.size[0]/2;
+		output[1] = cam.Position[1] + p.size[1]/2;
+	}
+	return output;
 }

@@ -108,5 +108,7 @@ private:
 	void despawnProjectilesFromDeletedChunks(int direction);
 	void fixRemainingProjectilePosition(int direction);
 	void clearAndResetGameBoard();
+	void spawnPlayerProjectile();
+	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
 };
 #endif

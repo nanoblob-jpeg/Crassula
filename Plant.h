@@ -19,5 +19,7 @@ public:
 	std::vector<std::string> projectileName;
 
 	Plant(std::string pname, int plevel, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
+
+	int interact(Game &game);
 };
 #endif
