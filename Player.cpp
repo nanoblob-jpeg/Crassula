@@ -76,3 +76,9 @@ void Player::dealDamage(int damage){
 bool Player::isDead(){
 	return health + getHealthBoost() > 0;
 }
+
+void Player::addEffects(Projectile &p){
+	for(int i{}; i < p.effects.size(); ++i){
+		this->effects.push_back(p.effects[i]);
+	}
+}

@@ -100,6 +100,11 @@ void Game::Init(){
 	player.loadPlayer("bin/player.txt");
 
 	/*
+	load projectiles
+	*/
+	ResourceManager::LoadProjectiles("projectileDirectory.txt");
+
+	/*
 	load the enemies
 	can't be loaded from a file as each of them have different attack functions
 	*/
@@ -974,9 +979,7 @@ void Game::player_projectile_collision_detection(){
 					//deal damage
 					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
 					//add effects
-					for(auto k = player_projectiles[i].effects->begin(); k != player_projectiles[i].effects->end(); ++k){
-						board_enemies[j].effects.push_back(*k);
-					}
+					board_enemies[j].addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
@@ -1018,9 +1021,7 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
-				for(auto k = enemy_projectiles[i].effects->begin(); k != enemy_projectiles[i].effects->end(); ++k){
-					player.effects.push_back(*k);
-				}
+				player.addEffects(enemy_projectiles[i]);
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){

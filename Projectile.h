@@ -10,11 +10,36 @@ public:
 	int damage;
 	bool piercing;
 	int range;
-	std::vector<Effect> *effects;
+	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
 
-	Projectile(glm::vec2 size, Texture sprite, int pdamage, int prange, bool ppiercing = false)
+	Projectile(glm::vec2 size, Texture sprite, int pdamage, int prange, glm::vec2 texCoords, bool ppiercing = false)
 		: GameObject(glm::vec2(0,0), size, sprite), damage{pdamage}, piercing{ppiercing}, range{prange}{
+		int temp = std::max(size[0], size[1]);
+		unsigned int texWidth = sprite.m_width;
+		unsigned int texHeight = sprite.m_height;
+		
+		glm::vec2 tempCoord;
+		tempCoord[0] = (texCoord[0]/texWidth);
+		tempCoord[1] = ((texCoord[1] + size[1])/texHeight);
+		texturePosition.push_back(tempCoord);
+
+		tempCoord[0] = ((texCoord[0] + size[0])/texWidth);
+		tempCoord[1] = (texCoord[1]/texHeight);
+		texturePosition.push_back(tempCoord);
+
+
+		tempCoord[0] = (texCoord[0]/texWidth);
+		tempCoord[1] = (texCoord[1]/texHeight);
+		texturePosition.push_back(tempCoord);
+
+		texturePosition.push_back(texturePosition[0]);
+
+		tempCoord[0] = ((texCoord[0] + size[0])/texWidth);
+		tempCoord[1] = ((texCoord[1] + size[1])/texHeight);
+		texturePosition.push_back(tempCoord);
+
+		texturePosition.push_back(texturePosition[1]);
 	};
 
 	void setDirection(glm::vec2 startPosition, float direction){

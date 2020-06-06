@@ -15,6 +15,7 @@
 #include "Plant.h"
 #include "Effect.h"
 #include "Enemy.h"
+#include "Projectile.h"
 
 
 class ResourceManager

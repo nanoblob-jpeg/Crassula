@@ -501,8 +501,7 @@ void LoadProjectiles(const char *file){
         std::string name, tname;
         int damage, range, num;
         bool piercing;
-        glm::vec2 size;
-        glm::vec2 texCoord;
+        glm::vec2 size, texCoord;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
@@ -521,7 +520,7 @@ void LoadProjectiles(const char *file){
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, Textures[tname], damage, range, piercing)
+        Projectile temp = Projectile(size, Textures[tname], damage, range, texCoord, piercing)
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){

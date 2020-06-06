@@ -59,6 +59,7 @@ public:
 	void switchPlant();
 	void dealDamage(int damage);
 	bool isDead();
+	void addEffects(Projectile &p);
 private:
 	int getDefenseBoost();
 	int getHealthBoost();

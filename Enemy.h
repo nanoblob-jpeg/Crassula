@@ -42,5 +42,10 @@ public:
 		attackSpeed *= multiplier;
 		speed *= multiplier;
 	}
+	void addEffects(Projectile &p){
+		for(int i{}; i < p.effects.size(); ++i){
+			this->effects.push_back(p.effects[i]);
+		}
+	}
 };
 #endif
