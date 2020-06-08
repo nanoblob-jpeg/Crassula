@@ -1,9 +1,13 @@
 #include "Game.h"
 
 SpriteRenderer *Renderer;
+SpriteRenderer *BlockRenderer;
+//background renderer
+BackgroundRenderer *BackGround_l1;
+BackgroundRenderer *BackGround_l2;
+BackgroundRenderer *BackGround_l3;
 //all block, plant, and projectile textures need to have the
 //same space or else I can't load the model matrix
-SpriteRenderer *BlockRenderer;
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
@@ -15,6 +19,7 @@ void Game::Init(){
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", mullptr, "background_l1");
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
 		-400.0f , 400.0f, -1.0f, 1.0f);
@@ -59,6 +64,29 @@ void Game::Init(){
 	eProgram.setMat4("projection", projection);
 	eProgram.setMat4("view", view);
 	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
+
+	Shader fProgram;
+	fProgram = ResourceManager::GetShader("background_l1");
+	fProgram.use();
+	fProgram.setInt("image", 0);
+	fProgram.setMat4("projection", projection);
+	BackGround_l1 = new BackgroundRenderer(ResourceManager::GetShader("background_l1"));
+
+	Shader gProgram;
+	gProgram = ResourceManager::GetShader("background_l2");
+	gProgram.use();
+	gProgram.setInt("image", 0);
+	gProgram.setMat4("projection", projection);
+	BackGround_l2 = new BackgroundRenderer(ResourceManager::GetShader("background_l2"));
+
+
+	Shader hProgram;
+	hProgram = ResourceManager::GetShader("background_l1");
+	hProgram.use();
+	hProgram.setInt("image", 0);
+	hProgram.setMat4("projection", projection);
+	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
+
 	/*
 	load textures
 	 */
@@ -95,9 +123,19 @@ void Game::Init(){
 	ResourceManager::LoadPlant("plant_list.txt");
 
 	/*
+	load backgrounds
+	*/
+	ResourceManager::LoadBackground("background_list.txt");
+
+	/*
 	load player
 	 */
 	player.loadPlayer("bin/player.txt");
+
+	/*
+	set the background
+	*/
+	setBackground(player.backgroundName);
 
 	/*
 	load projectiles
@@ -154,6 +192,12 @@ void Game::Render(){
 			glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
 				45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		BackGround_l1.setOffset(backgroundLayerOneOffset);
+		BackGround_l1.DrawSprites(backgroundTextures.layerOne);
+		BackGround_l2.setOffset(backgroundLayerTwoOffset);
+		BackGround_l2.DrawSprites(backgroundTextures.layerTwo);
+		BackGround_l3.setOffset(backgroundLayerThreeOffset);
+		BackGround_l3.DrawSprites(backgroundTextures.layerThree);
 		//prepping data for the block rendering
 		if(generatedChunks){
 			//clear already existing offset data
@@ -314,6 +358,8 @@ void Game::Render(){
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
 			glm::vec2(tempSize, tempSize));
+
+
 	}
 	
 }
@@ -324,6 +370,9 @@ void Game::Update(float dt){
 
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
+	backgroundLayerOneOffset += player.velocity/12;
+	backgroundLayerTwoOffset += player.velocity/8;
+	backgroundLayerThreeOffset += player.velocity/5;
 	player.interact = nullptr;
 
 	if(m_state == HOME_MAIN){
@@ -491,7 +540,9 @@ void Game::ProcessInput(float dt){
 				spawnPlayerProjectile();
 			}
 			if(Keys[GLFW_KEY_I]){
-				
+				if(player.interact){
+					player.interact->interact(this);
+				}
 			}
 		}
 	}else if(m_state = START_SCREEN){
@@ -1254,4 +1305,8 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 		output[1] = cam.Position[1] + p.size[1]/2;
 	}
 	return output;
+}
+
+void Game::setBackground(std::string name){
+	backgroundTextures = ResourceManager::GetBackground(name);
 }

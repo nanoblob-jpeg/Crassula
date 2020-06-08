@@ -12,6 +12,9 @@ std::map<std::string, GameObject> ResourceManager::Objects;
 std::map<std::string, Bowl> ResourceManager::Bowls;
 std::map<std::string, Plant> ResourceManager::Plants;
 std::map<std::string, Effect> ResourceManager::Effects;
+std::map<std::string, Enemy> ResourceManager::Enemies;
+std::map<std::string, Projectile> ResourceManager::Projectiles;
+std::map<std::string, Background> ResourceManager::Backgrounds;
 
 // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
 Shader& ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name){
@@ -537,4 +540,41 @@ void LoadProjectiles(const char *file){
 
 Projectile& ResourceManager::GetProjectile(std::string name){
     return Projectiles[name];
+}
+
+void ResourceManager::LoadBackgrounds(const char *file){
+    std::vector<std::string> background_list;
+    std::string line;
+    std::ifstream fstream(file);
+    if(fstream){
+        while(std::getline(fstream, line)){
+            background_list.push_back(line);
+        }
+    }else{
+        std::cout << "Could not open effect list file";
+    }
+
+    fstream.close();
+
+    /*
+    name
+    name1
+    name2
+    name3
+    */
+
+    for(int i{}; i < background_list.size(); ++i){
+        std::ifstream fstream2(effect_list[i]);
+        std::string name, name1, name2, name3;
+        std::getline(fstream2, name);
+        std::getline(fstream2, name1);
+        std::getline(fstream2, name2);
+        std::getline(fstream2, name3);
+        Backgrounds[name] = Effect(name1, name2, name3);
+        fstream2.close();
+    }
+}
+
+void BackGround& ResourceManager::GetBackground(std::string name){
+    return Backgrounds[name];
 }

@@ -11,6 +11,8 @@
 #include "Effect.h"
 #include "Projectile.h"
 #include "TexSampRenderer.h"
+#include "BackgroundRenderer.h"
+#include "Background.h"
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <deque>
@@ -74,6 +76,11 @@ public:
 	std::vector<glm::vec2> playerProjectileTexCoords{};
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<glm::vec2> enemyTexCoords{};
+	//background render logic stuff
+	Background &backgroundTextures;
+	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
+	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
+	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
@@ -110,5 +117,6 @@ private:
 	void clearAndResetGameBoard();
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
+	void setBackground(std::string name);
 };
 #endif

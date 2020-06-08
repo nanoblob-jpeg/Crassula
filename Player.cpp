@@ -10,6 +10,7 @@ void Player::loadPlayer(const char *file){
 	information in the file is going to be formatted like this:
 	name
 	level
+	backgroundName
 	experience
 	bowl name
 	*/
@@ -25,6 +26,8 @@ void Player::loadPlayer(const char *file){
 		name = line;
 		std::getline(fstream, line);
 		level = std::stoi(line);
+		std::getline(fstream, line);
+		backgroundName = line;
 		std::getline(fstream, line);
 		experience = std::stof(line);
 		calculateStats();

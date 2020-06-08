@@ -16,6 +16,7 @@
 #include "Effect.h"
 #include "Enemy.h"
 #include "Projectile.h"
+#include "Background.h"
 
 
 class ResourceManager
@@ -31,6 +32,7 @@ public:
     static std::map<std::string, Effect> Effects;
     static std::map<std::string, Enemy> Enemies;
     static std::map<std::string, Projectile> Projectiles;
+    static std::map<std::string, Background> Backgrounds;
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     static Shader& LoadShader(const char *vShaderFilePlant, const char *fShaderFile, const char *gShaderFile, std::string name);
     // retrieves a stored sader
@@ -68,6 +70,10 @@ public:
     static void LoadProjectiles(const char *file);
     //returns a projectile
     static Projectile& GetProjectile(std::string name);
+    //load Background
+    static void LoadBackgrounds(const char *file);
+    //returns a background
+    static Background& GetBackground(std::string name);
     // properly de-allocates all loaded resources
     static void Clear();
 private:
