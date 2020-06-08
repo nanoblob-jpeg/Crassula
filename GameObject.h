@@ -22,6 +22,7 @@ public:
 	/*
 	interact returns a code to let the game know which kind of object the player interacts with
 	this allows the game to remove the object if necessary
+	nothing happening returns -1s
 	plant returns 0
 	*/
 	virtual int interact(Game &game);
