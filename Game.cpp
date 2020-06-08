@@ -537,7 +537,9 @@ void Game::ProcessInput(float dt){
 			}
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
-				spawnPlayerProjectile();
+				if(player.canAttack(dt)){
+					spawnPlayerProjectile();
+				}
 			}
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){

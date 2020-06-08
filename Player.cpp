@@ -85,3 +85,14 @@ void Player::addEffects(Projectile &p){
 		this->effects.push_back(p.effects[i]);
 	}
 }
+
+bool Player::canAttack(float dt){
+	if(timer < 0.0001){
+		timer += dt;
+		return true;
+	}
+	timer += dt;
+	if(timer > (attackSpeed + statBoosts[3]))
+		timer = 0;
+	return false;
+}

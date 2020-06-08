@@ -56,6 +56,9 @@ public:
 	//maybe change it to a map
 	std::vector<float> statBoosts;
 
+	//attacking logic
+	float timer{};
+
 	Player(){};
 	void loadPlayer(const char *file);
 	void applyEffects(float dt);
@@ -64,6 +67,7 @@ public:
 	void dealDamage(int damage);
 	bool isDead();
 	void addEffects(Projectile &p);
+	bool canAttack();
 private:
 	int getDefenseBoost();
 	int getHealthBoost();
