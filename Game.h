@@ -121,5 +121,15 @@ private:
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
 	void setBackground(std::string name);
+
+	//rendering
+	void renderHomeMain();
+	void renderGame();
+	void renderGameBackground();
+	void calculateNewRenderValues();
+	void calculateBlockOffsets(int i, int j);
+	void calculatePlantOffsets(int i, int j);
+	void calculateProjectileRenderValues();
+	void calculateEnemyRenderValues();
 };
 #endif

@@ -36,65 +36,56 @@ void Game::Init(){
 	sProgram.setMat4("view", view);
 	Renderer = new SpriteRenderer(ResourceManager::GetShader("player"));
 
-
-	Shader bProgram;
-	bProgram = ResourceManager::GetShader("block");
-	bProgram.use();
-	bProgram.setInt("image", 0);
-	bProgram.setMat4("projection", projection);
-	bProgram.setMat4("view", view);
+	sProgram = ResourceManager::GetShader("block");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
 	BlockRenderer = new SpriteRenderer(ResourceManager::GetShader("block"));
 
-	Shader cProgram;
-	cProgram = ResourceManager::GetShader("plant");
-	cProgram.use();
-	cProgram.setInt("image", 0);
-	cProgram.setMat4("projection", projection);
-	cProgram.setMat4("view", view);
+	sProgram = ResourceManager::GetShader("plant");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
 	PlantRenderer = new TexSampRenderer(ResourceManager::GetShader("plant"));
 
-	Shader dProgram;
-	dProgram = ResourceManager::GetShader("projectiles");
-	dProgram.use();
-	dProgram.setInt("image", 0);
-	dProgram.setMat4("projection", projection);
-	dProgram.setMat4("view", view);
+	sProgram = ResourceManager::GetShader("projectiles");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
 	ProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("projectiles"));
 	
-	Shader eProgram;
-	eProgram = ResourceManager::GetShader("enemy");
-	eProgram.use();
-	eProgram.setInt("image", 0);
-	eProgram.setMat4("projection", projection);
-	eProgram.setMat4("view", view);
+	sProgram = ResourceManager::GetShader("enemy");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
 	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
 
-	Shader fProgram;
-	fProgram = ResourceManager::GetShader("background_l1");
-	fProgram.use();
-	fProgram.setInt("image", 0);
-	fProgram.setMat4("projection", projection);
+	sProgram = ResourceManager::GetShader("background_l1");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
 	BackGround_l1 = new BackgroundRenderer(ResourceManager::GetShader("background_l1"));
 
-	Shader gProgram;
-	gProgram = ResourceManager::GetShader("background_l2");
-	gProgram.use();
-	gProgram.setInt("image", 0);
-	gProgram.setMat4("projection", projection);
+	sProgram = ResourceManager::GetShader("background_l2");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
 	BackGround_l2 = new BackgroundRenderer(ResourceManager::GetShader("background_l2"));
 
-	Shader hProgram;
-	hProgram = ResourceManager::GetShader("background_l3");
-	hProgram.use();
-	hProgram.setInt("image", 0);
-	hProgram.setMat4("projection", projection);
+	sProgram = ResourceManager::GetShader("background_l3");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
 	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
 
-	Shader iProgram;
-	iProgram = ResourceManager::GetShader("text");
-	iProgram.use();
-	iProgram.setInt("image", 0);
-	iProgram.setMat4("projection", projection);
+	sProgram = ResourceManager::GetShader("text");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
 	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
 
 	/*
@@ -181,6 +172,14 @@ void Game::Init(){
 
 Game::~Game(){
 	delete Renderer;
+	delete BlockRenderer;
+	delete textRenderer;
+	delete BackGround_l1;
+	delete BackGround_l2;
+	delete BackGround_l3;
+	delete PlantRenderer;
+	delete ProjectileRenderer;
+	delete EnemyRenderer;
 }
 
 void Game::Render(){
@@ -204,194 +203,9 @@ void Game::Render(){
 	*/
 
 	if(m_state == HOME_MAIN){
-		glm::mat4 view = cam.GetViewMatrix();
-		Renderer->setViewMatrix("view", view);
-		Chunk *home_main = &ResourceManager::GetChunk("home_main");
-		for(int i{}; i < home_main->objects.size(); ++i){
-			float tempSize = std::max(home_main->objects[i]->size[0], home_main->objects[i]->size[1]);
-			Renderer->DrawSprite(home_main->objects[i]->sprite, 
-				home_main->objects[i]->position,
-				glm::vec2(tempSize, tempSize));
-		}
+		renderHomeMain();
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
-		BackGround_l1.setOffset(backgroundLayerOneOffset);
-		BackGround_l1.DrawSprites(backgroundTextures.layerOne);
-		BackGround_l2.setOffset(backgroundLayerTwoOffset);
-		BackGround_l2.DrawSprites(backgroundTextures.layerTwo);
-		BackGround_l3.setOffset(backgroundLayerThreeOffset);
-		BackGround_l3.DrawSprites(backgroundTextures.layerThree);
-		//prepping data for the block rendering
-		if(generatedChunks){
-			//clear already existing offset data
-			blockOffsets.clear();
-			plantOffsets.clear();
-			numBlocks = 0;
-			numPlants = 0;
-			//only need to recalculate every time that we generate new chunks
-			for(int i{}; i < 9; ++i){
-				for(int j{}; j < 100; ++j){
-					for(int k{}; k < board[i/3][i%3][j].objects.size(); ++k){
-						glm::vec2 temp{};
-						//calculating the x offset
-						//the object is going to be normally rendered at 0,0 with
-						//bottom right corner at 50, -50
-						//setting offset initially for chunks themselves
-						switch(i % 3){
-							case 0 :
-								temp[0] = -7500;
-								break;
-							case 1 :
-								temp[0] = -2500;
-								break;
-							case 2 :
-								temp[0] = 2500;
-								break;
-						}
-						//then add for each little box in a chunk
-						temp[0] += (j % 10) * 500;
-						//then add per block offset
-						temp[0] += board[i/3][i%3][j].objects[k]->position[0];
-
-						//calculating the y offset
-						//set offset initially for chunks themselves
-						switch(i / 3){
-							case 0 :
-								temp[1] = 7500;
-								break;
-							case 1 :
-								temp[1] = 2500;
-								break;
-							case 2 :
-								temp[1] = -2500;
-								break;
-						}
-						//subtracting for each little box in a chunk
-						temp[1] -= (j / 10) * 500;
-						//adding position per block which is already negative
-						temp[1] += board[i/3][i%3][j].objects[k]->position[1];
-
-						blockOffsets.push_back(temp);
-
-						numBlocks++;
-					}
-					for(int k{}; k < board[i/3][i%3][j].plants.size(); ++k){
-						glm::vec2 temp{};
-						//calculating the x offset
-						//setting offset initially for chunks themselves
-						switch(i % 3){
-							case 0 :
-								temp[0] = -7500;
-								break;
-							case 1 :
-								temp[0] = -2500;
-								break;
-							case 2 :
-								temp[0] = 2500;
-								break;
-						}
-						//then add for each little box in a chunk
-						temp[0] += (j % 10) * 500;
-						//then add the plants position
-						temp[0] += board[i/3][i%3][j].plants[k].position[0];
-
-						//calculating the y offset
-						//set offset initially for chunks themselves
-						switch(i / 3){
-							case 0 :
-								temp[1] = 7500;
-								break;
-							case 1 :
-								temp[1] = 2500;
-								break;
-							case 2 :
-								temp[1] = -2500;
-								break;
-						}
-						//subtracting for each little box in a chunk
-						temp[1] -= (j / 10) * 500;
-						temp[1] -= board[i/3][i%3][j].plants[k].position[1];
-
-						plantOffsets.push_back(temp);
-
-						numPlants++;
-
-						for(int l{}; l < 6; l++){
-							plantTexCoords.push_back(board[i/3][i%3][j].plants[k].texturePosition[l]);
-						}
-					}
-				}
-			}
-			generatedChunks = false;
-			BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
-			PlantRenderer->setOffset(&plantOffsets[0], numPlants);
-			PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
-		}
-		for(int i{}; i < enemy_projectiles.size(); ++i){
-			enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
-			for(int j{}; j < 6; ++j){
-				enemyProjectileTexCoords.push_back(enemy_projectiles[i].texturePosition[j]);
-			}
-		}
-
-		for(int i{}; i < player_projectiles.size(); ++i){
-			playerProjectileOffsets.push_back(player_projectiles[i].position);
-			for(int j{}; j < 6; ++j){
-				playerProjectileTexCoords.push_back(player_projectiles[i].texturePosition[j]);
-			}
-		}
-
-		for(int i{}; i < board_enemies.size(); ++i){
-			enemyOffsets.push_back(board_enemies[i].position);
-			for(int j{}; j < 6; ++j){
-				enemyTexCoords.push_back(board_enemies[i].texturePosition[j]);
-			}
-		}
-
-		glm::mat4 view = cam.GetViewMatrix();
-		//render blocks
-		BlockRenderer->setViewMatrix("view", view);
-		BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-			glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
-
-		//render plants
-		PlantRenderer->setViewMatrix("view", view);
-		PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
-		
-		//render enemy projectiles
-		ProjectileRenderer->setViewMatrix("view", view);
-		ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-		ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
-		ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
-
-		//render player projectiles
-		ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
-		ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
-		ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
-
-		//render enemies
-		EnemyRenderer->setViewMatrix("view", view);
-		EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
-		EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
-		EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
-
-		//render player
-		Renderer->setViewMatrix("view", view);
-		float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
-		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
-			glm::vec2(tempSize, tempSize));
-
-		//render text stuff
-		for(int i{}; i < text.size(); ++i){
-			float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
-			textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
-		}
-		// implement health/plant rendering once I know what the game screen looks like
-		// also need to implement point system
-		// todo also need to implement effect rendering
-		// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
-		// tempSize = std::max(hp->width, hp->height);
-
+		renderGame();
 	}
 	
 }
@@ -1359,4 +1173,220 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 
 void Game::setBackground(std::string name){
 	backgroundTextures = ResourceManager::GetBackground(name);
+}
+
+void Game::renderHomeMain(){
+	glm::mat4 view = cam.GetViewMatrix();
+	Renderer->setViewMatrix("view", view);
+	Chunk *home_main = &ResourceManager::GetChunk("home_main");
+	for(int i{}; i < home_main->objects.size(); ++i){
+		float tempSize = std::max(home_main->objects[i]->size[0], home_main->objects[i]->size[1]);
+		Renderer->DrawSprite(home_main->objects[i]->sprite, 
+			home_main->objects[i]->position,
+			glm::vec2(tempSize, tempSize));
+	}
+}
+
+void Game::renderGame(){
+	renderGameBackground();
+	//prepping data for the block rendering
+	if(generatedChunks){
+		calculateNewRenderValues();
+	}
+	calculateProjectileRenderValues();
+
+	calculateEnemyRenderValues();
+
+	glm::mat4 view = cam.GetViewMatrix();
+	//render blocks
+	BlockRenderer->setViewMatrix("view", view);
+	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
+		glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
+
+	//render plants
+	PlantRenderer->setViewMatrix("view", view);
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
+		
+	//render enemy projectiles
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
+	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
+
+	//render player projectiles
+	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
+	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
+
+	//render enemies
+	EnemyRenderer->setViewMatrix("view", view);
+	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
+	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
+	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
+
+	//render player
+	Renderer->setViewMatrix("view", view);
+	float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
+	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+		glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
+		glm::vec2(tempSize, tempSize));
+
+	//render text stuff
+	for(int i{}; i < text.size(); ++i){
+		float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
+		textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
+	}
+	// implement health/plant rendering once I know what the game screen looks like
+	// also need to implement point system
+	// todo also need to implement effect rendering
+	// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
+	// tempSize = std::max(hp->width, hp->height);
+}
+
+void Game::renderGameBackground(){
+	BackGround_l1.setOffset(backgroundLayerOneOffset);
+	BackGround_l1.DrawSprites(backgroundTextures.layerOne);
+	BackGround_l2.setOffset(backgroundLayerTwoOffset);
+	BackGround_l2.DrawSprites(backgroundTextures.layerTwo);
+	BackGround_l3.setOffset(backgroundLayerThreeOffset);
+	BackGround_l3.DrawSprites(backgroundTextures.layerThree);
+}
+
+void Game::calculateNewRenderValues(){
+	//clear already existing offset data
+	blockOffsets.clear();
+	plantOffsets.clear();
+	numBlocks = 0;
+	numPlants = 0;
+	//only need to recalculate every time that we generate new chunks
+	for(int i{}; i < 9; ++i){
+		for(int j{}; j < 100; ++j){
+			calculateBlockOffsets(i, j);
+			calculatePlantOffsets(i, j);
+		}
+	}
+	generatedChunks = false;
+	BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
+	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
+	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
+}
+
+void Game::calculateBlockOffsets(int i, int j){
+	for(int k{}; k < board[i/3][i%3][j].objects.size(); ++k){
+		glm::vec2 temp{};
+		//calculating the x offset
+		//the object is going to be normally rendered at 0,0 with
+		//bottom right corner at 50, -50
+		//setting offset initially for chunks themselves
+		switch(i % 3){
+			case 0 :
+				temp[0] = -7500;
+				break;
+			case 1 :
+				temp[0] = -2500;
+				break;
+			case 2 :
+				temp[0] = 2500;
+				break;
+		}
+		//then add for each little box in a chunk
+		temp[0] += (j % 10) * 500;
+		//then add per block offset
+		temp[0] += board[i/3][i%3][j].objects[k]->position[0];
+
+		//calculating the y offset
+		//set offset initially for chunks themselves
+		switch(i / 3){
+			case 0 :
+				temp[1] = 7500;
+				break;
+			case 1 :
+				temp[1] = 2500;
+				break;
+			case 2 :
+				temp[1] = -2500;
+				break;
+		}
+		//subtracting for each little box in a chunk
+		temp[1] -= (j / 10) * 500;
+		//adding position per block which is already negative
+		temp[1] += board[i/3][i%3][j].objects[k]->position[1];
+
+		blockOffsets.push_back(temp);
+
+		numBlocks++;
+	}
+}
+
+void Game::calculatePlantOffsets(int i, int j){
+	for(int k{}; k < board[i/3][i%3][j].plants.size(); ++k){
+		glm::vec2 temp{};
+		//calculating the x offset
+		//setting offset initially for chunks themselves
+		switch(i % 3){
+			case 0 :
+				temp[0] = -7500;
+				break;
+			case 1 :
+				temp[0] = -2500;
+				break;
+			case 2 :
+				temp[0] = 2500;
+				break;
+		}
+		//then add for each little box in a chunk
+		temp[0] += (j % 10) * 500;
+		//then add the plants position
+		temp[0] += board[i/3][i%3][j].plants[k].position[0];
+
+		//calculating the y offset
+		//set offset initially for chunks themselves
+		switch(i / 3){
+			case 0 :
+				temp[1] = 7500;
+				break;
+			case 1 :
+				temp[1] = 2500;
+				break;
+			case 2 :
+				temp[1] = -2500;
+				break;
+		}
+		//subtracting for each little box in a chunk
+		temp[1] -= (j / 10) * 500;
+		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
+
+		plantOffsets.push_back(temp);
+
+		numPlants++;
+
+		for(int l{}; l < 6; l++){
+			plantTexCoords.push_back(board[i/3][i%3][j].plants[k].texturePosition[l]);
+		}
+	}
+}
+
+void Game::calculateProjectileRenderValues(){
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
+		for(int j{}; j < 6; ++j){
+			enemyProjectileTexCoords.push_back(enemy_projectiles[i].texturePosition[j]);
+		}
+	}
+
+	for(int i{}; i < player_projectiles.size(); ++i){
+		playerProjectileOffsets.push_back(player_projectiles[i].position);
+		for(int j{}; j < 6; ++j){
+			playerProjectileTexCoords.push_back(player_projectiles[i].texturePosition[j]);
+		}
+	}
+}
+
+void Game::calculateEnemyRenderValues(){
+	for(int i{}; i < board_enemies.size(); ++i){
+		enemyOffsets.push_back(board_enemies[i].position);
+		for(int j{}; j < 6; ++j){
+			enemyTexCoords.push_back(board_enemies[i].texturePosition[j]);
+		}
+	}
 }
