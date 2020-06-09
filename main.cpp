@@ -33,12 +33,6 @@ float alpha{0.0f};
 //frame timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-//mouse stuff
-float lastX = SCR_WIDTH/2, lastY = SCR_HEIGHT/2;
-bool firstMouse{true};
-
-//light source location
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -62,8 +56,6 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -74,7 +66,6 @@ int main()
 
 	Crassula.Init();
 
-	
 	/*
 	CONFIGS
 
@@ -173,25 +164,3 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     //prevent the window from becoming a larger size
     glViewport(0, 0, 600, 800);
 }
-
-
-/**
- * coordinates the moving of the mouse, not needed for 2D game unless we want them to be able to click and aim
- * which honestly is not a bad idea
- * @param window tracks mouse within this window
- * @param xpos   new x position of the mouse
- * @param ypos   new y position of the mouse
- */
-void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-	//translate to go into the Game class
-
-	// if(firstMouse){
-	// 	lastX = xpos;
-	// 	lastY = ypos;
-	// 	firstMouse = false;
-	// }
-	// cam.ProcessMouseMovement(xpos - lastX, lastY - ypos, true);
-	// lastX = xpos;
-	// lastY = ypos;
-}
-

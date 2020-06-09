@@ -388,6 +388,7 @@ void Game::Render(){
 		}
 		// implement health/plant rendering once I know what the game screen looks like
 		// also need to implement point system
+		// todo also need to implement effect rendering
 		// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
 		// tempSize = std::max(hp->width, hp->height);
 

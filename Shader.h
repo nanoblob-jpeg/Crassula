@@ -38,5 +38,4 @@ private:
     // checks if compilation or linking failed and if so, print the error logs
     void checkCompileErrors(unsigned int object, std::string type); 
 };
-  
 #endif

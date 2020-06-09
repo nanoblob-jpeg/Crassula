@@ -84,5 +84,4 @@ private:
     // loads a single texture from file
     static Texture loadTextureFromFile(const char *file, bool alpha);
 };
-
 #endif

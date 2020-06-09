@@ -23,5 +23,4 @@ public:
 private:
 	void init(std::vector<std::string> files);
 };
-
 #endif

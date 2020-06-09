@@ -21,5 +21,4 @@ public:
 private:
 	void initRenderData();
 }
-
 #endif

@@ -1,6 +1,8 @@
 #ifndef BACKGROUND
 #define BACKGROUND
 #include "Texture.h"
+#include <string>
+#include "ResourceManager.h"
 class Background{
 public:
 	Texture layerOne;
@@ -13,6 +15,4 @@ public:
 		layerThree = ResourceManager::GetTexture(three);
 	}
 }
-
-
 #endif
