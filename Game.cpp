@@ -188,9 +188,15 @@ void Game::Render(){
 	*/
 
 	if(m_state == HOME_MAIN){
-		Renderer->DrawSprite(ResourceManager::GetTexture("face"),
-			glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f),
-				45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		glm::mat4 view = cam.GetViewMatrix();
+		Renderer->setViewMatrix("view", view);
+		Chunk *home_main = &ResourceManager::GetChunk("home_main");
+		for(int i{}; i < home_main->objects.size(); ++i){
+			float tempSize = std::max(home_main->objects[i]->size[0], home_main->objects[i]->size[1]);
+			Renderer->DrawSprite(home_main->objects[i]->sprite, 
+				home_main->objects[i]->position,
+				glm::vec2(tempSize, tempSize));
+		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		BackGround_l1.setOffset(backgroundLayerOneOffset);
 		BackGround_l1.DrawSprites(backgroundTextures.layerOne);
@@ -448,6 +454,9 @@ void Game::Update(float dt){
 			player_projectiles.clear();
 
 			m_state = DEATH_SCREEN;
+
+			cam.Position[0] = 0;
+			cam.Position[1] = 0;
 		}
 	}
 
@@ -513,7 +522,8 @@ void Game::ProcessInput(float dt){
 					if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
 						m_state = GAME_ACTIVE_CLASSIC;
 						initializeGame();
-
+						cam.Position[0] = 0;
+						cam.Position[1] = 0;
 						//should make a portal class
 						//need to have some function in there that can be called for
 						//all interactables
@@ -539,6 +549,10 @@ void Game::ProcessInput(float dt){
 			if(Keys[GLFW_KEY_SPACE]){
 				if(player.canAttack(dt)){
 					spawnPlayerProjectile();
+					player.bowl->startAnimationCounter();
+					player.bowl->addFrameTimer(dt);
+				}else if(player.bowl->inAnimation){
+					player.bowl->addFrameTimer(dt);
 				}
 			}
 			if(Keys[GLFW_KEY_I]){
