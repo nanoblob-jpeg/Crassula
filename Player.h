@@ -68,6 +68,7 @@ public:
 	bool isDead();
 	void addEffects(Projectile &p);
 	bool canAttack();
+	void calculateLevel();
 private:
 	int getDefenseBoost();
 	int getHealthBoost();

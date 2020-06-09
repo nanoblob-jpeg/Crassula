@@ -2,6 +2,7 @@
 
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
+SpriteRenderer *textRenderer;
 //background renderer
 BackgroundRenderer *BackGround_l1;
 BackgroundRenderer *BackGround_l2;
@@ -19,7 +20,10 @@ void Game::Init(){
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", mullptr, "background_l1");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
+	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
 		-400.0f , 400.0f, -1.0f, 1.0f);
@@ -79,13 +83,19 @@ void Game::Init(){
 	gProgram.setMat4("projection", projection);
 	BackGround_l2 = new BackgroundRenderer(ResourceManager::GetShader("background_l2"));
 
-
 	Shader hProgram;
-	hProgram = ResourceManager::GetShader("background_l1");
+	hProgram = ResourceManager::GetShader("background_l3");
 	hProgram.use();
 	hProgram.setInt("image", 0);
 	hProgram.setMat4("projection", projection);
 	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
+
+	Shader iProgram;
+	iProgram = ResourceManager::GetShader("text");
+	iProgram.use();
+	iProgram.setInt("image", 0);
+	iProgram.setMat4("projection", projection);
+	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
 
 	/*
 	load textures
@@ -161,6 +171,12 @@ void Game::Init(){
 	blockOffsets.reserve(30000);
 	plantOffsets.reserve(30000);
 	plantTexCoords.reserve(30000);
+	enemyProjectileOffsets.reserve(100);
+	enemyProjectileTexCoords.reserve(600);
+	playerProjectileOffsets.reserve(100);
+	playerProjectileTexCoords.reserve(600);
+	enemyOffsets.reserve(30000);
+	enemyTexCoords.reserve(30000);
 }
 
 Game::~Game(){
@@ -365,6 +381,15 @@ void Game::Render(){
 			glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
 			glm::vec2(tempSize, tempSize));
 
+		//render text stuff
+		for(int i{}; i < text.size(); ++i){
+			float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
+			textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
+		}
+		// implement health/plant rendering once I know what the game screen looks like
+		// also need to implement point system
+		// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
+		// tempSize = std::max(hp->width, hp->height);
 
 	}
 	
@@ -389,6 +414,10 @@ void Game::Update(float dt){
 			player_and_object_collisions(home_main->objects[i], dt);
 		}
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
+			points += dt/2;
+			player.experience += dt/20;
+		}
 		//moving the projectiles
 		moveAllProjectiles(dt);
 
@@ -397,14 +426,14 @@ void Game::Update(float dt){
 		//1 right
 		//2 down
 		//3 left
-		if(player.position[0] >= 4500)
+		if(cam.Position[0] >= 4500)
 			generateChunks(1);
-		else if(player.position[0] <= -4500)
+		else if(cam.Position[0] <= -4500)
 			generateChunks(3);
 
-		if(player.position[1] >= 4500)
+		if(cam.Position[1] >= 4500)
 			generateChunks(0);
-		else if(player.position[1] <= -4500)
+		else if(cam.Position[1] <= -4500)
 			generateChunks(2);
 
 		//finding out which chunk the player is in using position
@@ -438,14 +467,13 @@ void Game::Update(float dt){
 		if(player.isDead()){
 			clearAndResetGameBoard();
 			
+			player.calculateLevel();
 			player.calculateStats();
 			player.interact = nullptr;
 			for(int i{}; i < player.plants.size(); ++i){
 				player.plants[i] = nullptr;
 			}
 			player.effects.clear();
-			player.position[0] = 0;
-			player.position[1] = 0;
 			player.velocity[0] = 0;
 			player.velocity[1] = 0;
 
@@ -524,6 +552,7 @@ void Game::ProcessInput(float dt){
 						initializeGame();
 						cam.Position[0] = 0;
 						cam.Position[1] = 0;
+						points = 0;
 						//should make a portal class
 						//need to have some function in there that can be called for
 						//all interactables
@@ -558,6 +587,8 @@ void Game::ProcessInput(float dt){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
 					player.interact->interact(this);
+					points += 5;
+					player.experience += 2;
 				}
 			}
 		}
@@ -1121,6 +1152,8 @@ void Game::enemy_projectile_collision_detection(){
 void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i].health <= 0){
+			points += 2;
+			player.experience += 5;
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
 		}

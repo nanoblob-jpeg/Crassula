@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include <iostream>
 
-Texture::Texture() : m_width(0), m_height(0), m_internal_format(GL_RGB), m_image_format(GL_RGB), m_wrap_s(GL_REPEAT), m_wrap_t(GL_REPEAT), m_filter_min(GL_LINEAR), m_filter_max(GL_LINEAR)
+Texture::Texture() : m_width(0), m_height(0), m_internal_format(GL_RGB), m_image_format(GL_RGB), m_wrap_s(GL_REPEAT), m_wrap_t(GL_CLAMP_TO_EDGE), m_filter_min(GL_LINEAR), m_filter_max(GL_LINEAR)
 {
 	glGenTextures(1, &this->ID);
 }

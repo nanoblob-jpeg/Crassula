@@ -62,7 +62,8 @@ public:
 	std::vector<Enemy> board_enemies;
 	std::vector<Projectile> enemy_projectiles;
 	std::vector<Projectile> player_projectiles;
-	
+	float points{};
+
 	//render logic stuff
 	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
@@ -81,6 +82,8 @@ public:
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
+	//text render stuff
+	std::vector<GameObject *> text;
 
 	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
 	~Game();
