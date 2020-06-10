@@ -40,7 +40,10 @@ void Player::loadPlayer(const char *file){
 
 void Player::applyEffects(float dt){
 	for(int i{}; i < effects.size(); ++i){
-		effects[i].applyEffect(health, defense, attack, speed, recovery, dt);
+		if(effects[i].applyEffect(health, defense, attack, speed, recovery, dt)){
+			effects.erase(effects.begin() + i);
+			--i;
+		}
 	}
 }
 
@@ -92,7 +95,7 @@ bool Player::canAttack(float dt){
 		return true;
 	}
 	timer += dt;
-	if(timer > (attackSpeed + statBoosts[3]))
+	if(timer > 3 - (attackSpeed + statBoosts[3]))
 		timer = 0;
 	return false;
 }
