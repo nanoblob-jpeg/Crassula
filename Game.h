@@ -94,10 +94,26 @@ public:
 	void Update(float dt);
 	void Render();
 private:
-	void generateChunks(int direction);
+	//game initialization/destruction
 	void initializeGame();
-
 	void loadEnemies();
+	void clearAndResetGameBoard();
+	void setBackground(std::string name);
+	void prepBoard();
+	void reserveArraySpace();
+	void gameEndProtocol();
+
+	//Chunk Generation
+	void prepBoardForChunkCreation(int direction);
+	void generateChunks(int direction);
+	void despawnEnemiesFromDeletedChunks(int direction);
+	void despawnProjectilesFromDeletedChunks(int direction);
+	void fixGeneratedEnemiesPosition(int i, int j, int k, int direction);
+	void fixRemainingEnemyPosition(int direction);
+	void fixRemainingProjectilePosition(int direction);
+	int findAddingAmountOffsetWhenGeneratingChunks(int direction);
+
+	//collision detection
 	void player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, int width_offset, int height_offset);
@@ -106,30 +122,43 @@ private:
 	bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object);
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
-	void clearDeadEnemies();
 	short findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
-	void processEffectsForEnemies(float dt);
-	void processEffectsForPlayer(float dt);
-	void despawnEnemiesFromDeletedChunks(int direction);
-	void fixGeneratedEnemiesPosition(int i, int j, int k, int direction);
-	void fixRemainingEnemyPosition(int direction);
-	int findAddingAmountOffsetWhenGeneratingChunks(int direction);
-	void moveAllProjectiles(float dt);
-	void despawnProjectilesFromDeletedChunks(int direction);
-	void fixRemainingProjectilePosition(int direction);
-	void clearAndResetGameBoard();
+	
+	//game logic
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
-	void setBackground(std::string name);
+	void clearDeadEnemies();
+	void processEffectsForEnemies(float dt);
+	void processEffectsForPlayer(float dt);
+	void processPlayerMovement();
+	void moveAllProjectiles(float dt);
 
 	//rendering
 	void renderHomeMain();
 	void renderGame();
 	void renderGameBackground();
+	void renderBlocks(glm::mat4 &view);
+	void renderPlants(glm::mat4 &view);
+	void renderEnemyProjectiles(glm::mat4 &view);
+	void renderPlayerProjectiles(glm::mat4 &view);
+	void renderEnemies(glm::mat4 &view);
+	void renderPlayer(glm::mat4 &view);
+	void renderText();
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(int i, int j);
 	void calculatePlantOffsets(int i, int j);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
+
+	//Shader && Renderer loading
+	void initShaders();
+	void initRenderers();
+	void initRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initBlockRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initPlantRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initProjectileRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initEnemyRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initBackgroundRenderers(glm::mat4 &projection);
+	void initTextRenderer(glm::mat4 &view, glm::mat4 &projection);
 };
 #endif

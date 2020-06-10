@@ -13,163 +13,6 @@ TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 
-void Game::Init(){
-	//load shaders
-	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
-	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
-	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
-	//configure shaders
-	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
-		-400.0f , 400.0f, -1.0f, 1.0f);
-	glm::mat4 view = cam.GetViewMatrix();
-	Shader sProgram;
-	sProgram = ResourceManager::GetShader("player");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	sProgram.setMat4("view", view);
-	Renderer = new SpriteRenderer(ResourceManager::GetShader("player"));
-
-	sProgram = ResourceManager::GetShader("block");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	sProgram.setMat4("view", view);
-	BlockRenderer = new SpriteRenderer(ResourceManager::GetShader("block"));
-
-	sProgram = ResourceManager::GetShader("plant");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	sProgram.setMat4("view", view);
-	PlantRenderer = new TexSampRenderer(ResourceManager::GetShader("plant"));
-
-	sProgram = ResourceManager::GetShader("projectiles");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	sProgram.setMat4("view", view);
-	ProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("projectiles"));
-	
-	sProgram = ResourceManager::GetShader("enemy");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	sProgram.setMat4("view", view);
-	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
-
-	sProgram = ResourceManager::GetShader("background_l1");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	BackGround_l1 = new BackgroundRenderer(ResourceManager::GetShader("background_l1"));
-
-	sProgram = ResourceManager::GetShader("background_l2");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	BackGround_l2 = new BackgroundRenderer(ResourceManager::GetShader("background_l2"));
-
-	sProgram = ResourceManager::GetShader("background_l3");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
-
-	sProgram = ResourceManager::GetShader("text");
-	sProgram.use();
-	sProgram.setInt("image", 0);
-	sProgram.setMat4("projection", projection);
-	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
-
-	/*
-	load textures
-	 */
-	//loads all in one function call
-	ResourceManager::LoadTexture2("textureDirectory.txt");
-
-	/*
-	load GameObjects
-	the building blocks for the chunks
-	*/
-	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
-
-	/*
-	load chunks
-	 */
-	//loading home_main chunk
-	ResourceManager::LoadChunk("home_main.txt", false);
-	//loading chunks for the 10x10 squares
-	ResourceManager::LoadChunk("chunk_list.txt", true);
-
-	/*
-	load effects
-	*/
-	ResourceManager::LoadEffect("effect_list.txt");
-
-	/*
-	load bowls
-	*/
-	ResourceManager::LoadBowl("bowl_list.txt");
-	
-	/*
-	load plants
-	*/
-	ResourceManager::LoadPlant("plant_list.txt");
-
-	/*
-	load backgrounds
-	*/
-	ResourceManager::LoadBackground("background_list.txt");
-
-	/*
-	load player
-	 */
-	player.loadPlayer("bin/player.txt");
-
-	/*
-	set the background
-	*/
-	setBackground(player.backgroundName);
-
-	/*
-	load projectiles
-	*/
-	ResourceManager::LoadProjectiles("projectileDirectory.txt");
-
-	/*
-	load the enemies
-	can't be loaded from a file as each of them have different attack functions
-	*/
-	loadEnemies();
-
-	//create board
-	for(int i{}; i < 3; ++i){
-		std::deque<std::vector<Chunk>> temp;
-		for(int j{}; j < 3; ++j){
-			std::vector<Chunk> temp2(100);
-			temp.push_back(temp2);
-		}
-		board.push_back(temp);
-	}
-
-	blockOffsets.reserve(30000);
-	plantOffsets.reserve(30000);
-	plantTexCoords.reserve(30000);
-	enemyProjectileOffsets.reserve(100);
-	enemyProjectileTexCoords.reserve(600);
-	playerProjectileOffsets.reserve(100);
-	playerProjectileTexCoords.reserve(600);
-	enemyOffsets.reserve(30000);
-	enemyTexCoords.reserve(30000);
-}
-
 Game::~Game(){
 	delete Renderer;
 	delete BlockRenderer;
@@ -182,183 +25,41 @@ Game::~Game(){
 	delete EnemyRenderer;
 }
 
-void Game::Render(){
-	/*
-	camera is already at center of the player for the collision detection part
-	that means that the constant offset value for the player is
-	-player->bowl.size[0]/2 and player->bowl.size[1]/2
-	position for player is also changing every frame, calculated from camera
-
-	screen is centered on the player
-	player starts with at -player->bowl.size[0]/2 and player->bowl.size[1]/2
-	meaning camera starts centered at 0,0 and on the player
-	means that the horizontal edge of the starting screen is equal to
-	-300 and 300
-	vertical is then at 
-	-400 and 400
-
-	perception vector has been changed to match this change
-	now runs from -300 to 300 horizontally and -400 to 400 vertically
-	thus we can specify coordinates using this and have them translated for us
-	*/
-
-	if(m_state == HOME_MAIN){
-		renderHomeMain();
-	}else if(m_state == GAME_ACTIVE_CLASSIC){
-		renderGame();
-	}
-	
+void Game::Init(){
+	initShaders();
+	initRenderers();
+	//load texture
+	ResourceManager::LoadTexture2("textureDirectory.txt")
+	//load gameobject
+	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
+	//load chunk
+	ResourceManager::LoadChunk("home_main.txt", false);
+	//loading chunks for the 10x10 squares
+	ResourceManager::LoadChunk("chunk_list.txt", true);
+	//load effects
+	ResourceManager::LoadEffect("effect_list.txt");
+	//load bowls
+	ResourceManager::LoadBowl("bowl_list.txt");
+	//load plants
+	ResourceManager::LoadPlant("plant_list.txt");
+	//loads backgrounds
+	ResourceManager::LoadBackground("background_list.txt");
+	//load player
+	player.loadPlayer("bin/player.txt");
+	//set background
+	setBackground(player.backgroundName);
+	//load projectiles
+	ResourceManager::LoadProjectiles("projectileDirectory.txt");
+	//load enemies
+	loadEnemies();
+	//create board
+	prepBoard();
+	reserveArraySpace();
 }
-
-void Game::Update(float dt){
-	//todo once I add achievements, I need to add the checks here
-
-
-	//move the player
-	cam.ProcessKeyboard(player.velocity, dt);
-	backgroundLayerOneOffset += player.velocity/12;
-	backgroundLayerTwoOffset += player.velocity/8;
-	backgroundLayerThreeOffset += player.velocity/5;
-	player.interact = nullptr;
-
-	if(m_state == HOME_MAIN){
-		//don't know what I'm doing here, need to set it to the chunk that is displayed
-		Chunk *home_main = &ResourceManager::GetChunk("home_main");
-
-		for(int i{}; i < home_main->objects.size(); ++i){
-			player_and_object_collisions(home_main->objects[i], dt);
-		}
-	}else if(m_state == GAME_ACTIVE_CLASSIC){
-		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
-			points += dt/2;
-			player.experience += dt/20;
-		}
-		//moving the projectiles
-		moveAllProjectiles(dt);
-
-		//testing if it is time to generate new chunks
-		//0 up
-		//1 right
-		//2 down
-		//3 left
-		if(cam.Position[0] >= 4500)
-			generateChunks(1);
-		else if(cam.Position[0] <= -4500)
-			generateChunks(3);
-
-		if(cam.Position[1] >= 4500)
-			generateChunks(0);
-		else if(cam.Position[1] <= -4500)
-			generateChunks(2);
-
-		//finding out which chunk the player is in using position
-		int width, height;
-		//function returns which square the player is in
-		findLocationCoordinates(width, height, cam.Position[0], cam.Position[1]);
-
-		//collision detection between player and objects(the ground/plants/gates)
-		//since we have the player exact location, we only check the 9
-		//chunks that are right around it
-		nineBlockCollisionDetectionPAndO(width, height, dt);
-
-		//process effects for enemies
-		processEffectsForEnemies(dt);
-
-		//process effects for player
-		processEffectsForPlayer(dt);
-
-		//collision detection between player projectiles and enemies
-		//collision detection between the projectile and blocks
-		player_projectile_collision_detection();
-	
-		//collision detection between enemy projectile and player
-		//collision detection between the projectile and the blocks
-		enemy_projectile_collision_detection();
-
-		//looping to see if any enemies have died
-		clearDeadEnemies();
-
-		//check if the player has died
-		if(player.isDead()){
-			clearAndResetGameBoard();
-			
-			player.calculateLevel();
-			player.calculateStats();
-			player.interact = nullptr;
-			for(int i{}; i < player.plants.size(); ++i){
-				player.plants[i] = nullptr;
-			}
-			player.effects.clear();
-			player.velocity[0] = 0;
-			player.velocity[1] = 0;
-
-			board_enemies.clear();
-			enemy_projectiles.clear();
-			player_projectiles.clear();
-
-			m_state = DEATH_SCREEN;
-
-			cam.Position[0] = 0;
-			cam.Position[1] = 0;
-		}
-	}
-
-
-	//test for the other states else if()
-};
 
 void Game::ProcessInput(float dt){
 	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
-		if(Keys[GLFW_KEY_W]){
-			if(upCounter == 0)
-				player.falling = true;
-			//need to add code in the collision detector that will change falling to false
-			if(upCounter < 0.5){
-				upCounter += dt;
-				player.velocity.y = 4.1;
-			}
-		}
-		if(Keys[GLFW_KEY_S]){
-			player.switchPlant();
-		}
-		//move left, with correct acceleration
-		if(Keys[GLFW_KEY_A]){
-			player.facing = false;
-			player.velocity.x -= player.speed;
-			if(player.velocity.x < 0)
-				player.velocity.x = std::max(player.velocity.x, static_cast<float>((-3.5) - (player.speed/4)));
-		}
-		//move right, with correct acceleration
-		if(Keys[GLFW_KEY_D]){
-			player.facing = true;
-			player.velocity.x += player.speed;
-			if(player.velocity.x > 0)
-				player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
-		}
-		//slowing down, correct acceleration
-		if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
-			if(player.velocity.x < 0){
-				if(player.velocity.x > -player.speed - 0.2)
-					player.velocity.x = 0;
-				else
-					player.velocity.x += player.speed + 0.2;
-			}else{
-				if(player.velocity.x < player.speed + 0.2)
-					player.velocity.x = 0;
-				else
-					player.velocity.x -= (player.speed + 0.2);
-			}
-		}
-		//always subtract 0.6 from the y velocity to simulate falling
-		//makes it so that whenever they walk off a block they also fall
-		//gets corrected to 0 in the collision detection if there is a collision
-		//between the bottom of the player and the top of the object
-		player.velocity.y -= 0.6;
-		
-		if(upCounter != 0 && !player.falling){
-			upCounter = 0;
-		}
-
+		processPlayerMovement();
 		if(m_state == HOME_MAIN){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
@@ -414,8 +115,115 @@ void Game::ProcessInput(float dt){
 	}
 };
 
-	//this is to make the fix enemy location function work as intended
-	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
+void Game::Update(float dt){
+	//todo once I add achievements, I need to add the checks here
+
+
+	//move the player
+	cam.ProcessKeyboard(player.velocity, dt);
+	backgroundLayerOneOffset += player.velocity/12;
+	backgroundLayerTwoOffset += player.velocity/8;
+	backgroundLayerThreeOffset += player.velocity/5;
+	player.interact = nullptr;
+
+	if(m_state == HOME_MAIN){
+		//don't know what I'm doing here, need to set it to the chunk that is displayed
+		Chunk *home_main = &ResourceManager::GetChunk("home_main");
+
+		for(int i{}; i < home_main->objects.size(); ++i){
+			player_and_object_collisions(home_main->objects[i], dt);
+		}
+	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
+			points += dt/2;
+			player.experience += dt/20;
+		}
+		//moving the projectiles
+		moveAllProjectiles(dt);
+
+		//testing if it is time to generate new chunks
+		//0 up
+		//1 right
+		//2 down
+		//3 left
+		if(cam.Position[0] >= 4500)
+			generateChunks(1);
+		else if(cam.Position[0] <= -4500)
+			generateChunks(3);
+
+		if(cam.Position[1] >= 4500)
+			generateChunks(0);
+		else if(cam.Position[1] <= -4500)
+			generateChunks(2);
+
+		//finding out which chunk the player is in using position
+		int width, height;
+		//function returns which square the player is in
+		findLocationCoordinates(width, height, cam.Position[0], cam.Position[1]);
+		//collision detection between player and objects(the ground/plants/gates)
+		nineBlockCollisionDetectionPAndO(width, height, dt);
+		//process effects for enemies
+		processEffectsForEnemies(dt);
+		//process effects for player
+		processEffectsForPlayer(dt);
+		//collision detection between player projectiles and enemies
+		//collision detection between the projectile and blocks
+		player_projectile_collision_detection();
+		//collision detection between enemy projectile and player
+		//collision detection between the projectile and the blocks
+		enemy_projectile_collision_detection();
+		//looping to see if any enemies have died
+		clearDeadEnemies();
+		//check if the player has died
+		if(player.isDead()){
+			gameEndProtocol();
+		}
+	}
+
+
+	//test for the other states else if()
+};
+
+void Game::Render(){
+	/*
+	camera is already at center of the player for the collision detection part
+	that means that the constant offset value for the player is
+	-player->bowl.size[0]/2 and player->bowl.size[1]/2
+	position for player is also changing every frame, calculated from camera
+
+	screen is centered on the player
+	player starts with at -player->bowl.size[0]/2 and player->bowl.size[1]/2
+	meaning camera starts centered at 0,0 and on the player
+	means that the horizontal edge of the starting screen is equal to
+	-300 and 300
+	vertical is then at 
+	-400 and 400
+
+	perception vector has been changed to match this change
+	now runs from -300 to 300 horizontally and -400 to 400 vertically
+	thus we can specify coordinates using this and have them translated for us
+	*/
+
+	if(m_state == HOME_MAIN){
+		renderHomeMain();
+	}else if(m_state == GAME_ACTIVE_CLASSIC){
+		renderGame();
+	}
+	
+}
+/*
+
+
+
+GAME INITIALIZATION/DESTRUCTION
+
+
+
+
+
+*/
+//this is to make the fix enemy location function work as intended
+const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
 void Game::initializeGame(){
 	generatedChunks = true;
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
@@ -469,8 +277,87 @@ void Game::initializeGame(){
 	}
 }
 
-void Game::generateChunks(int direction){
-	generatedChunks = true;
+void Game::loadEnemies(){
+	//create the basic enemy here except don't have position set
+	//then save it to the map as a broad class enemy not
+	//as the specific one
+	//then they select it and set the position
+}
+
+void Game::clearAndResetGameBoard(){
+	for(int i{}; i < 2; ++i){
+		board.erase(board.begin());
+	}
+	for(int i{}; i < 3; ++i){
+		std::deque<std::vector<Chunk>> temp;
+		for(int j{}; j < 3; ++j){
+			std::vector<Chunk> temp2(100);
+			temp.push_back(temp2);
+		}
+		board.push_back(temp);
+	}
+}
+
+void Game::setBackground(std::string name){
+	backgroundTextures = ResourceManager::GetBackground(name);
+}
+
+void Game::prepBoard(){
+	for(int i{}; i < 3; ++i){
+		std::deque<std::vector<Chunk>> temp;
+		for(int j{}; j < 3; ++j){
+			std::vector<Chunk> temp2(100);
+			temp.push_back(temp2);
+		}
+		board.push_back(temp);
+	}
+}
+
+void Game::reserveArraySpace(){
+	blockOffsets.reserve(30000);
+	plantOffsets.reserve(30000);
+	plantTexCoords.reserve(30000);
+	enemyProjectileOffsets.reserve(100);
+	enemyProjectileTexCoords.reserve(600);
+	playerProjectileOffsets.reserve(100);
+	playerProjectileTexCoords.reserve(600);
+	enemyOffsets.reserve(30000);
+	enemyTexCoords.reserve(30000);
+}
+
+void Game::gameEndProtocol(){
+	clearAndResetGameBoard();
+			
+	player.calculateLevel();
+	player.calculateStats();
+	player.interact = nullptr;
+	for(int i{}; i < player.plants.size(); ++i){
+		player.plants[i] = nullptr;
+	}
+	player.effects.clear();
+	player.velocity[0] = 0;
+	player.velocity[1] = 0;
+
+	board_enemies.clear();
+	enemy_projectiles.clear();
+	player_projectiles.clear();
+
+	m_state = DEATH_SCREEN;
+
+	cam.Position[0] = 0;
+	cam.Position[1] = 0;
+}
+/*
+
+
+CHUNK GENERATION
+
+
+
+
+
+*/
+void Game::prepBoardForChunkCreation(int direction){
 	//0 is up
 	//1 is right
 	//2 is down
@@ -504,7 +391,11 @@ void Game::generateChunks(int direction){
 			board[2].pop_back();
 			break;
 	}
-	delete &temp;
+}
+
+void Game::generateChunks(int direction){
+	generatedChunks = true;
+	prepBoardForChunkCreation(direction);
 	despawnEnemiesFromDeletedChunks(direction);
 	fixRemainingEnemyPosition(direction);
 	despawnProjectilesFromDeletedChunks(direction);
@@ -575,6 +466,95 @@ void Game::generateChunks(int direction){
 	}
 }
 
+void Game::despawnEnemiesFromDeletedChunks(int direction){
+	//0 is up
+	//1 is right
+	//2 is down
+	//3 is left
+	int min_x, max_x, min_y, max_y;
+	switch(direction){
+		case 0 :
+			min_y = -7500;
+			max_y = -2500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 1 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = -2500;
+			break;
+		case 2 :
+			min_y = 2500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 3 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = 2500;
+			max_x = 7500;
+			break;
+	}
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].position[0] >= min_x && board_enemies[i].position[0] <= max_x 
+			&& board_enemies[i].position[1] >= min_y && board_enemies[i].position[1] <= max_y){
+			board_enemies.erase(board_enemies.begin() + i);
+			--i;
+		}
+	}
+}
+
+void Game::despawnProjectilesFromDeletedChunks(int direction){
+	//0 is up
+	//1 is right
+	//2 is down
+	//3 is left
+	int min_x, max_x, min_y, max_y;
+	switch(direction){
+		case 0 :
+			min_y = -7500;
+			max_y = -2500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 1 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = -2500;
+			break;
+		case 2 :
+			min_y = 2500;
+			max_y = 7500;
+			min_x = -7500;
+			max_x = 7500;
+			break;
+		case 3 :
+			min_y = -7500;
+			max_y = 7500;
+			min_x = 2500;
+			max_x = 7500;
+			break;
+	}
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		if(enemy_projectiles[i].position[0] >= min_x && enemy_projectiles[i].position[0] <= max_x 
+			&& enemy_projectiles[i].position[1] >= min_y && enemy_projectiles[i].position[1] <= max_y){
+			enemy_projectiles.erase(enemy_projectiles.begin() + i);
+			--i;
+		}
+	}
+	for(int i{}; i < player_projectiles.size(); ++i){
+		if(player_projectiles[i].position[0] >= min_x && player_projectiles[i].position[0] <= max_x 
+			&& player_projectiles[i].position[1] >= min_y && player_projectiles[i].position[1] <= max_y){
+			player_projectiles.erase(player_projectiles.begin() + i);
+			--i;
+		}
+	}
+}
+
 void Game::fixGeneratedEnemiesPosition(int i, int j, int k, int direction){
 	auto end = board_enemies.rbegin();
 	//i is the mini chunk inside the larger chunk
@@ -621,13 +601,60 @@ void Game::fixGeneratedEnemiesPosition(int i, int j, int k, int direction){
 	}
 }
 
-void Game::loadEnemies(){
-	//create the basic enemy here except don't have position set
-	//then save it to the map as a broad class enemy not
-	//as the specific one
-	//then they select it and set the position
+void Game::fixRemainingEnemyPosition(int direction){
+	//0 up
+	//1 right
+	//2 down
+	//3 left
+	bool vert{false};
+	if(direction % 2 == 0)
+		vert = true;
+	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(vert)
+			board_enemies[i].position[1] += adder;
+		else
+			board_enemies[i].position[0] += adder;
+	}
 }
 
+void Game::fixRemainingProjectilePosition(int direction){
+	bool vert{false};
+	if(direction % 2 == 0)
+		vert = true;
+	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(vert){
+			player_projectiles[i].position[1] += adder;
+			enemy_projectiles[i].position[1] += adder;
+		}else{
+			player_projectiles[i].position[0] += adder;
+			enemy_projectiles[i].position[0] += adder;
+		}
+	}
+}
+
+int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
+	switch(direction){
+		case 2 :
+		case 3 :
+			return 5000;
+		case 0 :
+		case 1 :
+			return -5000;
+	}
+}
+/*
+
+
+
+
+COLLISION DETECTION
+
+
+
+
+*/
 void Game::player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
 	if(object->interactable){
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
@@ -667,79 +694,6 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 			}
 		}
 	}
-}
-
-short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
-	short direction;
-	glm::vec2 prevPosition;
-	prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
-	prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
-	//finding which side the player is hitting the block
-	//0 is top side
-	//1 is right side
-	//2 is bottom side
-	//3 is left side
-			
-	//testing when player is above the object
-	if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
-		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
-			direction = 0;
-		}else{
-			//testing the edge cases where the player is in the corner of the space around the block
-			//yet still collides with it this frame
-			//uses distance for each axis and the velocity in order to figure out which one
-			//hit first
-			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
-
-			if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
-				if(prevPosition[0] < object->position[0] + gameobject_offset_x){
-					direction = 3;
-				}else{
-					direction = 1;
-				}
-			}else{
-				direction = 0;
-			}
-		}
-	}
-
-	//testing when the player is below the object
-	else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
-		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
-			direction = 2;
-		}else{
-			//testing the edge cases where the player is in the corner of the space around the block
-			//yet still collides with it this frame
-			//uses distance for each axis and the velocity in order to figure out which one
-			//hit first
-			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
-
-			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
-				if(prevPosition[0] < object->position[0]){
-					direction = 3;
-				}else{
-					direction = 1;
-				}
-			}else{
-				direction = 2;
-			}
-		}
-	}
-
-	//testing when the rest of the situations where the block approaches from the side
-	//previous ifs have eliminated the top and bottom approaches
-	else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
-		direction = 3;
-	}else{
-		direction = 1;
-	}
-	return direction;
 }
 
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
@@ -964,185 +918,92 @@ void Game::enemy_projectile_collision_detection(){
 	}
 }
 
-void Game::clearDeadEnemies(){
-	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].health <= 0){
-			points += 2;
-			player.experience += 5;
-			board_enemies.erase(board_enemies.begin() + i);
-			--i;
-		}
-	}
-}
-
-void Game::processEffectsForEnemies(float dt){
-	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].effects.size() > 0){
-			board_enemies[i].applyEffects(dt);
-		}
-	}
-}
-
-void Game::processEffectsForPlayer(float dt){
-	player.applyEffects(dt);
-}
-
-void Game::despawnEnemiesFromDeletedChunks(int direction){
-	//0 is up
-	//1 is right
-	//2 is down
-	//3 is left
-	int min_x, max_x, min_y, max_y;
-	switch(direction){
-		case 0 :
-			min_y = -7500;
-			max_y = -2500;
-			min_x = -7500;
-			max_x = 7500;
-			break;
-		case 1 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = -2500;
-			break;
-		case 2 :
-			min_y = 2500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = 7500;
-			break;
-		case 3 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = 2500;
-			max_x = 7500;
-			break;
-	}
-	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].position[0] >= min_x && board_enemies[i].position[0] <= max_x 
-			&& board_enemies[i].position[1] >= min_y && board_enemies[i].position[1] <= max_y){
-			board_enemies.erase(board_enemies.begin() + i);
-			--i;
-		}
-	}
-}
-
-void Game::clearAndResetGameBoard(){
-	for(int i{}; i < 2; ++i){
-		board.erase(board.begin());
-	}
-	for(int i{}; i < 3; ++i){
-		std::deque<std::vector<Chunk>> temp;
-		for(int j{}; j < 3; ++j){
-			std::vector<Chunk> temp2(100);
-			temp.push_back(temp2);
-		}
-		board.push_back(temp);
-	}
-}
-
-void Game::fixRemainingEnemyPosition(int direction){
-	//0 up
-	//1 right
-	//2 down
-	//3 left
-	bool vert{false};
-	if(direction % 2 == 0)
-		vert = true;
-	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
-	for(int i{}; i < board_enemies.size(); ++i){
-		if(vert)
-			board_enemies[i].position[1] += adder;
-		else
-			board_enemies[i].position[0] += adder;
-	}
-}
-
-int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
-	switch(direction){
-		case 2 :
-		case 3 :
-			return 5000;
-		case 0 :
-		case 1 :
-			return -5000;
-	}
-}
-
-void Game::moveAllProjectiles(float dt){
-	for(int i{}; i < player_projectiles.size(); ++i){
-		player_projectiles[i].move(dt);
-	}
-	for(int i{}; i < enemy_projectiles.size(); ++i){
-		enemy_projectiles[i].move(dt);
-	}
-}
-
-void Game::despawnProjectilesFromDeletedChunks(int direction){
-	//0 is up
-	//1 is right
-	//2 is down
-	//3 is left
-	int min_x, max_x, min_y, max_y;
-	switch(direction){
-		case 0 :
-			min_y = -7500;
-			max_y = -2500;
-			min_x = -7500;
-			max_x = 7500;
-			break;
-		case 1 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = -2500;
-			break;
-		case 2 :
-			min_y = 2500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = 7500;
-			break;
-		case 3 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = 2500;
-			max_x = 7500;
-			break;
-	}
-	for(int i{}; i < enemy_projectiles.size(); ++i){
-		if(enemy_projectiles[i].position[0] >= min_x && enemy_projectiles[i].position[0] <= max_x 
-			&& enemy_projectiles[i].position[1] >= min_y && enemy_projectiles[i].position[1] <= max_y){
-			enemy_projectiles.erase(enemy_projectiles.begin() + i);
-			--i;
-		}
-	}
-	for(int i{}; i < player_projectiles.size(); ++i){
-		if(player_projectiles[i].position[0] >= min_x && player_projectiles[i].position[0] <= max_x 
-			&& player_projectiles[i].position[1] >= min_y && player_projectiles[i].position[1] <= max_y){
-			player_projectiles.erase(player_projectiles.begin() + i);
-			--i;
-		}
-	}
-}
-
-void Game::fixRemainingProjectilePosition(int direction){
-	bool vert{false};
-	if(direction % 2 == 0)
-		vert = true;
-	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
-	for(int i{}; i < board_enemies.size(); ++i){
-		if(vert){
-			player_projectiles[i].position[1] += adder;
-			enemy_projectiles[i].position[1] += adder;
+short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
+	short direction;
+	glm::vec2 prevPosition;
+	prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
+	prevPosition[1] = cam.Position[1] - player.velocity[1] * dt;
+	//finding which side the player is hitting the block
+	//0 is top side
+	//1 is right side
+	//2 is bottom side
+	//3 is left side
+			
+	//testing when player is above the object
+	if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
+		//testing to see if the player with clearly above the block
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
+			direction = 0;
 		}else{
-			player_projectiles[i].position[0] += adder;
-			enemy_projectiles[i].position[0] += adder;
+			//testing the edge cases where the player is in the corner of the space around the block
+			//yet still collides with it this frame
+			//uses distance for each axis and the velocity in order to figure out which one
+			//hit first
+			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+			float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
+
+			if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
+				if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+					direction = 3;
+				}else{
+					direction = 1;
+				}
+			}else{
+				direction = 0;
+			}
 		}
 	}
-}
 
+	//testing when the player is below the object
+	else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
+		//testing to see if the player with clearly above the block
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
+			direction = 2;
+		}else{
+			//testing the edge cases where the player is in the corner of the space around the block
+			//yet still collides with it this frame
+			//uses distance for each axis and the velocity in order to figure out which one
+			//hit first
+			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
+				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
+			float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+
+			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
+				if(prevPosition[0] < object->position[0]){
+					direction = 3;
+				}else{
+					direction = 1;
+				}
+			}else{
+				direction = 2;
+			}
+		}
+	}
+
+	//testing when the rest of the situations where the block approaches from the side
+	//previous ifs have eliminated the top and bottom approaches
+	else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+		direction = 3;
+	}else{
+		direction = 1;
+	}
+	return direction;
+}
+/*
+
+
+
+
+
+GAME LOGIC
+
+
+
+
+
+
+*/
 void Game::spawnPlayerProjectile(){
 	if(player.currentPlant == -1){
 		player_projectiles.push_back(ResourceManager::GetProjectile("basic"));
@@ -1171,10 +1032,103 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	return output;
 }
 
-void Game::setBackground(std::string name){
-	backgroundTextures = ResourceManager::GetBackground(name);
+void Game::clearDeadEnemies(){
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].health <= 0){
+			points += 2;
+			player.experience += 5;
+			board_enemies.erase(board_enemies.begin() + i);
+			--i;
+		}
+	}
 }
 
+void Game::processEffectsForEnemies(float dt){
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].effects.size() > 0){
+			board_enemies[i].applyEffects(dt);
+		}
+	}
+}
+
+void Game::processEffectsForPlayer(float dt){
+	player.applyEffects(dt);
+}
+
+void processPlayerMovement(){
+	if(Keys[GLFW_KEY_W]){
+		if(upCounter == 0)
+			player.falling = true;
+		//need to add code in the collision detector that will change falling to false
+		if(upCounter < 0.5){
+			upCounter += dt;
+			player.velocity.y = 4.1;
+		}
+	}
+	if(Keys[GLFW_KEY_S]){
+		player.switchPlant();
+	}
+	//move left, with correct acceleration
+	if(Keys[GLFW_KEY_A]){
+		player.facing = false;
+		player.velocity.x -= player.speed;
+		if(player.velocity.x < 0)
+			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-3.5) - (player.speed/4)));
+	}
+	//move right, with correct acceleration
+	if(Keys[GLFW_KEY_D]){
+		player.facing = true;
+		player.velocity.x += player.speed;
+		if(player.velocity.x > 0)
+			player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
+	}
+	//slowing down, correct acceleration
+	if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
+		if(player.velocity.x < 0){
+			if(player.velocity.x > -player.speed - 0.2)
+				player.velocity.x = 0;
+			else
+				player.velocity.x += player.speed + 0.2;
+		}else{
+			if(player.velocity.x < player.speed + 0.2)
+				player.velocity.x = 0;
+			else
+				player.velocity.x -= (player.speed + 0.2);
+		}
+	}
+	//always subtract 0.6 from the y velocity to simulate falling
+	//makes it so that whenever they walk off a block they also fall
+	//gets corrected to 0 in the collision detection if there is a collision
+	//between the bottom of the player and the top of the object
+	player.velocity.y -= 0.6;
+		
+	if(upCounter != 0 && !player.falling){
+		upCounter = 0;
+	}
+}
+
+void Game::moveAllProjectiles(float dt){
+	for(int i{}; i < player_projectiles.size(); ++i){
+		player_projectiles[i].move(dt);
+	}
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		enemy_projectiles[i].move(dt);
+	}
+}
+/*
+
+
+
+
+RENDERING
+
+
+
+
+
+
+
+*/
 void Game::renderHomeMain(){
 	glm::mat4 view = cam.GetViewMatrix();
 	Renderer->setViewMatrix("view", view);
@@ -1198,49 +1152,13 @@ void Game::renderGame(){
 	calculateEnemyRenderValues();
 
 	glm::mat4 view = cam.GetViewMatrix();
-	//render blocks
-	BlockRenderer->setViewMatrix("view", view);
-	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
-
-	//render plants
-	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
-		
-	//render enemy projectiles
-	ProjectileRenderer->setViewMatrix("view", view);
-	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
-
-	//render player projectiles
-	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
-	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
-	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
-
-	//render enemies
-	EnemyRenderer->setViewMatrix("view", view);
-	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
-	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
-	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
-
-	//render player
-	Renderer->setViewMatrix("view", view);
-	float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
-	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-		glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
-		glm::vec2(tempSize, tempSize));
-
-	//render text stuff
-	for(int i{}; i < text.size(); ++i){
-		float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
-		textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
-	}
-	// implement health/plant rendering once I know what the game screen looks like
-	// also need to implement point system
-	// todo also need to implement effect rendering
-	// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
-	// tempSize = std::max(hp->width, hp->height);
+	renderBlocks(view);
+	renderPlants(view);
+	renderEnemyProjectiles(view);
+	renderPlayerProjectiles(view);
+	renderEnemies(view);
+	renderPlayer(view);
+	renderText();
 }
 
 void Game::renderGameBackground(){
@@ -1250,6 +1168,58 @@ void Game::renderGameBackground(){
 	BackGround_l2.DrawSprites(backgroundTextures.layerTwo);
 	BackGround_l3.setOffset(backgroundLayerThreeOffset);
 	BackGround_l3.DrawSprites(backgroundTextures.layerThree);
+}
+
+void Game::renderBlocks(glm::mat4 &view){
+	BlockRenderer->setViewMatrix("view", view);
+	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
+		glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
+}
+
+void Game::renderPlants(glm::mat4 &view){
+	PlantRenderer->setViewMatrix("view", view);
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
+}
+
+void Game::renderEnemyProjectiles(glm::mat4 &view){
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
+	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
+}
+
+void Game::renderPlayerProjectiles(glm::mat4 &view){
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
+	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
+}
+
+void Game::renderEnemies(glm::mat4 &view){
+	EnemyRenderer->setViewMatrix("view", view);
+	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
+	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
+	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
+}
+
+void Game::renderPlayer(glm::mat4 &view){
+	Renderer->setViewMatrix("view", view);
+	float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
+	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+		glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
+		glm::vec2(tempSize, tempSize));
+}
+
+void Game::renderText(){
+	for(int i{}; i < text.size(); ++i){
+		float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
+		textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
+	}
+	// implement health/plant rendering once I know what the game screen looks like
+	// also need to implement point system
+	// todo also need to implement effect rendering
+	// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
+	// tempSize = std::max(hp->width, hp->height);
 }
 
 void Game::calculateNewRenderValues(){
@@ -1389,4 +1359,124 @@ void Game::calculateEnemyRenderValues(){
 			enemyTexCoords.push_back(board_enemies[i].texturePosition[j]);
 		}
 	}
+}
+/*
+
+
+
+
+
+
+SHADER && RENDERER LOADING
+
+
+
+
+
+
+*/
+void Game::initShaders(){
+	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
+	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
+	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
+	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
+}
+
+void Game::initRenderers(){
+	//configure shaders
+	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
+		-400.0f , 400.0f, -1.0f, 1.0f);
+	glm::mat4 view = cam.GetViewMatrix();
+	initRenderer(view, projection);
+	initBlockRenderer(view, projection);
+	initPlantRenderer(view, projection);
+	initProjectileRenderer(view, projection);
+	initEnemyRenderer(view, projection);
+	initBackgroundRenderers(projection);
+	initTextRenderer(glm::mat4 &view, glm::mat4 &projection);
+}
+
+void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("player");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	Renderer = new SpriteRenderer(ResourceManager::GetShader("player"));
+}
+
+void Game::initBlockRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("block");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	BlockRenderer = new SpriteRenderer(ResourceManager::GetShader("block"));
+}
+
+void Game::initPlantRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("plant");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	PlantRenderer = new TexSampRenderer(ResourceManager::GetShader("plant"));
+}
+
+void Game::initProjectileRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("projectiles");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	ProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("projectiles"));
+}
+
+void Game::initEnemyRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("enemy");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
+}
+
+void Game::initBackgroundShaders(glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("background_l1");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	BackGround_l1 = new BackgroundRenderer(ResourceManager::GetShader("background_l1"));
+
+	sProgram = ResourceManager::GetShader("background_l2");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	BackGround_l2 = new BackgroundRenderer(ResourceManager::GetShader("background_l2"));
+
+	sProgram = ResourceManager::GetShader("background_l3");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
+}
+
+void Game::initTextRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("text");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
 }
