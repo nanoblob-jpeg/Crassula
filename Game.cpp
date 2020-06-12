@@ -282,6 +282,7 @@ void Game::loadEnemies(){
 	//then save it to the map as a broad class enemy not
 	//as the specific one
 	//then they select it and set the position
+	ResourceManager.Enemies["Melee"] = Melee();
 }
 
 void Game::clearAndResetGameBoard(){
@@ -1216,7 +1217,7 @@ void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
-	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemy"), maxEnemySize);
+	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize);
 }
 
 void Game::renderPlayer(glm::mat4 &view){
@@ -1373,7 +1374,7 @@ void Game::calculateEnemyRenderValues(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(board_enemies[i].position);
 		for(int j{}; j < 6; ++j){
-			enemyTexCoords.push_back(board_enemies[i].texturePosition[j]);
+			enemyTexCoords.push_back(board_enemies[i].texturePosition[board_enemies[i].frameCounter][j]);
 		}
 	}
 }

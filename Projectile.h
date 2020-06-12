@@ -22,10 +22,10 @@ public:
 		
 		glm::vec2 tempCoord;
 		tempCoord[0] = (texCoord[0]/texWidth);
-		tempCoord[1] = ((texCoord[1] + size[1])/texHeight);
+		tempCoord[1] = ((texCoord[1] + temp)/texHeight);
 		texturePosition.push_back(tempCoord);
 
-		tempCoord[0] = ((texCoord[0] + size[0])/texWidth);
+		tempCoord[0] = ((texCoord[0] + temp)/texWidth);
 		tempCoord[1] = (texCoord[1]/texHeight);
 		texturePosition.push_back(tempCoord);
 
@@ -36,8 +36,8 @@ public:
 
 		texturePosition.push_back(texturePosition[0]);
 
-		tempCoord[0] = ((texCoord[0] + size[0])/texWidth);
-		tempCoord[1] = ((texCoord[1] + size[1])/texHeight);
+		tempCoord[0] = ((texCoord[0] + temp)/texWidth);
+		tempCoord[1] = ((texCoord[1] + temp)/texHeight);
 		texturePosition.push_back(tempCoord);
 
 		texturePosition.push_back(texturePosition[1]);

@@ -13,6 +13,9 @@
 #include "TexSampRenderer.h"
 #include "BackgroundRenderer.h"
 #include "Background.h"
+
+#include "Melee.h"
+
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <deque>
@@ -26,9 +29,9 @@
 class Game
 {
 public:
-	const maxPlantSize{50};
-	const maxProjectileSize{50};
-	const maxEnemySize{50};
+	const maxPlantSize{20};
+	const maxProjectileSize{20};
+	const maxEnemySize{40};
 
 	enum GameState{
 		START_SCREEN,
@@ -46,8 +49,8 @@ public:
 	bool Keys[1024];
 	unsigned int Width, Height;
 	unsigned int numOfChunks{40};
-	unsigned int numOfPlants{10};
-	unsigned int numOfEnemies{10};
+	unsigned int numOfPlants{4};
+	unsigned int numOfEnemies{1};
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
