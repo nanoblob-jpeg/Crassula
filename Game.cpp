@@ -878,6 +878,15 @@ void Game::player_projectile_collision_detection(){
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(player_projectiles[i]))){
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
+				deletionTracker = true;
+			}
+		}
+		//checking range for the projectile
+		if(!deletionTracker){
+			if(player_projectiles[i].rangeCheck()){
+				player_projectiles.erase(player_projectiles.begin() + i);
+				--i;
+				deletionTracker = true;
 			}
 		}
 	}
@@ -913,6 +922,14 @@ void Game::enemy_projectile_collision_detection(){
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(enemy_projectiles[i]))){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
+			}
+		}
+		//checking range for the projectile
+		if(!deletionTracker){
+			if(enemy_projectiles[i].rangeCheck()){
+				enemy_projectiles.erase(enemy_projectiles.begin() + i);
+				--i;
+				deletionTracker = true;
 			}
 		}
 	}

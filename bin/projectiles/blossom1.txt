@@ -1,6 +1,6 @@
 blossom1
 8
-2
+200
 0
 projectiles
 0

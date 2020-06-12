@@ -10,6 +10,7 @@ public:
 	int damage;
 	bool piercing;
 	int range;
+	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
 
@@ -53,8 +54,11 @@ public:
 
 	void move(float dt){
 		position[0] += velocity[0] * dt;
+		distanceTravelled += velocity[0] * dt;
 	}
 
 	void addEffect(Effect effect);
+
+	bool rangeCheck();
 };
 #endif

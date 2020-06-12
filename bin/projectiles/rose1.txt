@@ -1,6 +1,6 @@
 rose1
 2
-5
+500
 1
 projectiles
 0

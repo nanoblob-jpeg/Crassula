@@ -1,6 +1,6 @@
 lamp1
 5
-5
+500
 0
 projectiles
 14

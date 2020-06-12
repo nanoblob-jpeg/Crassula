@@ -1,6 +1,6 @@
 french1
 3
-9
+900
 1
 projectiles
 20
