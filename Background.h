@@ -1,5 +1,6 @@
 #ifndef BACKGROUND
 #define BACKGROUND
+class ResourceManager;
 #include "Texture.h"
 #include <string>
 #include "ResourceManager.h"
@@ -9,10 +10,7 @@ public:
 	Texture layerTwo;
 	Texture layerThree;
 
-	Background(std::string one, std::string two, std::string three){
-		layerOne = ResourceManager::GetTexture(one);
-		layerTwo = ResourceManager::GetTexture(two);
-		layerThree = ResourceManager::GetTexture(three);
-	}
-}
+	Background(){}
+	Background(std::string one, std::string two, std::string three);
+};
 #endif

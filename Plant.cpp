@@ -38,7 +38,7 @@ int Plant::interact(Game *game){
 		if(game->player.plants[i]->name.compare(this->name) == 0){
 			if(game->player.plants[i]->level == 4)
 				return -1;
-			if(!(game->player.plants[i]->level == 3 && numCurrentLevelFourPlants == game->player.bowl->numOfLevelFour)){
+			if(!(game->player.plants[i]->level == 3 && game->player.numCurrentLevelFourPlants == game->player.bowl->numOfLevelFour)){
 				if(game->player.plants[i]->level == 3){
 					game->player.plants[i]->level += 1;
 					game->player.numCurrentLevelFourPlants += 1;
@@ -58,11 +58,11 @@ int Plant::interact(Game *game){
 		return 0;
 	}
 	if(game->player.numPlants == game->player.bowl->numOfPlants){
-		game->player.plants[currentPlant] = this;
+		game->player.plants[game->player.currentPlant] = this;
 		this->level = 1;
 		return 0;
 	}else{
-		game->player.plants[numPlants] = this;
+		game->player.plants[game->player.numPlants] = this;
 		this->level = 1;
 		game->player.numPlants += 1;
 		return 0;

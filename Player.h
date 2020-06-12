@@ -67,7 +67,7 @@ public:
 	void dealDamage(int damage);
 	bool isDead();
 	void addEffects(Projectile &p);
-	bool canAttack();
+	bool canAttack(float dt);
 	void calculateLevel();
 private:
 	int getDefenseBoost();

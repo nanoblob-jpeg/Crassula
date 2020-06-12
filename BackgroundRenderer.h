@@ -20,5 +20,5 @@ public:
 	void setOffset(glm::vec2 offset);
 private:
 	void initRenderData();
-}
+};
 #endif

@@ -1,9 +1,8 @@
 #include <vector>
-
+class GameObject;
 #include "Camera.h"
 #include "SpriteRenderer.h"
 #include "ResourceManager.h"
-#include "GameObject.h"
 #include "Chunks.h"
 #include "Plant.h"
 #include "Bowl.h"
@@ -29,9 +28,9 @@
 class Game
 {
 public:
-	const maxPlantSize{20};
-	const maxProjectileSize{20};
-	const maxEnemySize{40};
+	const int maxPlantSize{20};
+	const int maxProjectileSize{20};
+	const int maxEnemySize{40};
 
 	enum GameState{
 		START_SCREEN,
@@ -81,14 +80,14 @@ public:
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<glm::vec2> enemyTexCoords{};
 	//background render logic stuff
-	Background &backgroundTextures;
+	Background *backgroundTextures;
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 	//text render stuff
 	std::vector<GameObject *> text;
 
-	Game(unsigned int width, unsigned int height):m_state(GAME_ACTIVE_CLASSIC), Keys(), Width(width), Height(height){};
+	Game(unsigned int width, unsigned int height);
 	~Game();
 	//loads all textures
 	void Init();
@@ -133,7 +132,7 @@ private:
 	void clearDeadEnemies();
 	void processEffectsForEnemies(float dt);
 	void processEffectsForPlayer(float dt);
-	void processPlayerMovement();
+	void processPlayerMovement(float dt);
 	void moveAllProjectiles(float dt);
 
 	//rendering

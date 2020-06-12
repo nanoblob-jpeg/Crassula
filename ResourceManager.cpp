@@ -478,7 +478,7 @@ void LoadProjectiles(const char *file){
     std::ifstream fstream(file);
     if(fstream){
         while(std::getline(fstream, line)){
-            plant_list.push_back(line);
+            projectile_list.push_back(line);
         }
     }else{
         std::cout << "Could not open projectile list file";
@@ -502,8 +502,8 @@ void LoadProjectiles(const char *file){
     */
     //texture width needs to be top left corner
     //needs also to be specified starting from the lower left hand corner of the texture
-    for(int i{}; i < plant_list.size(); ++i){
-        std::ifstream fstream2(plant_list[i]);
+    for(int i{}; i < projectile_list.size(); ++i){
+        std::ifstream fstream2(projectile_list[i]);
         std::string name, tname;
         int damage, range, num;
         bool piercing;
@@ -526,14 +526,14 @@ void LoadProjectiles(const char *file){
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, Textures[tname], damage, range, texCoord, piercing)
+        Projectile temp = Projectile(size, ResourceManager::Textures[tname], damage, range, texCoord, piercing);
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){
             std::getline(fstream2, line);
-            temp.addEffect(Effects[line]);
+            temp.addEffect(ResourceManager::Effects[line]);
         }
-        Projectiles[name] = temp;
+        ResourceManager::Projectiles[name] = temp;
         fstream2.close();
     }
 }
@@ -564,17 +564,17 @@ void ResourceManager::LoadBackgrounds(const char *file){
     */
 
     for(int i{}; i < background_list.size(); ++i){
-        std::ifstream fstream2(effect_list[i]);
+        std::ifstream fstream2(background_list[i]);
         std::string name, name1, name2, name3;
         std::getline(fstream2, name);
         std::getline(fstream2, name1);
         std::getline(fstream2, name2);
         std::getline(fstream2, name3);
-        Backgrounds[name] = Effect(name1, name2, name3);
+        Backgrounds[name] = Background(name1, name2, name3);
         fstream2.close();
     }
 }
 
-void BackGround& ResourceManager::GetBackground(std::string name){
+Background& ResourceManager::GetBackground(std::string name){
     return Backgrounds[name];
 }

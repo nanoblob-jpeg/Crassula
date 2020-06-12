@@ -1,6 +1,6 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
-
+class Background; 
 #include <map>
 #include <string>
 #include <vector>

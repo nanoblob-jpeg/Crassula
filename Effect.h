@@ -27,7 +27,7 @@ public:
 	frameTimeCounter = 20;
 	timeCounter goes to t - frameTimeCounter after it runs
 	 */
-
+	Effect(){};
 	Effect(int dh, int dd, int da, float ds, float dr, float ptime, float pframeTimeCounter, bool ponce = false):
 		dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}, time{ptime}, frameTimeCounter{pframeTimeCounter}, once{ponce}{};
 
@@ -42,6 +42,7 @@ public:
 			speed += despeed;
 			recovery += derecovery;
 			apply = false;
+			return false;
 		}else if(timeCounter >= frameTimeCounter){
 			health += dehealth;
 			defense += dedefense;

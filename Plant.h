@@ -17,7 +17,7 @@ public:
 	std::vector<glm::vec2> texturePosition;
 
 	std::vector<std::string> projectileName;
-
+	Plant(){};
 	Plant(std::string pname, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
 
 	int interact(Game *game);

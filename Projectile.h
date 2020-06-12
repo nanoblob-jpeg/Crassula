@@ -2,6 +2,7 @@
 #include "Effect.h"
 #include "GameObject.h"
 #include <glm/glm.hpp>
+#include <vector>
 
 #ifndef PROJECTILE
 #define PROJECTILE
@@ -13,7 +14,7 @@ public:
 	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
-
+	Projectile(){};
 	Projectile(glm::vec2 size, Texture sprite, int pdamage, int prange, glm::vec2 texCoords, bool ppiercing = false)
 		: GameObject(glm::vec2(0,0), size, sprite), damage{pdamage}, piercing{ppiercing}, range{prange}{
 		int temp = std::max(size[0], size[1]);
@@ -21,23 +22,23 @@ public:
 		unsigned int texHeight = sprite.m_height;
 		
 		glm::vec2 tempCoord;
-		tempCoord[0] = (texCoord[0]/texWidth);
-		tempCoord[1] = ((texCoord[1] + temp)/texHeight);
+		tempCoord[0] = (texCoords[0]/texWidth);
+		tempCoord[1] = ((texCoords[1] + temp)/texHeight);
 		texturePosition.push_back(tempCoord);
 
-		tempCoord[0] = ((texCoord[0] + temp)/texWidth);
-		tempCoord[1] = (texCoord[1]/texHeight);
+		tempCoord[0] = ((texCoords[0] + temp)/texWidth);
+		tempCoord[1] = (texCoords[1]/texHeight);
 		texturePosition.push_back(tempCoord);
 
 
-		tempCoord[0] = (texCoord[0]/texWidth);
-		tempCoord[1] = (texCoord[1]/texHeight);
+		tempCoord[0] = (texCoords[0]/texWidth);
+		tempCoord[1] = (texCoords[1]/texHeight);
 		texturePosition.push_back(tempCoord);
 
 		texturePosition.push_back(texturePosition[0]);
 
-		tempCoord[0] = ((texCoord[0] + temp)/texWidth);
-		tempCoord[1] = ((texCoord[1] + temp)/texHeight);
+		tempCoord[0] = ((texCoords[0] + temp)/texWidth);
+		tempCoord[1] = ((texCoords[1] + temp)/texHeight);
 		texturePosition.push_back(tempCoord);
 
 		texturePosition.push_back(texturePosition[1]);

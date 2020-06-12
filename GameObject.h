@@ -1,11 +1,10 @@
 #ifndef GAMEOBJECT
 #define GAMEOBJECT
-
+class Game;
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "SpriteRenderer.h"
-#include "Game.h"
 
 class GameObject{
 public:
@@ -25,7 +24,7 @@ public:
 	nothing happening returns -1s
 	plant returns 0
 	*/
-	virtual int interact(Game &game);
+	virtual int interact(Game *game);
 public:
 	GameObject();
 	GameObject(glm::vec2 pos, glm::vec2 psize, Texture sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f), bool interactable = false);

@@ -64,8 +64,6 @@ int main()
         return -1;
     }    
 
-	Crassula.Init();
-
 	/*
 	CONFIGS
 

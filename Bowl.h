@@ -26,7 +26,7 @@ public:
 	float luck;
 
 	glm::vec2 size;
-
+	Bowl(){};
 	Bowl(int h, int d, int a, float as, float s, float r, float l, int nop, int nolf, glm::vec2 psize):
 	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, numOfPlants{nop}, numOfLevelFour{nolf}, size(psize){};
 
@@ -41,7 +41,7 @@ public:
 		frameCounter = static_cast<int>(frameTimer / 0.16);
 		if(frameCounter == attackAnimation.size()){
 			inAnimation = false;
-			frameCoutner = 0;
+			frameCounter = 0;
 		}
 	}
 };

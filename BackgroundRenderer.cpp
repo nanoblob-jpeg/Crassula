@@ -1,8 +1,8 @@
 #include "BackgroundRenderer.h"
 void BackgroundRenderer::DrawSprite(Texture &texture){
 	this->m_shader.use();
-	glm::mat4 model = glm::maat4(1.0f);
-	model = glm::translate(model, glm::vec3(position, 0.0f));
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-3750.0f, 3750.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(15000.0f, 15000.0f, 1.0f));
 
 	this->m_shader.setMat4("model", model);

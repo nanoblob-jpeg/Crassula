@@ -1,6 +1,7 @@
 #include <vector>
 #include "GameObject.h"
 #include "Effect.h"
+#include "Projectile.h"
 
 #ifndef ENEMY
 #define ENEMY

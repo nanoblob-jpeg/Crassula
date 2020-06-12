@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameObject.h"
 
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
@@ -12,6 +13,12 @@ BackgroundRenderer *BackGround_l3;
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
+
+Game::Game(unsigned int width, unsigned int height):m_state(GAME_ACTIVE_CLASSIC), Keys(), Width(width), Height(height){
+	Init();
+	//set background
+	setBackground(player.backgroundName);
+}
 
 Game::~Game(){
 	delete Renderer;
@@ -29,7 +36,7 @@ void Game::Init(){
 	initShaders();
 	initRenderers();
 	//load texture
-	ResourceManager::LoadTexture2("textureDirectory.txt")
+	ResourceManager::LoadTexture2("textureDirectory.txt");
 	//load gameobject
 	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
 	//load chunk
@@ -43,11 +50,9 @@ void Game::Init(){
 	//load plants
 	ResourceManager::LoadPlant("plant_list.txt");
 	//loads backgrounds
-	ResourceManager::LoadBackground("background_list.txt");
+	ResourceManager::LoadBackgrounds("background_list.txt");
 	//load player
 	player.loadPlayer("bin/player.txt");
-	//set background
-	setBackground(player.backgroundName);
 	//load projectiles
 	ResourceManager::LoadProjectiles("projectileDirectory.txt");
 	//load enemies
@@ -59,7 +64,7 @@ void Game::Init(){
 
 void Game::ProcessInput(float dt){
 	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
-		processPlayerMovement();
+		processPlayerMovement(dt);
 		if(m_state == HOME_MAIN){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
@@ -121,9 +126,12 @@ void Game::Update(float dt){
 
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
-	backgroundLayerOneOffset += player.velocity/12;
-	backgroundLayerTwoOffset += player.velocity/8;
-	backgroundLayerThreeOffset += player.velocity/5;
+	backgroundLayerOneOffset[0] += player.velocity[0]/12;
+	backgroundLayerOneOffset[1] += player.velocity[1]/12;
+	backgroundLayerTwoOffset[0] += player.velocity[0]/8;
+	backgroundLayerTwoOffset[1] += player.velocity[1]/8;
+	backgroundLayerThreeOffset[0] += player.velocity[0]/5;
+	backgroundLayerThreeOffset[1] += player.velocity[1]/5;
 	player.interact = nullptr;
 
 	if(m_state == HOME_MAIN){
@@ -282,7 +290,7 @@ void Game::loadEnemies(){
 	//then save it to the map as a broad class enemy not
 	//as the specific one
 	//then they select it and set the position
-	ResourceManager.Enemies["Melee"] = Melee();
+	ResourceManager::Enemies["Melee"] = Melee();
 }
 
 void Game::clearAndResetGameBoard(){
@@ -300,7 +308,7 @@ void Game::clearAndResetGameBoard(){
 }
 
 void Game::setBackground(std::string name){
-	backgroundTextures = ResourceManager::GetBackground(name);
+	backgroundTextures = &ResourceManager::GetBackground(name);
 }
 
 void Game::prepBoard(){
@@ -644,6 +652,7 @@ int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
 		case 1 :
 			return -5000;
 	}
+	return 0;
 }
 /*
 
@@ -1030,7 +1039,7 @@ void Game::spawnPlayerProjectile(){
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
 	}else{
-		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[currentPlant]->projectileName[level]));
+		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant]->projectileName[player.plants[player.currentPlant]->level]));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 		short direction = player.facing ? 1 : -1;
@@ -1040,7 +1049,7 @@ void Game::spawnPlayerProjectile(){
 
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	glm::vec2 output;
-	if(facing){
+	if(player.facing){
 		output[0] = cam.Position[0] + player.size[0]/2;
 		output[1] = cam.Position[1] + p.size[1]/2;
 	}else{
@@ -1073,7 +1082,7 @@ void Game::processEffectsForPlayer(float dt){
 	player.applyEffects(dt);
 }
 
-void processPlayerMovement(){
+void Game::processPlayerMovement(float dt){
 	if(Keys[GLFW_KEY_W]){
 		if(upCounter == 0)
 			player.falling = true;
@@ -1180,12 +1189,12 @@ void Game::renderGame(){
 }
 
 void Game::renderGameBackground(){
-	BackGround_l1.setOffset(backgroundLayerOneOffset);
-	BackGround_l1.DrawSprites(backgroundTextures.layerOne);
-	BackGround_l2.setOffset(backgroundLayerTwoOffset);
-	BackGround_l2.DrawSprites(backgroundTextures.layerTwo);
-	BackGround_l3.setOffset(backgroundLayerThreeOffset);
-	BackGround_l3.DrawSprites(backgroundTextures.layerThree);
+	BackGround_l1->setOffset(backgroundLayerOneOffset);
+	BackGround_l1->DrawSprite(backgroundTextures->layerOne);
+	BackGround_l2->setOffset(backgroundLayerTwoOffset);
+	BackGround_l2->DrawSprite(backgroundTextures->layerTwo);
+	BackGround_l3->setOffset(backgroundLayerThreeOffset);
+	BackGround_l3->DrawSprite(backgroundTextures->layerThree);
 }
 
 void Game::renderBlocks(glm::mat4 &view){
@@ -1416,7 +1425,7 @@ void Game::initRenderers(){
 	initProjectileRenderer(view, projection);
 	initEnemyRenderer(view, projection);
 	initBackgroundRenderers(projection);
-	initTextRenderer(glm::mat4 &view, glm::mat4 &projection);
+	initTextRenderer(view, projection);
 }
 
 void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
@@ -1469,7 +1478,7 @@ void Game::initEnemyRenderer(glm::mat4 &view, glm::mat4 &projection){
 	EnemyRenderer = new TexSampRenderer(ResourceManager::GetShader("enemy"));
 }
 
-void Game::initBackgroundShaders(glm::mat4 &projection){
+void Game::initBackgroundRenderers(glm::mat4 &projection){
 	Shader sProgram;
 	sProgram = ResourceManager::GetShader("background_l1");
 	sProgram.use();

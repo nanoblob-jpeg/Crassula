@@ -61,7 +61,7 @@ void SpriteRenderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 
 }
 
 void SpriteRenderer::bindInstanceBuffer(glm::vec2 *data, int numOfBlocks){
-	glBindBufferVertexArray(&this->m_quad);
+	glBindVertexArray(this->m_quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * numOfBlocks, data, GL_STATIC_DRAW);
 	
