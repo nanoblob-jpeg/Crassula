@@ -19,3 +19,6 @@ plants
 bin/textures/projectiles.png
 1
 projectiles
+bin/textures/enemies.png
+1
+enemies
