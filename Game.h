@@ -85,7 +85,7 @@ public:
 	//text render stuff
 	std::vector<GameObject *> text;
 
-	Game(unsigned int width, unsigned int height):m_state(START_SCREEN), Keys(), Width(width), Height(height){};
+	Game(unsigned int width, unsigned int height):m_state(GAME_ACTIVE_CLASSIC), Keys(), Width(width), Height(height){};
 	~Game();
 	//loads all textures
 	void Init();

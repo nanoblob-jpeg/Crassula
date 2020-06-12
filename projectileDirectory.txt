@@ -1,1 +1,4 @@
-bin/projectiles/cactus.txt
+bin/projectiles/blossom1.txt
+bin/projectiles/french1.txt
+bin/projectiles/lamp1.txt
+bin/projectiles/rose1.txt

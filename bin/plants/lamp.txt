@@ -1,0 +1,13 @@
+lamp
+plants
+lamp1
+lamp1
+lamp1
+lamp1
+20
+0
+8
+20
+1.0
+1.0
+1.0

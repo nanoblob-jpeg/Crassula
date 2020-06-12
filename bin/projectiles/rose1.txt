@@ -1,0 +1,10 @@
+rose1
+2
+5
+1
+projectiles
+0
+0
+20
+8
+0

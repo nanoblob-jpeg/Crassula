@@ -1,0 +1,13 @@
+rose
+plants
+rose1
+rose1
+rose1
+rose1
+0
+0
+8
+20
+1.0
+1.0
+1.0

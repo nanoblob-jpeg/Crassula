@@ -1,0 +1,5 @@
+tester
+1
+mountains
+0.01
+basic

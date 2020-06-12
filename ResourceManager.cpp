@@ -349,10 +349,10 @@ void ResourceManager::LoadPlant(const char *file){
     format for plant files:
     name
     Texture name
-    projectile texture name
-    projectile texture name 2
-    projectile texture name 3
-    projectile texture name 4
+    projectile name
+    projectile name 2
+    projectile name 3
+    projectile name 4
     texture width position
     texture height position
     width
