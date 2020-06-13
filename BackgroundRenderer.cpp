@@ -1,4 +1,14 @@
 #include "BackgroundRenderer.h"
+
+BackgroundRenderer::BackgroundRenderer(Shader &shader){
+	this->m_shader = shader;
+	this->initRenderData();
+}
+
+BackgroundRenderer::~BackgroundRenderer(){
+	delete &m_shader;
+}
+
 void BackgroundRenderer::DrawSprite(Texture &texture){
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);

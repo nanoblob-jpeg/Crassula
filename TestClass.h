@@ -1,43 +1,44 @@
 #include <vector>
 #include "Texture.h"
+#include "Plant.h"
 #include "Bowl.h"
 #include "GameObject.h"
 #include "Effect.h"
-#include "Plant.h"
+#include "Bowl.h"
 
 #ifndef PLAYER
 #define PLAYER
-class Player : public GameObject{
+class TestClass : public GameObject{
 	//insert all of the stuff that the GameObject does not keep track of
 public:
 	//movement logic variables
 	bool falling{};
 
 	//general information
-	int level = 0;
-	float experience= 0;
+	int level{};
+	float experience{};
 	std::string name = "";
 	std::string backgroundName = "";
 	//false for left, true for right
 	bool facing;
 
 	//stats
-	int health = 0;
-	int defense = 0;
-	int attack = 0;
-	float attackSpeed = 0;
-	float speed = 0;
-	float recovery = 0;
-	float luck = 0;
+	int health{};
+	int defense{};
+	int attack{};
+	float attackSpeed{};
+	float speed{};
+	float recovery{};
+	float luck{};
 
 	//type of bowl
 	//bowl also stores the textures/animation textures
 	Bowl *bowl = nullptr;
 
 	//plants
-	int numPlants = 0;
+	int numPlants{};
 	int currentPlant{-1}; // -1 represents the basic attack
-	int numCurrentLevelFourPlants = 0;
+	int numCurrentLevelFourPlants{};
 	std::vector<Plant *> plants;
 
 	//if the player is currently on an interactalbe GameObject, this will store it
@@ -56,20 +57,8 @@ public:
 	std::vector<float> statBoosts;
 
 	//attacking logic
-	float timer = 0;
+	float timer{};
 
-	Player():GameObject(){};
-	void loadPlayer(const char *file);
-	void applyEffects(float dt);
-	void calculateStats();
-	void switchPlant();
-	void dealDamage(int damage);
-	bool isDead();
-	void addEffects(Projectile &p);
-	bool canAttack(float dt);
-	void calculateLevel();
-private:
-	int getDefenseBoost();
-	int getHealthBoost();
+	TestClass(){};
 };
 #endif

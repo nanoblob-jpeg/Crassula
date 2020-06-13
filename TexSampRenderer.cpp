@@ -1,5 +1,14 @@
 #include "TexSampRenderer.h"
 
+TexSampRenderer::TexSampRenderer(Shader &shader){
+	this->m_shader = shader;
+	this->initRenderData();
+}
+
+TexSampRenderer::~TexSampRenderer(){
+	delete &m_shader;
+}
+
 void TexSampRenderer::initRenderData(){
 	unsigned int VBO;
 	float vertices[] = {

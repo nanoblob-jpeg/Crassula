@@ -1,7 +1,8 @@
 #include <vector>
-class GameObject;
 #include "Camera.h"
 #include "SpriteRenderer.h"
+#include "Enemy.h"
+#include "Melee.h"
 #include "ResourceManager.h"
 #include "Chunks.h"
 #include "Plant.h"
@@ -13,7 +14,6 @@ class GameObject;
 #include "BackgroundRenderer.h"
 #include "Background.h"
 
-#include "Melee.h"
 
 #include <GLFW/glfw3.h>
 #include <algorithm>
@@ -28,9 +28,9 @@ class GameObject;
 class Game
 {
 public:
-	const int maxPlantSize{20};
-	const int maxProjectileSize{20};
-	const int maxEnemySize{40};
+	int maxPlantSize{20};
+	int maxProjectileSize{20};
+	int maxEnemySize{40};
 
 	enum GameState{
 		START_SCREEN,
@@ -45,7 +45,7 @@ public:
 	};
 
 	GameState m_state;
-	bool Keys[1024];
+	bool Keys[1024]{};
 	unsigned int Width, Height;
 	unsigned int numOfChunks{40};
 	unsigned int numOfPlants{4};
@@ -58,12 +58,11 @@ public:
 	Player player;
 	//movement variables:
 	float upCounter{};
-	
 	//game storage system
-	std::deque<std::deque<std::vector<Chunk>>> board;
-	std::vector<Enemy> board_enemies;
-	std::vector<Projectile> enemy_projectiles;
-	std::vector<Projectile> player_projectiles;
+	std::deque<std::deque<std::vector<Chunk>>> board{};
+	std::vector<Enemy> board_enemies{};
+	std::vector<Projectile> enemy_projectiles{};
+	std::vector<Projectile> player_projectiles{};
 	float points{};
 
 	//render logic stuff
@@ -80,12 +79,12 @@ public:
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<glm::vec2> enemyTexCoords{};
 	//background render logic stuff
-	Background *backgroundTextures;
+	Background *backgroundTextures = nullptr;
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 	//text render stuff
-	std::vector<GameObject *> text;
+	std::vector<GameObject *> text{};
 
 	Game(unsigned int width, unsigned int height);
 	~Game();

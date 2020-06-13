@@ -5,10 +5,6 @@
 #include <iostream>
 #include <vector>
 
-#include "Shader.h"
-#include "Camera.h"
-#include "Texture.h"
-#include "ResourceManager.h"
 #include "Game.h"
 #include "stb_image.h"
 #include <cmath>
@@ -20,7 +16,6 @@
 //call back functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -54,8 +49,9 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
+    std::cout << "1";
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+std::cout << "1";
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -69,10 +65,12 @@ int main()
 
 
 	 */
+    Crassula.Init();
+    std::cout << "1";
 	//frame counting variables
 	double timeTracker{};
 	int frameCounter{};
-	
+	std::cout << "1";
     // render loop	
     // -----------
     while (!glfwWindowShouldClose(window))

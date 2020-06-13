@@ -4,22 +4,22 @@
 class Effect{
 public:
 	//variables for applying effects
-	int dehealth;
-	int dedefense;
-	int deattack;
-	float despeed;
-	float derecovery;
+	int dehealth{};
+	int dedefense{};
+	int deattack{};
+	float despeed{};
+	float derecovery{};
 
 	//logic for ones that just have a constant debuff
-	bool once;
+	bool once{};
 	bool apply{true};
 
 	//counts number of times this activates
-	float time;
+	float time{};
 	//counts the time that has passed
 	float timeCounter{};
 	//this is how often it does it
-	float frameTimeCounter;
+	float frameTimeCounter{};
 	//will activate once more after it surpasses this
 	/*
 	ex:

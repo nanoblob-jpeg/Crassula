@@ -472,7 +472,7 @@ Enemy& ResourceManager::GetEnemy(std::string name){
     return Enemies[name];
 }
 
-void LoadProjectiles(const char *file){
+void ResourceManager::LoadProjectiles(const char *file){
     std::vector<std::string> projectile_list;
     std::string line;
     std::ifstream fstream(file);

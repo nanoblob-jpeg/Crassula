@@ -14,10 +14,10 @@ TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 
-Game::Game(unsigned int width, unsigned int height):m_state(GAME_ACTIVE_CLASSIC), Keys(), Width(width), Height(height){
-	Init();
-	//set background
-	setBackground(player.backgroundName);
+Game::Game(unsigned int width, unsigned int height){
+	m_state = GAME_ACTIVE_CLASSIC;
+	Width = width;
+	Height = height;
 }
 
 Game::~Game(){
@@ -33,33 +33,49 @@ Game::~Game(){
 }
 
 void Game::Init(){
+	std::cout << "1";
 	initShaders();
+	std::cout << "1";
 	initRenderers();
 	//load texture
 	ResourceManager::LoadTexture2("textureDirectory.txt");
+	std::cout << "1";
 	//load gameobject
 	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
+	std::cout << "1";
 	//load chunk
 	ResourceManager::LoadChunk("home_main.txt", false);
+	std::cout << "1";
 	//loading chunks for the 10x10 squares
 	ResourceManager::LoadChunk("chunk_list.txt", true);
+	std::cout << "1";
 	//load effects
 	ResourceManager::LoadEffect("effect_list.txt");
+	std::cout << "1";
 	//load bowls
 	ResourceManager::LoadBowl("bowl_list.txt");
+	std::cout << "1";
 	//load plants
 	ResourceManager::LoadPlant("plant_list.txt");
+	std::cout << "1";
 	//loads backgrounds
 	ResourceManager::LoadBackgrounds("background_list.txt");
+	std::cout << "1";
 	//load player
 	player.loadPlayer("bin/player.txt");
+	std::cout << "1";
 	//load projectiles
 	ResourceManager::LoadProjectiles("projectileDirectory.txt");
+	std::cout << "1";
 	//load enemies
 	loadEnemies();
+	std::cout << "1";
+	setBackground(player.backgroundName);
 	//create board
 	prepBoard();
-	reserveArraySpace();
+	std::cout << "1";
+	//reserveArraySpace();
+	std::cout << "1";
 }
 
 void Game::ProcessInput(float dt){
@@ -187,7 +203,6 @@ void Game::Update(float dt){
 			gameEndProtocol();
 		}
 	}
-
 
 	//test for the other states else if()
 };

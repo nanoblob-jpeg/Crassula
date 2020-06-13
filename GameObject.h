@@ -17,7 +17,6 @@ public:
 	float rotation;
 	bool interactable{false};
 
-	Texture sprite;
 	/*
 	interact returns a code to let the game know which kind of object the player interacts with
 	this allows the game to remove the object if necessary

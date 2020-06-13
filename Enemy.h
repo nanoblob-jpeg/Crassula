@@ -24,8 +24,12 @@ public:
 
 	std::vector<Effect> attackEffects;
 
-	virtual void attackFunc();
-	virtual void move();
+	virtual void attackFunc(){
+		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
+	};
+	virtual void move(){
+		std::cout << "illegal action performed, enemy tried moving, not an enemy";
+	};
 	void applyEffects(float dt){
 		float temp = 0.0f;
 		for(int i{}; i < effects.size(); ++i){
