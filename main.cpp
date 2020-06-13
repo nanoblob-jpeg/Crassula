@@ -20,14 +20,15 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-//game object
-Game Crassula(SCR_WIDTH, SCR_HEIGHT);
+
 //texture mixing
 float alpha{0.0f};
 
 //frame timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+Game *gamePointer;
 
 int main()
 {
@@ -65,6 +66,9 @@ std::cout << "1";
 
 
 	 */
+    //game object
+    Game Crassula(SCR_WIDTH, SCR_HEIGHT);
+    gamePointer = &Crassula;
     Crassula.Init();
     std::cout << "1";
 	//frame counting variables
@@ -125,30 +129,30 @@ void processInput(GLFWwindow *window)
     
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_W] = true;
+        gamePointer->Keys[GLFW_KEY_W] = true;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_S] = true;
+        gamePointer->Keys[GLFW_KEY_S] = true;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_A] = true;
+        gamePointer->Keys[GLFW_KEY_A] = true;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_D] = true;
+        gamePointer->Keys[GLFW_KEY_D] = true;
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_SPACE] = true;
+        gamePointer->Keys[GLFW_KEY_SPACE] = true;
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-        Crassula.Keys[GLFW_KEY_I] = true;
+        gamePointer->Keys[GLFW_KEY_I] = true;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_W] = false;
+        gamePointer->Keys[GLFW_KEY_W] = false;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_S] = false;
+        gamePointer->Keys[GLFW_KEY_S] = false;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_A] = false;
+        gamePointer->Keys[GLFW_KEY_A] = false;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_D] = false;
+        gamePointer->Keys[GLFW_KEY_D] = false;
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_SPACE] = false;
+        gamePointer->Keys[GLFW_KEY_SPACE] = false;
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
-        Crassula.Keys[GLFW_KEY_I] = false;
+        gamePointer->Keys[GLFW_KEY_I] = false;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
