@@ -15,7 +15,7 @@ TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 
 Game::Game(unsigned int width, unsigned int height){
-	m_state = GAME_ACTIVE_CLASSIC;
+	m_state = HOME_MAIN;
 	Width = width;
 	Height = height;
 }
@@ -33,49 +33,34 @@ Game::~Game(){
 }
 
 void Game::Init(){
-	std::cout << "1";
 	initShaders();
-	std::cout << "1";
 	initRenderers();
 	//load texture
 	ResourceManager::LoadTexture2("textureDirectory.txt");
-	std::cout << "1";
 	//load gameobject
 	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
-	std::cout << "1";
 	//load chunk
 	ResourceManager::LoadChunk("home_main.txt", false);
-	std::cout << "1";
 	//loading chunks for the 10x10 squares
 	ResourceManager::LoadChunk("chunk_list.txt", true);
-	std::cout << "1";
 	//load effects
 	ResourceManager::LoadEffect("effect_list.txt");
-	std::cout << "1";
 	//load bowls
 	ResourceManager::LoadBowl("bowl_list.txt");
-	std::cout << "1";
 	//load plants
 	ResourceManager::LoadPlant("plant_list.txt");
-	std::cout << "1";
 	//loads backgrounds
 	ResourceManager::LoadBackgrounds("background_list.txt");
-	std::cout << "1";
 	//load player
 	player.loadPlayer("bin/player.txt");
-	std::cout << "1";
 	//load projectiles
 	ResourceManager::LoadProjectiles("projectileDirectory.txt");
-	std::cout << "1";
 	//load enemies
 	loadEnemies();
-	std::cout << "1";
 	setBackground(player.backgroundName);
 	//create board
 	prepBoard();
-	std::cout << "1";
 	//reserveArraySpace();
-	std::cout << "1";
 }
 
 void Game::ProcessInput(float dt){
@@ -83,33 +68,39 @@ void Game::ProcessInput(float dt){
 		processPlayerMovement(dt);
 		if(m_state == HOME_MAIN){
 			if(Keys[GLFW_KEY_I]){
-				if(player.interact){
-					if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
-						m_state = GAME_ACTIVE_CLASSIC;
-						initializeGame();
-						cam.Position[0] = 0;
-						cam.Position[1] = 0;
-						points = 0;
-						//should make a portal class
-						//need to have some function in there that can be called for
-						//all interactables
-						//like interact with or something
-					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
-						m_state = GAME_ACTIVE_BOSS;
-						//add in code here to prep for that
-					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
-						m_state = HOME_ARMORY;
-						//add in code later
-					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
-						m_state = HOME_NURSERY;
-						//add in code later
-					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
-						m_state = HOME_GREENHOUSE;
-						//add code later
-					}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
-						m_state = HOME_CLOCK;
-					}
-				}
+				// if(player.interact){
+				// 	if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
+				// 		m_state = GAME_ACTIVE_CLASSIC;
+				// 		initializeGame();
+				// 		cam.Position[0] = 0;
+				// 		cam.Position[1] = 0;
+				// 		points = 0;
+				// 		//should make a portal class
+				// 		//need to have some function in there that can be called for
+				// 		//all interactables
+				// 		//like interact with or something
+				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
+				// 		m_state = GAME_ACTIVE_BOSS;
+				// 		//add in code here to prep for that
+				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
+				// 		m_state = HOME_ARMORY;
+				// 		//add in code later
+				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
+				// 		m_state = HOME_NURSERY;
+				// 		//add in code later
+				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
+				// 		m_state = HOME_GREENHOUSE;
+				// 		//add code later
+				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
+				// 		m_state = HOME_CLOCK;
+				// 	}
+				// }
+				m_state = GAME_ACTIVE_CLASSIC;
+				initializeGame();
+				player.setStatBoosts();
+				cam.Position[0] = 0;
+				cam.Position[1] = 0;
+				points = 0;
 			}
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
@@ -129,7 +120,7 @@ void Game::ProcessInput(float dt){
 				}
 			}
 		}
-	}else if(m_state = START_SCREEN){
+	}else if(m_state == START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
 			m_state = HOME_MAIN;
 		}
@@ -365,11 +356,14 @@ void Game::gameEndProtocol(){
 	board_enemies.clear();
 	enemy_projectiles.clear();
 	player_projectiles.clear();
+	player.statBoosts.clear();
 
 	m_state = DEATH_SCREEN;
 
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
+
+	std::cout << "player died?\n";
 }
 /*
 
@@ -777,27 +771,28 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 	//iterating through those chunks
 	for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
 		//figuring out which chunk on the board it corresponds to
-		short index_x, index_y, index_chunk;
-		if(width <= -6){
+		short index_x, index_y, index_chunk{};
+		if(width + chunk_width_offset <= -6){
 			index_y = 0;
-			index_chunk += width + chunk_width_offset + 15;
-		}else if(width <= 4){
+			index_chunk = width + chunk_width_offset + 15;
+		}else if(width + chunk_width_offset <= 4){
 			index_y = 1;
-			index_chunk += width + chunk_width_offset + 5;
+			index_chunk = width + chunk_width_offset + 5;
 		}else{
 			index_y = 2;
-			index_chunk += width + chunk_width_offset - 5;
+			index_chunk = width + chunk_width_offset - 5;
 		}
 		for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
-			if(height <= -6){
+			short index_chunk_2;
+			if(height + i <= -6){
 				index_x = 2;
-				index_chunk += (-6 - height + i) * 10;
-			}else if(height <= 4){
+				index_chunk_2 = (-6 - (height + i)) * 10;
+			}else if(height + i <= 4){
 				index_x = 1;
-				index_chunk += (4 - height + i) * 10;
+				index_chunk_2 = (4 - (height + i)) * 10;
 			}else{
 				index_x = 0;
-				index_chunk += (14 - height + i) * 10;
+				index_chunk_2 = (14 - (height + i)) * 10;
 			}
 
 			//check this chunk and loop through the gameobjects
@@ -806,13 +801,13 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
 			int gameobject_offset_y = (height + 1 + i) * 500;
 			int gameobject_offset_x = (width + chunk_width_offset) * 500;
-			for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
-				player_and_object_collisions(board[index_x][index_y][index_chunk].objects[j], gameobject_offset_x, gameobject_offset_y, dt);
+				player_and_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], dt, gameobject_offset_x, gameobject_offset_y);
 			}
-			for(int j{}; j < board[index_x][index_y][index_chunk].plants.size(); ++j){
+			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].plants.size(); ++j){
 				//loop through all of the plants in the chunk
-				player_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk].plants[j]), gameobject_offset_x, gameobject_offset_y, dt);
+				player_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk + index_chunk_2].plants[j]), dt, gameobject_offset_x, gameobject_offset_y);
 			}
 		}
 	}
@@ -828,26 +823,27 @@ bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject 
 	for(; chunk_width_offset <= max_width_chunk_offset; chunk_width_offset++){
 		//figuring out which chunk on the board it corresponds to
 		short index_x, index_y, index_chunk;
-		if(width <= -6){
+		if(width + chunk_width_offset <= -6){
 			index_y = 0;
-			index_chunk += width + chunk_width_offset + 15;
-		}else if(width <= 4){
+			index_chunk = width + chunk_width_offset + 15;
+		}else if(width + chunk_width_offset <= 4){
 			index_y = 1;
-			index_chunk += width + chunk_width_offset + 5;
+			index_chunk = width + chunk_width_offset + 5;
 		}else{
 			index_y = 2;
-			index_chunk += width + chunk_width_offset - 5;
+			index_chunk = width + chunk_width_offset - 5;
 		}
 		for(int i = chunk_height_offset; i <= max_height_chunk_offset; i++){
-			if(height <= -6){
+			short index_chunk_2;
+			if(height + i <= -6){
 				index_x = 2;
-				index_chunk += (-6 - height + i) * 10;
-			}else if(height <= 4){
+				index_chunk_2 = (-6 - (height + i)) * 10;
+			}else if(height + i <= 4){
 				index_x = 1;
-				index_chunk += (4 - height + i) * 10;
+				index_chunk_2 = (4 - (height + i)) * 10;
 			}else{
 				index_x = 0;
-				index_chunk += (14 - height + i) * 10;
+				index_chunk_2 = (14 - (height + i)) * 10;
 			}
 
 			//check this chunk and loop through the gameobjects
@@ -856,9 +852,9 @@ bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject 
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
 			int gameobject_offset_y = (height + 1 + i) * 500;
 			int gameobject_offset_x = (width + chunk_width_offset) * 500;
-			for(int j{}; j < board[index_x][index_y][index_chunk].objects.size(); ++j){
+			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
-				if(game_classic_two_object_collisions(board[index_x][index_y][index_chunk].objects[j], object, gameobject_offset_x, gameobject_offset_y))
+				if(game_classic_two_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], object, gameobject_offset_x, gameobject_offset_y))
 					return true;
 			}
 		}

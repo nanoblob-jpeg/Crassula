@@ -68,6 +68,7 @@ public:
 	void addEffects(Projectile &p);
 	bool canAttack(float dt);
 	void calculateLevel();
+	void setStatBoosts();
 private:
 	int getDefenseBoost();
 	int getHealthBoost();

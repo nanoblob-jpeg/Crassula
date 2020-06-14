@@ -80,7 +80,7 @@ void Player::dealDamage(int damage){
 }
 
 bool Player::isDead(){
-	return health + getHealthBoost() > 0;
+	return health + getHealthBoost() <= 0;
 }
 
 void Player::addEffects(Projectile &p){
@@ -105,4 +105,13 @@ void Player::calculateLevel(){
 		level += 1;
 		experience -= (level+1) * (level+1);
 	}
+}
+
+void Player::setStatBoosts(){
+	statBoosts.push_back(bowl->health);
+	statBoosts.push_back(bowl->defense);
+	statBoosts.push_back(bowl->attack);
+	statBoosts.push_back(bowl->speed);
+	statBoosts.push_back(bowl->recovery);
+	statBoosts.push_back(bowl->luck);
 }

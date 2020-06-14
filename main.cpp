@@ -15,7 +15,7 @@
 
 //call back functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -32,7 +32,7 @@ Game *gamePointer;
 
 int main()
 {
-	//stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(true);
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -42,7 +42,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Crassula", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -50,9 +50,8 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
-    std::cout << "1";
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-std::cout << "1";
+    glfwSetKeyCallback(window, processInput);
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -70,11 +69,10 @@ std::cout << "1";
     Game Crassula(SCR_WIDTH, SCR_HEIGHT);
     gamePointer = &Crassula;
     Crassula.Init();
-    std::cout << "1";
+
 	//frame counting variables
 	double timeTracker{};
 	int frameCounter{};
-	std::cout << "1";
     // render loop	
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -89,13 +87,10 @@ std::cout << "1";
     		++frameCounter;
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
-    	}else{
-    		timeTracker = 0;
-    		frameCounter = 0;
+            std::cout << gamePointer->m_state << '\n';
+            timeTracker = 0;
+            frameCounter = 0;
     	}
-
-    	processInput(window);
-
     	glfwPollEvents();
 
         // input
@@ -107,6 +102,7 @@ std::cout << "1";
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 		Crassula.Render();
+        std::cout << gamePointer->cam.Position[0] << "," << gamePointer->cam.Position[1] <<'\n';
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -122,37 +118,16 @@ std::cout << "1";
 
 // sends all keyboard input to the ProcessInput funciton in Game
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
-	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
        glfwSetWindowShouldClose(window, true);
-    
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_W] = true;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_S] = true;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_A] = true;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_D] = true;
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_SPACE] = true;
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-        gamePointer->Keys[GLFW_KEY_I] = true;
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_W] = false;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_S] = false;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_A] = false;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_D] = false;
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_SPACE] = false;
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
-        gamePointer->Keys[GLFW_KEY_I] = false;
+    if(key >= 0 && key <1024){
+        if(action == GLFW_PRESS)
+            gamePointer->Keys[key] = true;
+        else if(action == GLFW_RELEASE)
+            gamePointer->Keys[key] = false;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

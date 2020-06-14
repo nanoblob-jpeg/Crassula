@@ -33,8 +33,10 @@ void Chunk::init(std::vector<std::string> names){
 	for(int i{}; i < names.size(); ++i){
 		objects.push_back(&ResourceManager::GetGameObject(names[i]));
 	}
-	locationOfObjects.reserve(100);
+	for(int i{}; i < 100; ++i){
+		locationOfObjects.push_back(false);
+	}
 	for(int i{}; i < objects.size(); ++i){
-		locationOfObjects[(objects[i]->position.x/50) * -10 + (objects[i]->position.y/50)] = true;
+		locationOfObjects[(objects[i]->position.y/50) * -10 + (objects[i]->position.x/50)] = true;
 	}
 }

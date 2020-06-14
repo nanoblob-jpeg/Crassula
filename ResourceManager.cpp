@@ -186,12 +186,12 @@ void ResourceManager::LoadGameObject(const char *file){
     */
     for(int i{}; i < gameobject_list.size(); ++i){
         std::string line2;
-        std::ifstream fstream2(gameobject_list[i]);
+        std::ifstream fstream2(gameobject_list[i].c_str());
         std::string vname;
         glm::vec2 pos, size;
         std::string textureName;
         glm::vec3 color;
-        if(fstream){
+        if(fstream2){
             std::getline(fstream2, line2);
             vname = line2;
             std::getline(fstream2, line2);
@@ -212,6 +212,7 @@ void ResourceManager::LoadGameObject(const char *file){
             GameObject obj(pos, size, ResourceManager::GetTexture(textureName.c_str()), color);
             Objects[vname] = obj;
         }else{
+            std::cout << gameobject_list[i] << '\n';
             std::cout << "could not open object file";
         }
     }
@@ -370,39 +371,43 @@ void ResourceManager::LoadPlant(const char *file){
         glm::vec2 size;
         glm::vec3 color;
         glm::vec2 texCoord;
-        std::getline(fstream2, line);
-        name = line;
-        std::getline(fstream2, line);
-        tname = line;
-        std::getline(fstream2, line);
-        pname = line;
-        std::getline(fstream2, line);
-        pname2 = line;
-        std::getline(fstream2, line);
-        pname3 = line;
-        std::getline(fstream2, line);
-        pname4 = line;
-        std::getline(fstream2, line);
-        texCoord[0] = std::stof(line);
-        std::getline(fstream2, line);
-        texCoord[1] = std::stof(line);
-        std::getline(fstream2, line);
-        size[0] = std::stof(line);
-        std::getline(fstream2, line);
-        size[1] = std::stof(line);
-        std::getline(fstream2, line);
-        color[0] = std::stoi(line);
-        std::getline(fstream2, line);
-        color[1] = std::stoi(line);
-        std::getline(fstream2, line);
-        color[2] = std::stof(line);
-        Plant temp = Plant(name, Textures[tname], size, texCoord, color);
-        temp.projectileName.push_back(pname);
-        temp.projectileName.push_back(pname2);
-        temp.projectileName.push_back(pname3);
-        temp.projectileName.push_back(pname4);
-        Plants[name] = temp;
-        fstream2.close();
+        if(fstream2){
+            std::getline(fstream2, line);
+            name = line;
+            std::getline(fstream2, line);
+            tname = line;
+            std::getline(fstream2, line);
+            pname = line;
+            std::getline(fstream2, line);
+            pname2 = line;
+            std::getline(fstream2, line);
+            pname3 = line;
+            std::getline(fstream2, line);
+            pname4 = line;
+            std::getline(fstream2, line);
+            texCoord[0] = std::stof(line);
+            std::getline(fstream2, line);
+            texCoord[1] = std::stof(line);
+            std::getline(fstream2, line);
+            size[0] = std::stof(line);
+            std::getline(fstream2, line);
+            size[1] = std::stof(line);
+            std::getline(fstream2, line);
+            color[0] = std::stoi(line);
+            std::getline(fstream2, line);
+            color[1] = std::stoi(line);
+            std::getline(fstream2, line);
+            color[2] = std::stof(line);
+            Plant temp = Plant(name, Textures[tname], size, texCoord, color);
+            temp.projectileName.push_back(pname);
+            temp.projectileName.push_back(pname2);
+            temp.projectileName.push_back(pname3);
+            temp.projectileName.push_back(pname4);
+            Plants[name] = temp;
+            fstream2.close();
+        }else{
+            std::cout << "couldn't open plant file";
+        }
     }
 }
 
