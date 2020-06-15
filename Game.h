@@ -31,6 +31,8 @@ public:
 	int maxPlantSize{20};
 	int maxProjectileSize{20};
 	int maxEnemySize{40};
+	float maxSpeed = 38.0;
+	float acceleration = 60.0;
 
 	enum GameState{
 		START_SCREEN,
@@ -94,7 +96,7 @@ public:
 	void ProcessInput(float dt);
 	void Update(float dt);
 	void Render();
-private:
+
 	//game initialization/destruction
 	void initializeGame();
 	void loadEnemies();

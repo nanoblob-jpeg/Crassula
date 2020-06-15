@@ -674,12 +674,13 @@ COLLISION DETECTION
 
 
 */
+//debug starting here
 void Game::player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
 	if(object->interactable){
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
 			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y
-			&& object->position[1] + object->size[1] + gameobject_offset_y >= cam.Position[1] - player.bowl->size[1]/2;
+		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
 		if(collisionX && collisionY){
 			//set the object as the interactable object
 			player.interact = object;
@@ -687,25 +688,25 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
 			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] + player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y
-			&& object->position[1] + object->size[1] + gameobject_offset_y >= cam.Position[1] - player.bowl->size[1]/2;
+		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
 
 		if(collisionX && collisionY){
 			//getting previous location
 			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
-			
+			std::cout << "\n\n" << direction << '\n' << object->position[0] + gameobject_offset_x << '\n' << object->position[1] + gameobject_offset_y << "\n\n";
 			//applying the corrections to the players position
 			//while also fixing the velocity in that direction
 			//to make it seem like they were stopped by the object
 			if(direction == 0){
-				cam.Position[1] -= cam.Position[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+				cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
 				player.velocity[1] = 0.0f;
 				player.falling = false;
 			}else if(direction == 1){
 				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
 				player.velocity[0] = 0.0f;
 			}else if(direction == 2){
-				cam.Position[1] += object->position[1] + object->size[1] + gameobject_offset_y - (cam.Position[1] - player.bowl->size[1]/2);
+				cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] + object->size[1] + gameobject_offset_y);
 				player.velocity[1] = 0.0f;
 			}else{
 				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
@@ -968,9 +969,9 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	//3 is left side
 			
 	//testing when player is above the object
-	if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + gameobject_offset_y){
+	if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + gameobject_offset_x + player.bowl->size[0]/2){
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 0;
 		}else{
 			//testing the edge cases where the player is in the corner of the space around the block
@@ -979,9 +980,9 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 			//hit first
 			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
 				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] + player.bowl->size[1]/2);
+			float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] - player.bowl->size[1]/2);
 
-			if(distanceX/player.velocity[0] < distanceY/(-player.velocity[1])){
+			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
 				if(prevPosition[0] < object->position[0] + gameobject_offset_x){
 					direction = 3;
 				}else{
@@ -994,9 +995,9 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	}
 
 	//testing when the player is below the object
-	else if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + object->size[1] + gameobject_offset_y){
+	else if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + object->size[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x) < object->size[0] + player.bowl->size[0]/2){
+		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 2;
 		}else{
 			//testing the edge cases where the player is in the corner of the space around the block
@@ -1005,7 +1006,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 			//hit first
 			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
 				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			float distanceY = prevPosition[1] - player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y);
+			float distanceY = prevPosition[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y + object->size[1]);
 
 			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
 				if(prevPosition[0] < object->position[0]){
@@ -1094,13 +1095,15 @@ void Game::processEffectsForPlayer(float dt){
 }
 
 void Game::processPlayerMovement(float dt){
+	if(player.velocity[1] < 0)
+		player.falling = true;
 	if(Keys[GLFW_KEY_W]){
 		if(upCounter == 0)
 			player.falling = true;
 		//need to add code in the collision detector that will change falling to false
 		if(upCounter < 0.5){
 			upCounter += dt;
-			player.velocity.y = 4.1;
+			player.velocity.y = maxSpeed + player.speed/4;
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
@@ -1109,36 +1112,37 @@ void Game::processPlayerMovement(float dt){
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
 		player.facing = false;
-		player.velocity.x -= player.speed;
+		player.velocity.x -= (player.speed + acceleration) * dt;
 		if(player.velocity.x < 0)
-			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-3.5) - (player.speed/4)));
+			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-maxSpeed) - (player.speed/4)));
 	}
 	//move right, with correct acceleration
 	if(Keys[GLFW_KEY_D]){
 		player.facing = true;
-		player.velocity.x += player.speed;
+		player.velocity.x += (player.speed + acceleration) * dt;
 		if(player.velocity.x > 0)
-			player.velocity.x = std::min(player.velocity.x, static_cast<float>(3.5 + (player.speed/4)));
+			player.velocity.x = std::min(player.velocity.x, static_cast<float>(maxSpeed + (player.speed/4)));
 	}
 	//slowing down, correct acceleration
 	if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
 		if(player.velocity.x < 0){
-			if(player.velocity.x > -player.speed - 0.2)
+			if(player.velocity.x > (-(player.speed + acceleration) - 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x += player.speed + 0.2;
+				player.velocity.x += ((player.speed + acceleration) + 0.2) * dt;
 		}else{
-			if(player.velocity.x < player.speed + 0.2)
+			if(player.velocity.x < (player.speed + acceleration + 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x -= (player.speed + 0.2);
+				player.velocity.x -= (player.speed + acceleration + 0.2) * dt;
 		}
 	}
 	//always subtract 0.6 from the y velocity to simulate falling
 	//makes it so that whenever they walk off a block they also fall
 	//gets corrected to 0 in the collision detection if there is a collision
 	//between the bottom of the player and the top of the object
-	player.velocity.y -= 0.6;
+	player.velocity.y -= 0.6 * dt;
+	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - player.speed/4));
 		
 	if(upCounter != 0 && !player.falling){
 		upCounter = 0;
@@ -1180,7 +1184,7 @@ void Game::renderHomeMain(){
 }
 
 void Game::renderGame(){
-	renderGameBackground();
+	//renderGameBackground();
 	//prepping data for the block rendering
 	if(generatedChunks){
 		calculateNewRenderValues();
@@ -1191,12 +1195,12 @@ void Game::renderGame(){
 
 	glm::mat4 view = cam.GetViewMatrix();
 	renderBlocks(view);
-	renderPlants(view);
-	renderEnemyProjectiles(view);
-	renderPlayerProjectiles(view);
-	renderEnemies(view);
+	//renderPlants(view);
+	//renderEnemyProjectiles(view);
+	//renderPlayerProjectiles(view);
+	//renderEnemies(view);
 	renderPlayer(view);
-	renderText();
+	//renderText();
 }
 
 void Game::renderGameBackground(){
@@ -1244,7 +1248,7 @@ void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
 	float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
 	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-		glm::vec2(cam.Position[0] - player.bowl->size[0], cam.Position[1] + player.bowl->size[1]),
+		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
 		glm::vec2(tempSize, tempSize));
 }
 
@@ -1274,6 +1278,7 @@ void Game::calculateNewRenderValues(){
 		}
 	}
 	generatedChunks = false;
+	std::cout << "calculated\n";
 	BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
 	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
@@ -1320,6 +1325,9 @@ void Game::calculateBlockOffsets(int i, int j){
 		//adding position per block which is already negative
 		temp[1] += board[i/3][i%3][j].objects[k]->position[1];
 
+		temp[0] /= 50;
+		temp[1] /= 50;
+
 		blockOffsets.push_back(temp);
 
 		numBlocks++;
@@ -1363,6 +1371,9 @@ void Game::calculatePlantOffsets(int i, int j){
 		//subtracting for each little box in a chunk
 		temp[1] -= (j / 10) * 500;
 		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
+
+		temp[0] /= maxPlantSize;
+		temp[1] /= maxPlantSize;
 
 		plantOffsets.push_back(temp);
 

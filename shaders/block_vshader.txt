@@ -10,6 +10,6 @@ out vec2 TexCoords;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(vertex.xy + aOffset, 0.0, 1.0);
+    gl_Position = projection * view * model * vec4(vertex.x + aOffset.x, vertex.y + aOffset.y, 0.0, 1.0);
     TexCoords = vertex.zw;
 }  

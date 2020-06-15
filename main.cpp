@@ -99,10 +99,10 @@ int main()
 
         Crassula.Update(deltaTime);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(50.0f, 50.0f, 50.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 		Crassula.Render();
-        std::cout << gamePointer->cam.Position[0] << "," << gamePointer->cam.Position[1] <<'\n';
+        std::cout << gamePointer->cam.Position[0] << "," << gamePointer->cam.Position[1] <<','<< gamePointer->player.velocity[0] << ',' << gamePointer->player.velocity[1]<<'\n';
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
