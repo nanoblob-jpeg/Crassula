@@ -969,7 +969,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	//3 is left side
 			
 	//testing when player is above the object
-	if(prevPosition[1] - player.bowl->size[1]/2 > object->position[1] + gameobject_offset_y){
+	if(prevPosition[1] - player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
 		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 0;
@@ -995,7 +995,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	}
 
 	//testing when the player is below the object
-	else if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] - object->size[1] + gameobject_offset_y){
+	else if(prevPosition[1] + player.bowl->size[1]/2 <= object->position[1] - object->size[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
 		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 2;
