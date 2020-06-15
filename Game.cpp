@@ -719,16 +719,16 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
 	bool collisionX =  projectile->position[0] + projectile->size[0] >= object->position[0]
 		&& object->position[0] + object->size[0] >= projectile->position[0];
-	bool collisionY = projectile->position[1] + projectile->size[1] >= object->position[1]
-		&& object->position[1] + object->size[1] >= projectile->position[1];
+	bool collisionY = projectile->position[1] - projectile->size[1] <= object->position[1]
+		&& object->position[1] - object->size[1] <= projectile->position[1];
 	return (collisionX && collisionY);
 }
 
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *object2, int gameobject_offset_x, int gameobject_offset_y){
 	bool collisionX =  object2->position[0] + object2->size[0] >= object->position[0] + gameobject_offset_x
 		&& object->position[0] + object->size[0] + gameobject_offset_x >= object2->position[0];
-	bool collisionY = object2->position[1] + object2->size[1] >= object->position[1] + gameobject_offset_y
-		&& object->position[1] + object->size[1] + gameobject_offset_y >= object->position[1];
+	bool collisionY = object2->position[1] - object2->size[1] <= object->position[1] + gameobject_offset_y
+		&& object->position[1] - object->size[1] + gameobject_offset_y <= object->position[1];
 	return (collisionX && collisionY);
 }
 
@@ -995,7 +995,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	}
 
 	//testing when the player is below the object
-	else if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] + object->size[1] + gameobject_offset_y){
+	else if(prevPosition[1] + player.bowl->size[1]/2 < object->position[1] - object->size[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
 		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 2;
@@ -1006,7 +1006,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 			//hit first
 			float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
 				: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			float distanceY = prevPosition[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y + object->size[1]);
+			float distanceY = prevPosition[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y - object->size[1]);
 
 			if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
 				if(prevPosition[0] < object->position[0]){
