@@ -973,24 +973,6 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 		//testing to see if the player with clearly above the block
 		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 0;
-		}else{
-			//testing the edge cases where the player is in the corner of the space around the block
-			//yet still collides with it this frame
-			//uses distance for each axis and the velocity in order to figure out which one
-			//hit first
-			// float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-			// 	: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			// float distanceY = (object->position[1] + gameobject_offset_y) - (prevPosition[1] - player.bowl->size[1]/2);
-
-			// if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
-			// 	if(prevPosition[0] < object->position[0] + gameobject_offset_x){
-			// 		direction = 3;
-			// 	}else{
-			// 		direction = 1;
-			// 	}
-			// }else{
-			// 	direction = 0;
-			// }
 		}
 	}
 
@@ -999,27 +981,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 		//testing to see if the player with clearly above the block
 		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2){
 			direction = 2;
-		}else{
-			//testing the edge cases where the player is in the corner of the space around the block
-			//yet still collides with it this frame
-			//uses distance for each axis and the velocity in order to figure out which one
-			//hit first
-			// float distanceX = prevPosition[0] < object->position[0] + gameobject_offset_x ? (object->position[0] + gameobject_offset_x) - (prevPosition[0] + player.bowl->size[0]/2) 
-			// 	: object->position[0] + object->size[0] + gameobject_offset_x - (prevPosition[0] - player.bowl->size[0]/2);
-			// float distanceY = prevPosition[1] + player.bowl->size[1]/2 - (object->position[1] + gameobject_offset_y - object->size[1]);
-
-			// if(distanceX/player.velocity[0] < distanceY/(player.velocity[1])){
-			// 	if(prevPosition[0] < object->position[0]){
-			// 		direction = 3;
-			// 	}else{
-			// 		direction = 1;
-			// 	}
-			// }else{
-			// 	direction = 2;
-			// }
-		}
 	}
-
 	//testing when the rest of the situations where the block approaches from the side
 	//previous ifs have eliminated the top and bottom approaches
 	else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
