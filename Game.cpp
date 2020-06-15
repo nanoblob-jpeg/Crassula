@@ -694,7 +694,6 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 		if(collisionX && collisionY){
 			//getting previous location
 			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
-			std::cout << "\n\n" << direction << '\n' << object->position[0] + gameobject_offset_x << '\n' << object->position[1] + gameobject_offset_y << "\n\n";
 			//applying the corrections to the players position
 			//while also fixing the velocity in that direction
 			//to make it seem like they were stopped by the object
