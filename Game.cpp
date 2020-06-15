@@ -1141,7 +1141,7 @@ void Game::processPlayerMovement(float dt){
 	//makes it so that whenever they walk off a block they also fall
 	//gets corrected to 0 in the collision detection if there is a collision
 	//between the bottom of the player and the top of the object
-	player.velocity.y -= 0.6 * dt;
+	player.velocity.y -= acceleration * dt;
 	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - player.speed/4));
 		
 	if(upCounter != 0 && !player.falling){
