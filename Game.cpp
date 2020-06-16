@@ -698,20 +698,27 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 			//applying the corrections to the players position
 			//while also fixing the velocity in that direction
 			//to make it seem like they were stopped by the object
-			if(direction == 0){
-				cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
-				player.velocity[1] = 0.0f;
-				player.falling = false;
-			}else if(direction == 1){
-				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
-				player.velocity[0] = 0.0f;
-			}else if(direction == 2){
-				std::cout << "registered\n";
-				cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
-				player.velocity[1] = 0.0f;
-			}else{
-				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
-				player.velocity[0] = 0.0f;
+			switch(direction){
+				case 0:
+					cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
+					player.velocity[1] = 0.0f;
+					player.falling = false;
+					break;
+				case 1:
+					cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+					player.velocity[0] = 0.0f;
+					break;
+				case 2:
+					std::cout << "registered\n";
+					cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
+					player.velocity[1] = 0.0f;
+					break;
+				case 3:
+					cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+					player.velocity[0] = 0.0f;
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -984,10 +991,12 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	}
 	//testing when the rest of the situations where the block approaches from the side
 	//previous ifs have eliminated the top and bottom approaches
-	else if(prevPosition[0] + player.bowl->size[0]/2 < object->position[0] + gameobject_offset_x){
+	else if(prevPosition[0] + player.bowl->size[0]/2 <= object->position[0] + gameobject_offset_x){
 		direction = 3;
-	}else{
+	}else if(prevPosition[0] - player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x + object->size[0]){
 		direction = 1;
+	}else{
+		direction = -1;
 	}
 	return direction;
 }
