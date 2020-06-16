@@ -87,6 +87,7 @@ int main()
     		++frameCounter;
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
+            std::cout << glGetError() << std::endl;
             timeTracker = 0;
             frameCounter = 0;
     	}

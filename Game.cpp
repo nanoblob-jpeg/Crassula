@@ -223,7 +223,6 @@ void Game::Render(){
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		renderGame();
 	}
-	
 }
 /*
 
