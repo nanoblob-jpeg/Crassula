@@ -115,6 +115,7 @@ public:
 	void fixRemainingEnemyPosition(const short direction);
 	void fixRemainingProjectilePosition(const short direction);
 	short findAddingAmountOffsetWhenGeneratingChunks(const short direction);
+	void fixPlayerPosition(const short direction);
 
 	//collision detection
 	void player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);

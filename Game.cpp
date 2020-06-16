@@ -161,15 +161,21 @@ void Game::Update(float dt){
 		//1 right
 		//2 down
 		//3 left
-		if(cam.Position[0] >= 4500)
+		if(cam.Position[0] >= 4500){
 			generateChunks(1);
-		else if(cam.Position[0] <= -4500)
+			fixPlayerPosition(1);
+		}else if(cam.Position[0] <= -4500){
 			generateChunks(3);
+			fixPlayerPosition(3);
+		}
 
-		if(cam.Position[1] >= 4500)
+		if(cam.Position[1] >= 4500){
 			generateChunks(0);
-		else if(cam.Position[1] <= -4500)
+			fixPlayerPosition(0);
+		}else if(cam.Position[1] <= -4500){
 			generateChunks(2);
+			fixPlayerPosition(2);
+		}
 
 		//finding out which chunk the player is in using position
 		short width, height;
@@ -662,6 +668,23 @@ short Game::findAddingAmountOffsetWhenGeneratingChunks(const short direction){
 			return -5000;
 	}
 	return 0;
+}
+
+void Game::fixPlayerPosition(const short direction){
+	switch(direction){
+		case 0:
+			cam.Position[1] -= 4500;
+			break;
+		case 1:
+			cam.Position[0] -= 4500;
+			break;
+		case 2:
+			cam.Position[1] += 4500;
+			break;
+		case 3:
+			cam.Position[0] += 4500;
+			break;
+	}
 }
 /*
 
