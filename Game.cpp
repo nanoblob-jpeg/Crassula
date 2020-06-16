@@ -984,7 +984,7 @@ short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_off
 	}
 	//testing when the rest of the situations where the block approaches from the side
 	//previous ifs have eliminated the top and bottom approaches
-	else if(prevPosition[0] < object->position[0] + gameobject_offset_x){
+	else if(prevPosition[0] + player.bowl->size[0]/2 < object->position[0] + gameobject_offset_x){
 		direction = 3;
 	}else{
 		direction = 1;
@@ -1065,7 +1065,7 @@ void Game::processPlayerMovement(float dt){
 		//need to add code in the collision detector that will change falling to false
 		if(upCounter < 0.5){
 			upCounter += dt;
-			player.velocity.y = maxSpeed + player.speed/4;
+			player.velocity.y = 30 + maxSpeed + player.speed/4;
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
@@ -1104,7 +1104,7 @@ void Game::processPlayerMovement(float dt){
 	//gets corrected to 0 in the collision detection if there is a collision
 	//between the bottom of the player and the top of the object
 	player.velocity.y -= acceleration * dt;
-	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - player.speed/4));
+	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - 30 - player.speed/4));
 		
 	if(upCounter != 0 && !player.falling){
 		upCounter = 0;
