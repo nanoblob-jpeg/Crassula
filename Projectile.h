@@ -44,7 +44,7 @@ public:
 		texturePosition.push_back(texturePosition[1]);
 	};
 
-	void setDirection(glm::vec2 startPosition, short direction){
+	void setDirection(const glm::vec2 &startPosition, const short direction){
 		if(direction < 0){
 			velocity[0] = -5;
 		}else{
@@ -58,7 +58,7 @@ public:
 		distanceTravelled += velocity[0] * dt;
 	}
 
-	void addEffect(Effect effect);
+	void addEffect(Effect &effect);
 
 	bool rangeCheck();
 };

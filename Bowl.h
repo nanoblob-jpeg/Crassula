@@ -36,7 +36,7 @@ public:
 		inAnimation = true;
 	}
 
-	void addFrameTimer(const float &dt){
+	void addFrameTimer(const float dt){
 		frameTimer += dt;
 		frameCounter = static_cast<int>(frameTimer / 0.16);
 		if(frameCounter == attackAnimation.size()){

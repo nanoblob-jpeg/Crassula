@@ -25,7 +25,7 @@ void Chunk::Load(const char *file){
 		std::cout << "Parsed zero lines";
 }
 
-void Chunk::init(std::vector<std::string> names){
+void Chunk::init(std::vector<std::string> &names){
 	if(names.size() == 0){
 		std::cout << "no files detected";
 		return;

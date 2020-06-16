@@ -21,6 +21,6 @@ public:
 	Chunk(){}
 	void Load(const char *file);
 private:
-	void init(std::vector<std::string> files);
+	void init(std::vector<std::string> &files);
 };
 #endif

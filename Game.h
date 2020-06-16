@@ -107,34 +107,34 @@ public:
 	void gameEndProtocol();
 
 	//Chunk Generation
-	void prepBoardForChunkCreation(const short &&direction);
-	void generateChunks(const short &&direction);
-	void despawnEnemiesFromDeletedChunks(const short &&direction);
-	void despawnProjectilesFromDeletedChunks(const short &&direction);
-	void fixGeneratedEnemiesPosition(const short &i, const short &j, const short &k, const short &&direction);
-	void fixRemainingEnemyPosition(const short &&direction);
-	void fixRemainingProjectilePosition(const short &&direction);
-	short findAddingAmountOffsetWhenGeneratingChunks(const short &&direction);
+	void prepBoardForChunkCreation(const short direction);
+	void generateChunks(const short direction);
+	void despawnEnemiesFromDeletedChunks(const short direction);
+	void despawnProjectilesFromDeletedChunks(const short direction);
+	void fixGeneratedEnemiesPosition(const short i, const short j, const short k, const short direction);
+	void fixRemainingEnemyPosition(const short direction);
+	void fixRemainingProjectilePosition(const short direction);
+	short findAddingAmountOffsetWhenGeneratingChunks(const short direction);
 
 	//collision detection
-	void player_and_object_collisions(GameObject *object, const float &dt, const short &gameobject_offset_x = 0, const short &gameobject_offset_y = 0);
+	void player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
-	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, int width_offset, int height_offset);
-	void findLocationCoordinates(short &width, short &height, const float &x, const float &y);
-	void nineBlockCollisionDetectionPAndO(const short &width, const short &height, const float &dt);
-	bool nineBlockCollisionDetectionGeneral(const short &width, const short &height, GameObject *object);
+	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, const short width_offset, const short height_offset);
+	void findLocationCoordinates(short &width, short &height, const float x, const float y);
+	void nineBlockCollisionDetectionPAndO(const short width, const short height, const float dt);
+	bool nineBlockCollisionDetectionGeneral(const short width, const short height, GameObject *object);
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
-	short findPlayerDirection(GameObject *object, const float &dt, const short &gameobject_offset_x = 0, const short &gameobject_offset_y = 0);
+	short findPlayerDirection(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
 	
 	//game logic
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
 	void clearDeadEnemies();
-	void processEffectsForEnemies(const float &dt);
-	void processEffectsForPlayer(const float &dt);
-	void processPlayerMovement(const float &dt);
-	void moveAllProjectiles(const float &dt);
+	void processEffectsForEnemies(const float dt);
+	void processEffectsForPlayer(const float dt);
+	void processPlayerMovement(const float dt);
+	void moveAllProjectiles(const float dt);
 
 	//rendering
 	void renderHomeMain();
@@ -148,8 +148,8 @@ public:
 	void renderPlayer(glm::mat4 &view);
 	void renderText();
 	void calculateNewRenderValues();
-	void calculateBlockOffsets(const short &i, const short &j);
-	void calculatePlantOffsets(const short &i, const short &j);
+	void calculateBlockOffsets(const short i, const short j);
+	void calculatePlantOffsets(const short i, const short j);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
 
