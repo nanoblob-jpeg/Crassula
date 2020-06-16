@@ -51,6 +51,6 @@ void BackgroundRenderer::initRenderData(){
 	glBindVertexArray(0);
 }
 
-void BackgroundRenderer::setOffset(const glm::vec2 &offset){
+void BackgroundRenderer::setOffset(glm::vec2 offset){
 	m_shader.setVec2("offset", offset);
 }
