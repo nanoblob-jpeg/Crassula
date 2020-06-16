@@ -87,7 +87,6 @@ int main()
     		++frameCounter;
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
-            std::cout << gamePointer->m_state << '\n';
             timeTracker = 0;
             frameCounter = 0;
     	}

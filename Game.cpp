@@ -60,7 +60,7 @@ void Game::Init(){
 	setBackground(player.backgroundName);
 	//create board
 	prepBoard();
-	//reserveArraySpace();
+	reserveArraySpace();
 }
 
 void Game::ProcessInput(float dt){
