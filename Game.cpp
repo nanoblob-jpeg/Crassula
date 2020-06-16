@@ -1352,6 +1352,10 @@ void Game::calculatePlantOffsets(const short i, const short j){
 }
 
 void Game::calculateProjectileRenderValues(){
+	enemyProjectileOffsets.clear();
+	enemyProjectileTexCoords.clear();
+	playerProjectileOffsets.clear();
+	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
 		for(int j{}; j < 6; ++j){
@@ -1368,6 +1372,8 @@ void Game::calculateProjectileRenderValues(){
 }
 
 void Game::calculateEnemyRenderValues(){
+	enemyOffsets.clear();
+	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(board_enemies[i].position);
 		for(int j{}; j < 6; ++j){
