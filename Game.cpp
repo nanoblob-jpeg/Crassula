@@ -673,16 +673,16 @@ short Game::findAddingAmountOffsetWhenGeneratingChunks(const short direction){
 void Game::fixPlayerPosition(const short direction){
 	switch(direction){
 		case 0:
-			cam.Position[1] -= 4500;
+			cam.Position[1] -= 5000;
 			break;
 		case 1:
-			cam.Position[0] -= 4500;
+			cam.Position[0] -= 5000;
 			break;
 		case 2:
-			cam.Position[1] += 4500;
+			cam.Position[1] += 5000;
 			break;
 		case 3:
-			cam.Position[0] += 4500;
+			cam.Position[0] += 5000;
 			break;
 	}
 }
