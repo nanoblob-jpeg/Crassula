@@ -28,9 +28,9 @@
 class Game
 {
 public:
-	int maxPlantSize{20};
-	int maxProjectileSize{20};
-	int maxEnemySize{40};
+	short maxPlantSize{20};
+	short maxProjectileSize{20};
+	short maxEnemySize{40};
 	float maxSpeed = 90.0;
 	float acceleration = 130.0;
 
@@ -49,9 +49,9 @@ public:
 	GameState m_state;
 	bool Keys[1024]{};
 	unsigned int Width, Height;
-	unsigned int numOfChunks{40};
-	unsigned int numOfPlants{4};
-	unsigned int numOfEnemies{1};
+	unsigned short numOfChunks{40};
+	unsigned short numOfPlants{4};
+	unsigned short numOfEnemies{1};
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
@@ -101,40 +101,40 @@ public:
 	void initializeGame();
 	void loadEnemies();
 	void clearAndResetGameBoard();
-	void setBackground(std::string name);
+	void setBackground(std::string &name);
 	void prepBoard();
 	void reserveArraySpace();
 	void gameEndProtocol();
 
 	//Chunk Generation
-	void prepBoardForChunkCreation(int direction);
-	void generateChunks(int direction);
-	void despawnEnemiesFromDeletedChunks(int direction);
-	void despawnProjectilesFromDeletedChunks(int direction);
-	void fixGeneratedEnemiesPosition(int i, int j, int k, int direction);
-	void fixRemainingEnemyPosition(int direction);
-	void fixRemainingProjectilePosition(int direction);
-	int findAddingAmountOffsetWhenGeneratingChunks(int direction);
+	void prepBoardForChunkCreation(const short &&direction);
+	void generateChunks(const short &&direction);
+	void despawnEnemiesFromDeletedChunks(const short &&direction);
+	void despawnProjectilesFromDeletedChunks(const short &&direction);
+	void fixGeneratedEnemiesPosition(const short &i, const short &j, const short &k, const short &&direction);
+	void fixRemainingEnemyPosition(const short &&direction);
+	void fixRemainingProjectilePosition(const short &&direction);
+	short findAddingAmountOffsetWhenGeneratingChunks(const short &&direction);
 
 	//collision detection
-	void player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
+	void player_and_object_collisions(GameObject *object, const float &dt, const short &gameobject_offset_x = 0, const short &gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, int width_offset, int height_offset);
-	void findLocationCoordinates(int &width, int &height, float x, float y);
-	void nineBlockCollisionDetectionPAndO(int width, int height, float dt);
-	bool nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object);
+	void findLocationCoordinates(short &width, short &height, const float &x, const float &y);
+	void nineBlockCollisionDetectionPAndO(const short &width, const short &height, const float &dt);
+	bool nineBlockCollisionDetectionGeneral(const short &width, const short &height, GameObject *object);
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
-	short findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x = 0, int gameobject_offset_y = 0);
+	short findPlayerDirection(GameObject *object, const float &dt, const short &gameobject_offset_x = 0, const short &gameobject_offset_y = 0);
 	
 	//game logic
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
 	void clearDeadEnemies();
-	void processEffectsForEnemies(float dt);
-	void processEffectsForPlayer(float dt);
-	void processPlayerMovement(float dt);
-	void moveAllProjectiles(float dt);
+	void processEffectsForEnemies(const float &dt);
+	void processEffectsForPlayer(const float &dt);
+	void processPlayerMovement(const float &dt);
+	void moveAllProjectiles(const float &dt);
 
 	//rendering
 	void renderHomeMain();
@@ -148,8 +148,8 @@ public:
 	void renderPlayer(glm::mat4 &view);
 	void renderText();
 	void calculateNewRenderValues();
-	void calculateBlockOffsets(int i, int j);
-	void calculatePlantOffsets(int i, int j);
+	void calculateBlockOffsets(const short &i, const short &j);
+	void calculatePlantOffsets(const short &i, const short &j);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
 

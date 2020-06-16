@@ -172,7 +172,7 @@ void Game::Update(float dt){
 			generateChunks(2);
 
 		//finding out which chunk the player is in using position
-		int width, height;
+		short width, height;
 		//function returns which square the player is in
 		findLocationCoordinates(width, height, cam.Position[0], cam.Position[1]);
 		//collision detection between player and objects(the ground/plants/gates)
@@ -242,18 +242,18 @@ void Game::initializeGame(){
 	generatedChunks = true;
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
-	for(int k{}; k < 9; ++k){
+	for(short k{}; k < 9; ++k){
 		std::vector<Chunk> temp;
 		//getting all the chunks
-		for(int i{}; i < 100; ++i){
+		for(short i{}; i < 100; ++i){
 			temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
 		}
 		//add spawning logic here
-		for(int i{}; i < 100; ++i){
-			for(int j{10}; j < 100; ++j){
+		for(short i{}; i < 100; ++i){
+			for(short j{10}; j < 100; ++j){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
-						int rnum = random(mersenne);
+						short rnum = random(mersenne);
 						if(rnum <= 5){
 							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
@@ -313,7 +313,7 @@ void Game::clearAndResetGameBoard(){
 	}
 }
 
-void Game::setBackground(std::string name){
+void Game::setBackground(std::string &name){
 	backgroundTextures = &ResourceManager::GetBackground(name);
 }
 
@@ -375,7 +375,7 @@ CHUNK GENERATION
 
 
 */
-void Game::prepBoardForChunkCreation(int direction){
+void Game::prepBoardForChunkCreation(const short &&direction){
 	//0 is up
 	//1 is right
 	//2 is down
@@ -411,7 +411,7 @@ void Game::prepBoardForChunkCreation(int direction){
 	}
 }
 
-void Game::generateChunks(int direction){
+void Game::generateChunks(const short &&direction){
 	generatedChunks = true;
 	prepBoardForChunkCreation(direction);
 	despawnEnemiesFromDeletedChunks(direction);
@@ -422,18 +422,18 @@ void Game::generateChunks(int direction){
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
 	std::uniform_int_distribution random{1, 100};
 
-	for(int k{}; k < 3; ++k){
+	for(short k{}; k < 3; ++k){
 		std::vector<Chunk> temp;
 		//getting all the chunks
-		for(int i{}; i < 100; ++i){
+		for(short i{}; i < 100; ++i){
 			temp.push_back(ResourceManager::GetChunk(std::to_string(chunkSelector(mersenne))));
 		}
 		//add spawning logic here
-		for(int i{}; i < 100; ++i){
-			for(int j{10}; j < 100; ++j){
+		for(short i{}; i < 100; ++i){
+			for(short j{10}; j < 100; ++j){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
-						int rnum = random(mersenne);
+						short rnum = random(mersenne);
 						if(rnum <= 5){
 							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
@@ -484,12 +484,12 @@ void Game::generateChunks(int direction){
 	}
 }
 
-void Game::despawnEnemiesFromDeletedChunks(int direction){
+void Game::despawnEnemiesFromDeletedChunks(const short &&direction){
 	//0 is up
 	//1 is right
 	//2 is down
 	//3 is left
-	int min_x, max_x, min_y, max_y;
+	short min_x, max_x, min_y, max_y;
 	switch(direction){
 		case 0 :
 			min_y = -7500;
@@ -525,12 +525,12 @@ void Game::despawnEnemiesFromDeletedChunks(int direction){
 	}
 }
 
-void Game::despawnProjectilesFromDeletedChunks(int direction){
+void Game::despawnProjectilesFromDeletedChunks(const short &&direction){
 	//0 is up
 	//1 is right
 	//2 is down
 	//3 is left
-	int min_x, max_x, min_y, max_y;
+	short min_x, max_x, min_y, max_y;
 	switch(direction){
 		case 0 :
 			min_y = -7500;
@@ -573,7 +573,7 @@ void Game::despawnProjectilesFromDeletedChunks(int direction){
 	}
 }
 
-void Game::fixGeneratedEnemiesPosition(int i, int j, int k, int direction){
+void Game::fixGeneratedEnemiesPosition(const short &i, const short &j, const short &k, const short &direction){
 	auto end = board_enemies.rbegin();
 	//i is the mini chunk inside the larger chunk
 	//i/10 gives the row
@@ -619,14 +619,12 @@ void Game::fixGeneratedEnemiesPosition(int i, int j, int k, int direction){
 	}
 }
 
-void Game::fixRemainingEnemyPosition(int direction){
+void Game::fixRemainingEnemyPosition(const short &&direction){
 	//0 up
 	//1 right
 	//2 down
 	//3 left
-	bool vert{false};
-	if(direction % 2 == 0)
-		vert = true;
+	bool vert = direction % 2 == 0;
 	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(vert)
@@ -636,23 +634,26 @@ void Game::fixRemainingEnemyPosition(int direction){
 	}
 }
 
-void Game::fixRemainingProjectilePosition(int direction){
-	bool vert{false};
-	if(direction % 2 == 0)
-		vert = true;
-	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
-	for(int i{}; i < board_enemies.size(); ++i){
+void Game::fixRemainingProjectilePosition(const short &&direction){
+	bool vert = direction % 2 == 0;
+	short adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
+	for(int i{}; i < player_projectiles.size(); ++i){
 		if(vert){
 			player_projectiles[i].position[1] += adder;
-			enemy_projectiles[i].position[1] += adder;
 		}else{
 			player_projectiles[i].position[0] += adder;
+		}
+	}
+	for(int i{}; i < enemy_projectiles.size(); ++i){
+		if(vert){
+			enemy_projectiles[i].position[1] += adder;
+		}else{
 			enemy_projectiles[i].position[0] += adder;
 		}
 	}
 }
 
-int Game::findAddingAmountOffsetWhenGeneratingChunks(int direction){
+short Game::findAddingAmountOffsetWhenGeneratingChunks(const short &&direction){
 	switch(direction){
 		case 2 :
 		case 3 :
@@ -674,8 +675,7 @@ COLLISION DETECTION
 
 
 */
-//debug starting here
-void Game::player_and_object_collisions(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
+void Game::player_and_object_collisions(GameObject *object, const float &dt, const short &gameobject_offset_x, const short &gameobject_offset_y){
 	if(object->interactable){
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
 			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
@@ -694,7 +694,6 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 		if(collisionX && collisionY){
 			//getting previous location
 			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
-			std::cout << "\n\n" << direction << '\n' << (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y) << "\n\n";
 			//applying the corrections to the players position
 			//while also fixing the velocity in that direction
 			//to make it seem like they were stopped by the object
@@ -709,7 +708,6 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 					player.velocity[0] = 0.0f;
 					break;
 				case 2:
-					std::cout << "registered\n";
 					cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
 					player.velocity[1] = 0.0f;
 					break;
@@ -732,7 +730,7 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *pr
 	return (collisionX && collisionY);
 }
 
-bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *object2, int gameobject_offset_x, int gameobject_offset_y){
+bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *object2, const short &gameobject_offset_x, const short &gameobject_offset_y){
 	bool collisionX =  object2->position[0] + object2->size[0] >= object->position[0] + gameobject_offset_x
 		&& object->position[0] + object->size[0] + gameobject_offset_x >= object2->position[0];
 	bool collisionY = object2->position[1] - object2->size[1] <= object->position[1] + gameobject_offset_y
@@ -740,7 +738,7 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *ob
 	return (collisionX && collisionY);
 }
 
-void Game::findLocationCoordinates(int &width, int &height, float x, float y){
+void Game::findLocationCoordinates(short &width, short &height, const float &x, const float &y){
 	//this changes the variables to the index
 	//no returns, just changes the variables passed to it
 	if(y / 500 == 0){
@@ -771,7 +769,7 @@ void Game::findLocationCoordinates(int &width, int &height, float x, float y){
 	}
 }
 
-void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
+void Game::nineBlockCollisionDetectionPAndO(const short &width, const short &height, const float &dt){
 	//finding the chunks right next to the main chunk
 	short chunk_width_offset = width == -15 ? 0 : -1;
 	short max_width_chunk_offset = width == 14 ? 0 : 1;
@@ -808,8 +806,8 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 			//detect collisions between them and the player object
 			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
-			int gameobject_offset_y = (height + 1 + i) * 500;
-			int gameobject_offset_x = (width + chunk_width_offset) * 500;
+			short gameobject_offset_y = (height + 1 + i) * 500;
+			short gameobject_offset_x = (width + chunk_width_offset) * 500;
 			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
 				player_and_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], dt, gameobject_offset_x, gameobject_offset_y);
@@ -822,7 +820,7 @@ void Game::nineBlockCollisionDetectionPAndO(int width, int height, float dt){
 	}
 }
 
-bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject *object){
+bool Game::nineBlockCollisionDetectionGeneral(const short &width, const short &height, GameObject *object){
 	//finding the chunks right next to the main chunk
 	short chunk_width_offset = width == -15 ? 0 : -1;
 	short max_width_chunk_offset = width == 14 ? 0 : 1;
@@ -859,8 +857,8 @@ bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject 
 			//detect collisions between them and the player object
 			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
-			int gameobject_offset_y = (height + 1 + i) * 500;
-			int gameobject_offset_x = (width + chunk_width_offset) * 500;
+			short gameobject_offset_y = (height + 1 + i) * 500;
+			short gameobject_offset_x = (width + chunk_width_offset) * 500;
 			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
 				if(game_classic_two_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], object, gameobject_offset_x, gameobject_offset_y))
@@ -872,7 +870,7 @@ bool Game::nineBlockCollisionDetectionGeneral(int width, int height, GameObject 
 }
 
 void Game::player_projectile_collision_detection(){
-	int width, height;
+	short width, height;
 	for(int i{}; i < player_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		for(int j{}; j < board_enemies.size(); ++j){
@@ -923,7 +921,7 @@ void Game::player_projectile_collision_detection(){
 }
 
 void Game::enemy_projectile_collision_detection(){
-	int width, height;
+	short width, height;
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		if(abs(cam.Position[0] - enemy_projectiles[i].position[0]) > 500)
@@ -965,7 +963,7 @@ void Game::enemy_projectile_collision_detection(){
 	}
 }
 
-short Game::findPlayerDirection(GameObject *object, float dt, int gameobject_offset_x, int gameobject_offset_y){
+short Game::findPlayerDirection(GameObject *object, const float &dt, const short &gameobject_offset_x, const short &gameobject_offset_y){
 	short direction;
 	glm::vec2 prevPosition;
 	prevPosition[0] = cam.Position[0] - player.velocity[0] * dt;
@@ -1053,7 +1051,7 @@ void Game::clearDeadEnemies(){
 	}
 }
 
-void Game::processEffectsForEnemies(float dt){
+void Game::processEffectsForEnemies(const float &dt){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i].effects.size() > 0){
 			board_enemies[i].applyEffects(dt);
@@ -1061,11 +1059,11 @@ void Game::processEffectsForEnemies(float dt){
 	}
 }
 
-void Game::processEffectsForPlayer(float dt){
+void Game::processEffectsForPlayer(const float &dt){
 	player.applyEffects(dt);
 }
 
-void Game::processPlayerMovement(float dt){
+void Game::processPlayerMovement(const float &dt){
 	if(player.velocity[1] < 0)
 		player.falling = true;
 	if(Keys[GLFW_KEY_W]){
@@ -1120,7 +1118,7 @@ void Game::processPlayerMovement(float dt){
 	}
 }
 
-void Game::moveAllProjectiles(float dt){
+void Game::moveAllProjectiles(const float &dt){
 	for(int i{}; i < player_projectiles.size(); ++i){
 		player_projectiles[i].move(dt);
 	}
@@ -1241,21 +1239,20 @@ void Game::calculateNewRenderValues(){
 	numBlocks = 0;
 	numPlants = 0;
 	//only need to recalculate every time that we generate new chunks
-	for(int i{}; i < 9; ++i){
-		for(int j{}; j < 100; ++j){
+	for(short i{}; i < 9; ++i){
+		for(short j{}; j < 100; ++j){
 			calculateBlockOffsets(i, j);
 			calculatePlantOffsets(i, j);
 		}
 	}
 	generatedChunks = false;
-	std::cout << "calculated\n";
 	BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
 	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
 }
 
-void Game::calculateBlockOffsets(int i, int j){
-	for(int k{}; k < board[i/3][i%3][j].objects.size(); ++k){
+void Game::calculateBlockOffsets(const short &i, const short &j){
+	for(short k{}; k < board[i/3][i%3][j].objects.size(); ++k){
 		glm::vec2 temp{};
 		//calculating the x offset
 		//the object is going to be normally rendered at 0,0 with
@@ -1304,8 +1301,8 @@ void Game::calculateBlockOffsets(int i, int j){
 	}
 }
 
-void Game::calculatePlantOffsets(int i, int j){
-	for(int k{}; k < board[i/3][i%3][j].plants.size(); ++k){
+void Game::calculatePlantOffsets(const short &i, const short &j){
+	for(short k{}; k < board[i/3][i%3][j].plants.size(); ++k){
 		glm::vec2 temp{};
 		//calculating the x offset
 		//setting offset initially for chunks themselves

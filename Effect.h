@@ -33,7 +33,7 @@ public:
 
 	//false if it can still run
 	//true if it can't run anymore
-	bool applyEffect(int &health, int &defense, int &attack, float &speed, float &recovery, float dt){
+	bool applyEffect(int &health, int &defense, int &attack, float &speed, float &recovery, const float &dt){
 		timeCounter += dt;
 		if(once && apply){
 			health += dehealth;

@@ -48,7 +48,7 @@ public:
 
     glm::mat4 GetViewMatrix();
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
-    void ProcessKeyboard(glm::vec2 movement_vector, float deltaTime);
+    void ProcessKeyboard(const glm::vec2 &movement_vector, const float &deltaTime);
 private:
 	void updateCameraVectors();
 };

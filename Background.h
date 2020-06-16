@@ -11,6 +11,6 @@ public:
 	Texture layerThree;
 
 	Background(){}
-	Background(std::string one, std::string two, std::string three);
+	Background(std::string &one, std::string &two, std::string &three);
 };
 #endif
