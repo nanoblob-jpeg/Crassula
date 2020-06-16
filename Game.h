@@ -31,8 +31,8 @@ public:
 	int maxPlantSize{20};
 	int maxProjectileSize{20};
 	int maxEnemySize{40};
-	float maxSpeed = 70.0;
-	float acceleration = 100.0;
+	float maxSpeed = 1200.0;
+	float acceleration = 130.0;
 
 	enum GameState{
 		START_SCREEN,

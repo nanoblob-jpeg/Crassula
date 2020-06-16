@@ -705,6 +705,7 @@ void Game::player_and_object_collisions(GameObject *object, float dt, int gameob
 				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
 				player.velocity[0] = 0.0f;
 			}else if(direction == 2){
+				std::cout << "registered\n";
 				cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
 				player.velocity[1] = 0.0f;
 			}else{
