@@ -1207,10 +1207,9 @@ void Game::renderEnemies(glm::mat4 &view){
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	float tempSize = std::max(player.bowl->size[0], player.bowl->size[1]);
 	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-		glm::vec2(tempSize, tempSize));
+		player.bowl->size);
 }
 
 void Game::renderText(){
