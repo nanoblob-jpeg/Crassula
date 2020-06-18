@@ -1186,7 +1186,7 @@ void Game::renderGame(){
 
 	glm::mat4 view = cam.GetViewMatrix();
 	renderBlocks(view);
-	//renderPlants(view);
+	renderPlants(view);
 	//renderEnemyProjectiles(view);
 	//renderPlayerProjectiles(view);
 	//renderEnemies(view);
@@ -1237,10 +1237,9 @@ void Game::renderEnemies(glm::mat4 &view){
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	// Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-	// 	glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-	// 	player.bowl->size);
-	Renderer->DrawSprite(ResourceManager::GetTexture("plants"), glm::vec2(0.0,0.0), glm::vec2(maxPlantSize, maxPlantSize));
+	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
+		player.bowl->size);
 }
 
 void Game::renderText(){
@@ -1259,6 +1258,7 @@ void Game::calculateNewRenderValues(){
 	//clear already existing offset data
 	blockOffsets.clear();
 	plantOffsets.clear();
+	plantTexCoords.clear();
 	numBlocks = 0;
 	numPlants = 0;
 	//only need to recalculate every time that we generate new chunks
