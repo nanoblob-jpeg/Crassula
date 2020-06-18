@@ -303,7 +303,7 @@ void Game::loadEnemies(){
 	//as the specific one
 	//then they select it and set the position
 	ResourceManager::Enemies["Melee"] = Melee();
-	ResourceManager::texutreDepth["Melee"] = 0;
+	ResourceManager::textureDepth["Melee"] = 0;
 }
 
 void Game::clearAndResetGameBoard(){
@@ -1222,21 +1222,21 @@ void Game::renderPlants(glm::mat4 &view){
 void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size() * 6);
+	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
 	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
-	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size() * 6);
+	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
 	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("playerProjectiles"), maxProjectileSize);
 }
 
 void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
-	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size() * 6);
+	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
 	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize);
 }
 
@@ -1276,7 +1276,7 @@ void Game::calculateNewRenderValues(){
 	generatedChunks = false;
 	BlockRenderer->bindInstanceBuffer(&blockOffsets[0], numBlocks);
 	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
-	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants * 6);
+	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
 }
 
 void Game::calculateBlockOffsets(const short i, const short j){

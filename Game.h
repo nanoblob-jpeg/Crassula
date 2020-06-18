@@ -72,7 +72,7 @@ public:
 	int numBlocks{};
 	bool generatedChunks{false};
 	std::vector<glm::vec2> plantOffsets{};
-	std::vector<glm::vec2> plantTexCoords{};
+	std::vector<float> plantTexCoords{};
 	int numPlants{};
 	std::vector<glm::vec2> enemyProjectileOffsets{};
 	std::vector<float> enemyProjectileTexCoords{};
