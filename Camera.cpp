@@ -23,6 +23,8 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime){
 };
 
 void Camera::ProcessKeyboard(const glm::vec2 &movement_vector, const float deltaTime){
+    if(dt > 0.5)
+        return;
     Position += Right * movement_vector.x * deltaTime;
     Position += Up * movement_vector.y * deltaTime;
     Position.z = 1;

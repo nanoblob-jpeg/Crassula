@@ -1086,6 +1086,8 @@ void Game::processEffectsForPlayer(const float dt){
 }
 
 void Game::processPlayerMovement(const float dt){
+	if(dt > 0.5)
+		return;
 	if(player.velocity[1] < 0)
 		player.falling = true;
 	if(Keys[GLFW_KEY_W]){
@@ -1362,8 +1364,8 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		temp[1] -= (j / 10) * 500;
 		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
 
-		float t_width = ResourceManager::GetTexture("plants").width;
-		float t_height = ResourceManager::GetTexture("plants").height;
+		float t_width = ResourceManager::GetTexture("plants").m_width;
+		float t_height = ResourceManager::GetTexture("plants").m_height;
 		temp[0] /= t_width;
 		temp[1] /= t_height;
 
