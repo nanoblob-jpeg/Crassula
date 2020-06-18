@@ -1374,7 +1374,7 @@ void Game::calculatePlantOffsets(const short i, const short j){
 
 		numPlants++;
 
-		plantTexCoords.push_back(ResourceManager::textureDepth[board[i/3][i%3][j].plants[k].name]);
+		plantTexCoords.push_back(ResourceManager::getDepth(board[i/3][i%3][j].plants[k].name));
 	}
 }
 
@@ -1385,12 +1385,12 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
-		enemyProjectileTexCoords.push_back(ResourceManager::textureDepth[enemy_projectiles[i].name]);
+		enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
 	}
 
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(player_projectiles[i].position);
-		playerProjectileTexCoords.push_back(ResourceManager::textureDepth[player_projectiles[i].name]);
+		playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name]));
 	}
 }
 
@@ -1399,7 +1399,7 @@ void Game::calculateEnemyRenderValues(){
 	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(board_enemies[i].position);
-		enemyTexCoords.push_back(ResourceManager::textureDepth[board_enemies[i].name]);
+		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name]));
 	}
 }
 /*

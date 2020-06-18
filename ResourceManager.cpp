@@ -647,3 +647,7 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
     }
     return texture;
 }
+
+ing ResourceManager::getDepth(std::string name){
+    return textureDepth[name];
+}

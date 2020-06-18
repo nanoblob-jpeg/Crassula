@@ -77,6 +77,8 @@ public:
     static Background& GetBackground(std::string name);
     //loads the directory for all of the array textures
     static void LoadArrayTextures(const char *file);
+    //gets the depth value for a texture
+    static int getDepth(std::string name);
     // properly de-allocates all loaded resources
     static void Clear();
 private:
