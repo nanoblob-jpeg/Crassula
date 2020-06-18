@@ -2,3 +2,5 @@ plants
 bin/textures/plants.txt
 projectiles
 bin/textures/projectiles.txt
+enemies
+bin/textures/enemies.txt
