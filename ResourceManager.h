@@ -77,8 +77,6 @@ public:
     static Background& GetBackground(std::string name);
     //loads the directory for all of the array textures
     static void LoadArrayTextures(const char *file);
-    //loads a single array texture
-    Texture void LoadArrayTexture(std::string directory);
     // properly de-allocates all loaded resources
     static void Clear();
 private:
@@ -88,5 +86,7 @@ private:
     static Shader loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile = nullptr);
     // loads a single texture from file
     static Texture loadTextureFromFile(const char *file, bool alpha);
+    //loads a single array texture
+    static Texture LoadArrayTexture(std::string directory);
 };
 #endif
