@@ -13,12 +13,10 @@ public:
 	//position for the game is in the 10x10 grid
 	std::string name;
 	int level;
-	
-	std::vector<glm::vec2> texturePosition;
 
 	std::vector<std::string> projectileName;
 	Plant(){};
-	Plant(std::string pname, Texture &tex, glm::vec2 size, glm::vec2 texCoord, glm::vec3 color = glm::vec3(1.0f));
+	Plant(std::string pname, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
 
 	int interact(Game *game);
 };

@@ -371,16 +371,13 @@ void ResourceManager::LoadPlant(const char *file){
     //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < plant_list.size(); ++i){
         std::ifstream fstream2(plant_list[i]);
-        std::string name, tname, pname, pname2, pname3, pname4;
+        std::string name, pname, pname2, pname3, pname4;
         int num;
         glm::vec2 size;
         glm::vec3 color;
-        glm::vec2 texCoord;
         if(fstream2){
             std::getline(fstream2, line);
             name = line;
-            std::getline(fstream2, line);
-            tname = line;
             std::getline(fstream2, line);
             pname = line;
             std::getline(fstream2, line);
@@ -389,10 +386,6 @@ void ResourceManager::LoadPlant(const char *file){
             pname3 = line;
             std::getline(fstream2, line);
             pname4 = line;
-            std::getline(fstream2, line);
-            texCoord[0] = std::stof(line);
-            std::getline(fstream2, line);
-            texCoord[1] = std::stof(line);
             std::getline(fstream2, line);
             size[0] = std::stof(line);
             std::getline(fstream2, line);
@@ -403,7 +396,7 @@ void ResourceManager::LoadPlant(const char *file){
             color[1] = std::stoi(line);
             std::getline(fstream2, line);
             color[2] = std::stof(line);
-            Plant temp = Plant(name, Textures[tname], size, texCoord, color);
+            Plant temp = Plant(name, size, color);
             temp.projectileName.push_back(pname);
             temp.projectileName.push_back(pname2);
             temp.projectileName.push_back(pname3);

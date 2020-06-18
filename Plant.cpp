@@ -1,35 +1,11 @@
 #include "Game.h"
-Plant::Plant(std::string pname, Texture &tex, glm::vec2 psize, glm::vec2 texCoord, glm::vec3 pcolor)
+Plant::Plant(std::string pname, Texture &tex, glm::vec2 psize, glm::vec3 pcolor)
 	: name(pname), level(0)
 {
 	interactable = true;
-	sprite = tex;
 	size = psize;
 	color = pcolor;
-	int temp = std::max(psize[0], psize[1]);
-	unsigned int texWidth = sprite.m_width;
-	unsigned int texHeight = sprite.m_height;
-		
-	glm::vec2 tempCoord;
-	tempCoord[0] = (texCoord[0]/texWidth);
-	tempCoord[1] = ((texCoord[1] + temp)/texHeight);
-	texturePosition.push_back(tempCoord);
-
-	tempCoord[0] = ((texCoord[0] + temp)/texWidth);
-	tempCoord[1] = (texCoord[1]/texHeight);
-	texturePosition.push_back(tempCoord);
-
-	tempCoord[0] = (texCoord[0]/texWidth);
-	tempCoord[1] = (texCoord[1]/texHeight);
-	texturePosition.push_back(tempCoord);
-
-	texturePosition.push_back(texturePosition[0]);
-
-	tempCoord[0] = ((texCoord[0] + temp)/texWidth);
-	tempCoord[1] = ((texCoord[1] + temp)/texHeight);
-	texturePosition.push_back(tempCoord);
-
-	texturePosition.push_back(texturePosition[1]);
+	position = glm::vec2((50-size[0])/2, (size[1] - 50));
 };
 
 int Plant::interact(Game *game){
