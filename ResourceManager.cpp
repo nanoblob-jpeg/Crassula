@@ -520,7 +520,7 @@ void ResourceManager::LoadProjectiles(const char *file){
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, ResourceManager::Textures[tname], damage, range, name, piercing);
+        Projectile temp = Projectile(size, damage, range, name, piercing);
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){
@@ -594,7 +594,7 @@ void ResourceManager::LoadArrayTextures(const char *file){
     }
 
     for(int i{}; i < texturePaths.size(); ++i){
-        Textures[names[i]] = LoadArrayTexture(std::get<0>(texturePaths[i]).c_str(), std::get<1>(texturePaths[i]), std::get<2>(texturePaths[i]));
+        Textures[names[i]] = LoadArrayTexture(texturePaths[i]);
     }
 }
 
