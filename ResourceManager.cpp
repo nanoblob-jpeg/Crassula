@@ -88,6 +88,12 @@ void ResourceManager::Clear(){
     for(auto iter : Enemies){
         delete &iter.second;
     }
+    for(auto iter : Projectiles){
+        delete &iter.second;
+    }
+    for(auto iter : Backgrounds){
+        delete &iter.second;
+    }
 };
 // loads and generates a shader from file
 Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile){
