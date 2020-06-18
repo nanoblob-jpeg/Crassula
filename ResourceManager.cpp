@@ -15,6 +15,7 @@ std::map<std::string, Effect> ResourceManager::Effects;
 std::map<std::string, Enemy> ResourceManager::Enemies;
 std::map<std::string, Projectile> ResourceManager::Projectiles;
 std::map<std::string, Background> ResourceManager::Backgrounds;
+std::map<std::string, int> ResourceManager::textureDepth;
 
 // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
 Shader& ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name){
