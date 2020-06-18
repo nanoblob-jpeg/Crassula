@@ -28,6 +28,7 @@ void Texture::Generate(unsigned int width, unsigned int height, unsigned char* d
 }
 
 void Texture::generateArray(unsigned char* data){
+    glBindTexture(GL_TEXTURE_2D_ARRAY, this->ID);
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, this->index, this->m_width, this->m_height, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
     
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, this->m_wrap_s);
@@ -40,4 +41,8 @@ void Texture::generateArray(unsigned char* data){
 void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, this->ID);
+}
+
+void Texture::BindArray() const{
+    glBindTexture(GL_TEXTURE_2D_ARRAY, this->ID);
 }

@@ -1,11 +1,9 @@
 rose
-plants
+rose
 rose1
 rose1
 rose1
 rose1
-0
-0
 8
 20
 1.0

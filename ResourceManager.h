@@ -23,6 +23,7 @@ class ResourceManager
 {
 public:
     // resource storage
+    static std::map<std::string, int> textureDepth;
     static std::map<std::string, Shader> Shaders;
     static std::map<std::string, Texture> Textures;
     static std::map<std::string, Chunk> Chunks;

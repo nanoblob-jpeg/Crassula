@@ -2,9 +2,6 @@ french1
 3
 900
 1
-projectiles
-20
-20
 13
 9
 0

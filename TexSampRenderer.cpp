@@ -12,25 +12,25 @@ TexSampRenderer::~TexSampRenderer(){
 void TexSampRenderer::initRenderData(){
 	unsigned int VBO;
 	float vertices[] = {
-		// pos     
-		0.0f, 1.0f, 
-		1.0f, 0.0f, 
-		0.0f, 0.0f, //top left
+		// pos       // tex
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
 
-		0.0f, 1.0f, 
-		1.0f, 1.0f, 
-		1.0f, 0.0f  
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f
 	};
 
-	glGenVertexArrays(1, &this->quadVAO);
+	glGenVertexArrays(1, &this->m_quadVAO);
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(this->quadVAO);
+	glBindVertexArray(this->m_quadVAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -50,15 +50,15 @@ void TexSampRenderer::setOffset(glm::vec2 *data, int numOfOffsets){
 	glBindVertexArray(0);
 }
 
-void TexSampRenderer::setTextureCoords(glm::vec2 *data, int numOfCoords){
+void TexSampRenderer::setTextureCoords(float *data, int numOfCoords){
 	glBindVertexArray(this->quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceTexturePosVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * numOfCoords, data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numOfCoords, data, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glVertexAttribDivisor(2, 0);
+	glVertexAttribDivisor(2, 1);
 	glBindVertexArray(0);
 }
 
@@ -77,7 +77,7 @@ void TexSampRenderer::DrawSprites(int num, Texture &texture,float size, glm::vec
 	this->m_shader.setVec3("spriteColor", color);
 
 	glActiveTexture(GL_TEXTURE0);
-	texture.Bind();
+	texture.BindArray();
 
 	glBindVertexArray(this->quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, num);

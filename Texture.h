@@ -37,6 +37,7 @@ public:
 
 	//binds the texture as the current active GL_TEXTURE_2D texture object
 	void Bind() const;
+	void BindArray() const;
 
 };
 #endif

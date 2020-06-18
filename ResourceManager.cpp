@@ -354,8 +354,6 @@ void ResourceManager::LoadPlant(const char *file){
     projectile name 2
     projectile name 3
     projectile name 4
-    texture width position
-    texture height position
     width
     height
     color.r
@@ -497,9 +495,6 @@ void ResourceManager::LoadProjectiles(const char *file){
     damage
     range
     piercing
-    Texture name
-    texture width position
-    texture height position
     width
     height
     effect num
@@ -509,10 +504,10 @@ void ResourceManager::LoadProjectiles(const char *file){
     //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < projectile_list.size(); ++i){
         std::ifstream fstream2(projectile_list[i]);
-        std::string name, tname;
+        std::string name;
         int damage, range, num;
         bool piercing;
-        glm::vec2 size, texCoord;
+        glm::vec2 size;
         std::getline(fstream2, line);
         name = line;
         std::getline(fstream2, line);
@@ -522,16 +517,10 @@ void ResourceManager::LoadProjectiles(const char *file){
         std::getline(fstream2, line);
         piercing = static_cast<bool>(std::stoi(line));
         std::getline(fstream2, line);
-        tname = line;
-        std::getline(fstream2, line);
-        texCoord[0] = std::stof(line);
-        std::getline(fstream2, line);
-        texCoord[1] = std::stof(line);
-        std::getline(fstream2, line);
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, ResourceManager::Textures[tname], damage, range, texCoord, piercing);
+        Projectile temp = Projectile(size, ResourceManager::Textures[tname], damage, range, name, piercing);
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){
@@ -618,12 +607,15 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
 
     */
     std::vector<std::string> textureDir;
+    std::vector<std::string> names;
     /*
     file format:
     max width
     max height
     number of textures
+    name
     path name
+    name
     path name
     etc.
     (repeats)
@@ -639,6 +631,8 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
         std::getline(fstream, line);
         depth = static_cast<unsigned int>(std::stoi(line));
         while(std::getline(fstream, line)){
+            name.push_back(line);
+            std::getline(fstream, line);
             textureDir.push_back(line);
         }
     }
@@ -648,6 +642,7 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
         int texWidth, texHeight, nrChannels;
         unsigned char* data = stbi_load(textureDir[i].c_str(), &texWidth, &texHeight, &nrChannels, 0);
         texture.generateArray(data);
+        textureDepth[names[i]] = i;
         stbi_image_free(data);
     }
 }

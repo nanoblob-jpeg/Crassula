@@ -35,8 +35,9 @@ Game::~Game(){
 void Game::Init(){
 	initShaders();
 	initRenderers();
-	//load texture
+	//load textures
 	ResourceManager::LoadTexture2("textureDirectory.txt");
+	ResourceManager::LoadArrayTextures("arrayTextureDirectory.txt");
 	//load gameobject
 	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
 	//load chunk
@@ -1374,9 +1375,7 @@ void Game::calculatePlantOffsets(const short i, const short j){
 
 		numPlants++;
 
-		for(int l{}; l < 6; l++){
-			plantTexCoords.push_back(board[i/3][i%3][j].plants[k].texturePosition[l]);
-		}
+		plantTexCoords.push_back(ResourceManager::textureDepth[board[i/3][i%3][j].plants[k].name]);
 	}
 }
 
@@ -1394,9 +1393,7 @@ void Game::calculateProjectileRenderValues(){
 
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(player_projectiles[i].position);
-		for(int j{}; j < 6; ++j){
-			playerProjectileTexCoords.push_back(player_projectiles[i].texturePosition[j]);
-		}
+		playerProjectileTexCoords.push_back(ResourceManager::textureDepth[player_projectiles.name]);
 	}
 }
 
@@ -1428,9 +1425,9 @@ SHADER && RENDERER LOADING
 void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
 	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "plant");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "projectiles");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader.txt", nullptr, "enemy");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "plant");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "projectiles");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "enemy");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");

@@ -1,0 +1,11 @@
+20
+20
+4
+blossom1
+bin/textures/blossom1.png
+french1
+bin/textures/french1.png
+lamp1
+bin/textures/lamp1.png
+rose1
+bin/textures/rose1.png
