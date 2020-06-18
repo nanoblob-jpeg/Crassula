@@ -1399,7 +1399,7 @@ void Game::calculateEnemyRenderValues(){
 	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(board_enemies[i].position);
-		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name]);
+		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name);
 	}
 }
 /*
