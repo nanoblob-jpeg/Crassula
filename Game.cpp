@@ -303,7 +303,7 @@ void Game::loadEnemies(){
 	//as the specific one
 	//then they select it and set the position
 	ResourceManager::Enemies["Melee"] = Melee();
-	ResourceManager::textureDepth["Melee"] = 0;
+	ResourceManager::setDepth("Melee", 0);
 }
 
 void Game::clearAndResetGameBoard(){

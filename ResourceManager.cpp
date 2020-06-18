@@ -651,3 +651,7 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
 int ResourceManager::getDepth(std::string name){
     return textureDepth[name];
 }
+
+void ResourceManager::setDepth(std::string name, int depth){
+    textureDepth[name] = depth;
+}

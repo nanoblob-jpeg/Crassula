@@ -79,6 +79,8 @@ public:
     static void LoadArrayTextures(const char *file);
     //gets the depth value for a texture
     static int getDepth(std::string name);
+    //sets depth
+    static void setDepth(std::string name, int depth);
     // properly de-allocates all loaded resources
     static void Clear();
 private:
