@@ -72,6 +72,7 @@ void TexSampRenderer::DrawSprites(int num, Texture &texture,float size, glm::vec
 	model = glm::scale(model, glm::vec3(size, size, 1.0f));
 
 	this->m_shader.setMat4("model", model);
+	this->m_shader.setVec3("spriteColor", clm::vec3(0.0));
 
 	glActiveTexture(GL_TEXTURE0);
 	texture.Bind();

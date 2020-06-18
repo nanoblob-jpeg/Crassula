@@ -1189,7 +1189,7 @@ void Game::renderGame(){
 
 	glm::mat4 view = cam.GetViewMatrix();
 	renderBlocks(view);
-	//renderPlants(view);
+	renderPlants(view);
 	//renderEnemyProjectiles(view);
 	//renderPlayerProjectiles(view);
 	//renderEnemies(view);
@@ -1208,14 +1208,8 @@ void Game::renderGameBackground(){
 
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
-	// BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-	// 	glm::vec2(0.0f, -10.0f), glm::vec2(50.0f, 50.0f));
-	blockOffsets[0] = glm::vec2(0.0, 0.0);
-	blockOffsets[1] = glm::vec2(40/maxPlantSize, 0.0);
-	blockOffsets[2] = glm::vec2(0.0, 40/ResourceManager::GetTexture("plants").m_width);
-	BlockRenderer->bindInstanceBuffer(&blockOffsets[0], 3);
-	BlockRenderer->DrawInstancedSprites(3, ResourceManager::GetTexture("plants"), 
-		glm::vec2(0.0, 0.0), glm::vec2(maxPlantSize, maxPlantSize));
+	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
+		glm::vec2(0.0f, -10.0f), glm::vec2(50.0f, 50.0f));
 }
 
 void Game::renderPlants(glm::mat4 &view){
