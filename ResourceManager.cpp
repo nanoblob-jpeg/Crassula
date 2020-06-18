@@ -620,7 +620,7 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
     etc.
     (repeats)
     */
-    std::ifstream fstream(file);
+    std::ifstream fstream(directory.c_str());
     std::string line;
     unsigned int width, height, depth;
     if(fstream){
@@ -631,7 +631,7 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
         std::getline(fstream, line);
         depth = static_cast<unsigned int>(std::stoi(line));
         while(std::getline(fstream, line)){
-            name.push_back(line);
+            names.push_back(line);
             std::getline(fstream, line);
             textureDir.push_back(line);
         }
