@@ -1385,12 +1385,12 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
-		enemyProjectileTexCoords.push_back(ResourceManager::textureDepth[enemy.name]);
+		enemyProjectileTexCoords.push_back(ResourceManager::textureDepth[enemy_projectiles[i].name]);
 	}
 
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(player_projectiles[i].position);
-		playerProjectileTexCoords.push_back(ResourceManager::textureDepth[player_projectiles.name]);
+		playerProjectileTexCoords.push_back(ResourceManager::textureDepth[player_projectiles[i].name]);
 	}
 }
 
@@ -1399,9 +1399,7 @@ void Game::calculateEnemyRenderValues(){
 	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(board_enemies[i].position);
-		for(int j{}; j < 6; ++j){
-			enemyTexCoords.push_back(board_enemies[i].texturePosition[board_enemies[i].frameCounter][j]);
-		}
+		enemyTexCoords.push_back(ResourceManager::textureDepth[board_enemies[i].name]);
 	}
 }
 /*
