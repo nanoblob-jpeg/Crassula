@@ -303,6 +303,7 @@ void Game::loadEnemies(){
 	//as the specific one
 	//then they select it and set the position
 	ResourceManager::Enemies["Melee"] = Melee();
+	ResourceManager::texutreDepth["Melee"] = 0;
 }
 
 void Game::clearAndResetGameBoard(){
@@ -1366,10 +1367,8 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		temp[1] -= (j / 10) * 500;
 		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
 
-		float t_width = ResourceManager::GetTexture("plants").m_width;
-		float t_height = ResourceManager::GetTexture("plants").m_height;
-		temp[0] /= t_width;
-		temp[1] /= t_height;
+		temp[0] /= maxPlantSize;
+		temp[1] /= maxPlantSize;
 
 		plantOffsets.push_back(temp);
 
@@ -1386,9 +1385,7 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(enemy_projectiles[i].position);
-		for(int j{}; j < 6; ++j){
-			enemyProjectileTexCoords.push_back(enemy_projectiles[i].texturePosition[j]);
-		}
+		enemyProjectileTexCoords.push_back(ResourceManager::textureDepth[enemy.name]);
 	}
 
 	for(int i{}; i < player_projectiles.size(); ++i){

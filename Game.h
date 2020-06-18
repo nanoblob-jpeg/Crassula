@@ -75,11 +75,11 @@ public:
 	std::vector<glm::vec2> plantTexCoords{};
 	int numPlants{};
 	std::vector<glm::vec2> enemyProjectileOffsets{};
-	std::vector<glm::vec2> enemyProjectileTexCoords{};
+	std::vector<float> enemyProjectileTexCoords{};
 	std::vector<glm::vec2> playerProjectileOffsets{};
-	std::vector<glm::vec2> playerProjectileTexCoords{};
+	std::vector<float> playerProjectileTexCoords{};
 	std::vector<glm::vec2> enemyOffsets{};
-	std::vector<glm::vec2> enemyTexCoords{};
+	std::vector<float> enemyTexCoords{};
 	//background render logic stuff
 	Background *backgroundTextures = nullptr;
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};

@@ -42,6 +42,7 @@ public:
 			texturePosition.push_back(tempVec);
 		}
 		size = glm::vec2(40, 40);
+		name = "Melee";
 	}
 	void attackFunc(){
 		std::cout << "enemy attacked";

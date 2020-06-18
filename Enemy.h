@@ -13,6 +13,7 @@ public:
 	int attack;
 	float attackSpeed;
 	float speed;
+	std::string name;
 
 	int frameCounter{};
 
