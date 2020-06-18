@@ -398,7 +398,7 @@ void ResourceManager::LoadPlant(const char *file){
             color[1] = std::stoi(line);
             std::getline(fstream2, line);
             color[2] = std::stof(line);
-            Plant temp = Plant(name, size, color);
+            Plant temp = Plant(name, tname, size, color);
             temp.projectileName.push_back(pname);
             temp.projectileName.push_back(pname2);
             temp.projectileName.push_back(pname3);
