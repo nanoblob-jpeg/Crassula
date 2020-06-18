@@ -706,6 +706,7 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		if(collisionX && collisionY){
 			//set the object as the interactable object
 			player.interact = object;
+			std::cout << "collision with interactable\n";
 		}
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
