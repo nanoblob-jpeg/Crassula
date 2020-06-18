@@ -22,11 +22,18 @@ public:
 	unsigned int m_filter_min; //filtering mode if texture pixels < screen pixels
 	unsigned int m_filter_max; //filtering mode if texture pixels > screen pixels
 
+	//below is only for array textures
+	int index = 0;
+
 	//constructor
 	Texture();
+	Texture(unsigned int width, unsigned int height);
 
 	// generates texture from image data
 	void Generate(unsigned int width, unsigned int height, unsigned char* data);
+
+	//generates texture layer for array textures
+	void GenerateArray(unsigned char* data);
 
 	//binds the texture as the current active GL_TEXTURE_2D texture object
 	void Bind() const;

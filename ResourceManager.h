@@ -74,6 +74,10 @@ public:
     static void LoadBackgrounds(const char *file);
     //returns a background
     static Background& GetBackground(std::string name);
+    //loads the directory for all of the array textures
+    static void ResourceManager::LoadArrayTextures(const char *file);
+    //loads a single array texture
+    Texture void ResourceManager::LoadArrayTexture(std::string directory);
     // properly de-allocates all loaded resources
     static void Clear();
 private:

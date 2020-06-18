@@ -583,3 +583,71 @@ void ResourceManager::LoadBackgrounds(const char *file){
 Background& ResourceManager::GetBackground(std::string name){
     return Backgrounds[name];
 }
+
+void ResourceManager::LoadArrayTextures(const char *file){
+    std::vector<std::string> texturePaths;
+    std::vector<std::string> names;
+    /*
+    file format:
+    name
+    path name
+    (repeats)
+    */
+    std::ifstream fstream(file);
+    std::string line;
+    if(fstream){
+        while(std::getline(fstream, line)){
+            names.push_back(line);
+            std::getline(fstream, line);
+            texturePaths.push_back(line);
+
+        }
+    }
+
+    for(int i{}; i < texturePaths.size(); ++i){
+        Textures[names[i]] = LoadArrayTexture(std::get<0>(texturePaths[i]).c_str(), std::get<1>(texturePaths[i]), std::get<2>(texturePaths[i]));
+    }
+}
+
+Texture ResourceManager::LoadArrayTexture(std::string directory){
+    /*
+
+
+    all of these must be in GL_RGBA format aka .png or else this will break
+
+
+    */
+    std::vector<std::string> textureDir;
+    /*
+    file format:
+    max width
+    max height
+    number of textures
+    path name
+    path name
+    etc.
+    (repeats)
+    */
+    std::ifstream fstream(file);
+    std::string line;
+    unsigned int width, height, depth;
+    if(fstream){
+        std::getline(fstream, line);
+        width = static_cast<unsigned int>(std::stoi(line));
+        std::getline(fstream, line);
+        height = static_cast<unsigned int>(std::stoi(line));
+        std::getline(fstream, line);
+        depth = static_cast<unsigned int>(std::stoi(line));
+        while(std::getline(fstream, line)){
+            textureDir.push_back(line);
+        }
+    }
+
+    Texture texture(width, height, depth);
+    for(int i{}; i < textureDir.size(); ++i){
+        int texWidth, texHeight, nrChannels;
+        unsigned char* data = stbi_load(textureDir[i].c_str(), &texWidth, &texHeight, &nrChannels, 0);
+        texture.generateArray(data);
+        stbi_image_free(data);
+    }
+}

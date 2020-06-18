@@ -6,6 +6,11 @@ Texture::Texture() : m_width(0), m_height(0), m_internal_format(GL_RGB), m_image
 	glGenTextures(1, &this->ID);
 }
 
+Texture::Texture(unsigned int width, unsigned int height, unsigned int depth):m_width{width}, m_height{height}, m_internal_format(GL_RGB), m_image_format(GL_RGB), m_wrap_s(GL_REPEAT), m_wrap_t(GL_CLAMP_TO_EDGE), m_filter_min(GL_LINEAR), m_filter_max(GL_LINEAR){
+    glGenTextures(1, &this->ID);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+}
+
 void Texture::Generate(unsigned int width, unsigned int height, unsigned char* data)
 {
     this->m_width = width;
@@ -20,6 +25,16 @@ void Texture::Generate(unsigned int width, unsigned int height, unsigned char* d
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->m_filter_max);
     // unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture::generateArray(unsigned char* data){
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, this->index, this->m_width, this->m_height, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, this->m_wrap_s);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, this->m_wrap_t);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, this->m_filter_min);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, this->m_filter_max);
+    index++;
 }
 
 void Texture::Bind() const
