@@ -645,4 +645,5 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
         textureDepth[names[i]] = i;
         stbi_image_free(data);
     }
+    return texture;
 }
