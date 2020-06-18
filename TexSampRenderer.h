@@ -27,7 +27,7 @@ public:
 	);
 
 	void setOffset(glm::vec2 *data, int numOfOffsets);
-	void setTextureCoords(glm::vec2 *data, int numOfCoords);
+	void setTextureCoords(float *data, int numOfCoords);
 	void setViewMatrix(const std::string &name, glm::mat4 &viewMatrix) const;
 private:
 	void initRenderData();
