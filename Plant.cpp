@@ -1,11 +1,12 @@
 #include "Game.h"
-Plant::Plant(std::string pname, Texture &tex, glm::vec2 psize, glm::vec3 pcolor)
+Plant::Plant(std::string pname, std::string ptname, Texture &tex, glm::vec2 psize, glm::vec3 pcolor)
 	: name(pname), level(0)
 {
 	interactable = true;
 	size = psize;
 	color = pcolor;
 	position = glm::vec2((50-size[0])/2, (size[1] - 50));
+	textureName = ptname;
 };
 
 int Plant::interact(Game *game){

@@ -371,13 +371,15 @@ void ResourceManager::LoadPlant(const char *file){
     //needs also to be specified starting from the lower left hand corner of the texture
     for(int i{}; i < plant_list.size(); ++i){
         std::ifstream fstream2(plant_list[i]);
-        std::string name, pname, pname2, pname3, pname4;
+        std::string name, tname, pname, pname2, pname3, pname4;
         int num;
         glm::vec2 size;
         glm::vec3 color;
         if(fstream2){
             std::getline(fstream2, line);
             name = line;
+            std::getline(fstream2, line);
+            tname = line;
             std::getline(fstream2, line);
             pname = line;
             std::getline(fstream2, line);

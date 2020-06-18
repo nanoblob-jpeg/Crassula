@@ -1374,7 +1374,7 @@ void Game::calculatePlantOffsets(const short i, const short j){
 
 		numPlants++;
 
-		plantTexCoords.push_back(ResourceManager::getDepth(board[i/3][i%3][j].plants[k].name));
+		plantTexCoords.push_back(ResourceManager::getDepth(board[i/3][i%3][j].plants[k].textureName));
 	}
 }
 
