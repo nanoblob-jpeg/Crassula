@@ -16,8 +16,10 @@ public:
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
 	Projectile(){};
-	Projectile(glm::vec2 size, Texture sprite, int pdamage, int prange, std::string pname, bool ppiercing = false)
-		: GameObject(glm::vec2(0,0), size, sprite), damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}{};
+	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, bool ppiercing = false)
+		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}{
+			size = psize;
+		};
 
 	void setDirection(const glm::vec2 &startPosition, const short direction){
 		if(direction < 0){
