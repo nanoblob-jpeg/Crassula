@@ -1,5 +1,5 @@
 #include "Game.h"
-Plant::Plant(std::string pname, std::string ptname, Texture &tex, glm::vec2 psize, glm::vec3 pcolor)
+Plant::Plant(std::string pname, std::string ptname, glm::vec2 psize, glm::vec3 pcolor)
 	: name(pname), level(0)
 {
 	interactable = true;
