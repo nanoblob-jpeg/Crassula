@@ -1186,7 +1186,7 @@ void Game::renderGame(){
 
 	glm::mat4 view = cam.GetViewMatrix();
 	renderBlocks(view);
-	//renderPlants(view);
+	renderPlants(view);
 	//renderEnemyProjectiles(view);
 	//renderPlayerProjectiles(view);
 	//renderEnemies(view);
