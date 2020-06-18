@@ -1362,8 +1362,10 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		temp[1] -= (j / 10) * 500;
 		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
 
-		temp[0] /= maxPlantSize;
-		temp[1] /= maxPlantSize;
+		float t_width = ResourceManager::GetTexture("plants").width;
+		float t_height = ResourceManager::GetTexture("plants").height;
+		temp[0] /= t_width;
+		temp[1] /= t_height;
 
 		plantOffsets.push_back(temp);
 
