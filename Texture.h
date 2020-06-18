@@ -27,7 +27,7 @@ public:
 
 	//constructor
 	Texture();
-	Texture(unsigned int width, unsigned int height);
+	Texture(unsigned int width, unsigned int height, unsigned int depth);
 
 	// generates texture from image data
 	void Generate(unsigned int width, unsigned int height, unsigned char* data);
