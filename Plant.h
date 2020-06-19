@@ -11,7 +11,6 @@
 class Plant : public GameObject{
 public:
 	//position for the game is in the 10x10 grid
-	std::string type = "plant";
 	std::string name;
 	std::string textureName;
 	int level;

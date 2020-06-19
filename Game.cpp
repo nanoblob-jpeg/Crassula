@@ -718,7 +718,7 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		if(collisionX && collisionY){
 			//set the object as the interactable object
 			player.interact = object;
-			player.location = findInteractPosition(object);
+			player.location = findInteractPosition(object, gameobject_offset_x, gameobject_offset_y);
 		}
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
@@ -1042,7 +1042,7 @@ glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset
 	if(width <= -6){
 		output[0] = 0;
 		output[2] = width + 15;
-	}else if(width + chunk_width_offset <= 4){
+	}else if(width <= 4){
 		output[0] = 1;
 		output[2] = width + 5;
 	}else{

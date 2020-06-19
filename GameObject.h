@@ -16,6 +16,7 @@ public:
 	glm::vec3 color;
 	float rotation;
 	bool interactable{false};
+	std::string type = "";
 
 	Texture sprite;
 	/*

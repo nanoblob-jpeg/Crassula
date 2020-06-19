@@ -7,6 +7,7 @@ Plant::Plant(std::string pname, std::string ptname, glm::vec2 psize, glm::vec3 p
 	color = pcolor;
 	position = glm::vec2((50-size[0])/2, (size[1] - 50));
 	textureName = ptname;
+	type = "plant";
 };
 
 int Plant::interact(Game *game){
