@@ -40,3 +40,7 @@ void Chunk::init(std::vector<std::string> &names){
 		locationOfObjects[(objects[i]->position.y/50) * -10 + (objects[i]->position.x/50)] = true;
 	}
 }
+
+void Chunk::removePlant(float in){
+	plants.erase(plants.begin() + in);
+}

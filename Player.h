@@ -42,6 +42,7 @@ public:
 
 	//if the player is currently on an interactalbe GameObject, this will store it
 	//the interact key is currently "i"
+	glm::vec3 location{0.0,0.0,0.0};
 	GameObject *interact = nullptr;
 
 	//effects

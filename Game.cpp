@@ -116,6 +116,16 @@ void Game::ProcessInput(float dt){
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
 					player.interact->interact(this);
+					if(player.interact->type.compare("plant") == 0){
+						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
+						for(int i{}; i < 9; ++i){
+							for(int j{}; j < 100; ++j){
+								calculatePlantOffsets(i, j);
+							}
+						}
+						PlantRenderer->setOffset(&plantOffsets[0], numPlants);
+						PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
+					}
 					points += 5;
 					player.experience += 2;
 				}
@@ -708,7 +718,7 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		if(collisionX && collisionY){
 			//set the object as the interactable object
 			player.interact = object;
-			std::cout << "collision with interactable\n";
+			player.location = findInteractPosition(object);
 		}
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
@@ -1022,6 +1032,42 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 		direction = -1;
 	}
 	return direction;
+}
+
+glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y){
+	short width, height, index_chunk;
+	glm::vec4 output = {0.0f, 0.0f, 0.0f, 0.0f};
+	findLocationCoordinates(width, height, gameobject_offset_x, gameobject_offset_y);
+
+	if(width <= -6){
+		output[0] = 0;
+		output[2] = width + 15;
+	}else if(width + chunk_width_offset <= 4){
+		output[0] = 1;
+		output[2] = width + 5;
+	}else{
+		output[0] = 2;
+		output[2] = width - 5;
+	}
+
+	if(height <= -6){
+		output[1] = 2;
+		output[2] += (-6 - (height)) * 10;
+	}else if(height <= 4){
+		output[1] = 1;
+		output[2] += (4 - (height)) * 10;
+	}else{
+		output[1] = 0;
+		output[2] += (14 - (height)) * 10;
+	}
+
+	auto it = board[output[0]][output[1]][output[2]].plants.begin();
+	auto it2 = board[output[0]][output[1]][output[2]].plants.end();
+	auto index = std::find_if(it, it2, [=](Plant &p){
+		return p.position = object->position;
+	});
+	output[3] = index - it;
+	return output;
 }
 /*
 
@@ -1376,6 +1422,10 @@ void Game::calculatePlantOffsets(const short i, const short j){
 
 		plantTexCoords.push_back(ResourceManager::getDepth(board[i/3][i%3][j].plants[k].textureName));
 	}
+}
+
+void Game::calculatePlantOffsets(int width, int height, int index){
+
 }
 
 void Game::calculateProjectileRenderValues(){

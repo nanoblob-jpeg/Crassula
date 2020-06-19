@@ -20,6 +20,7 @@ public:
 	
 	Chunk(){}
 	void Load(const char *file);
+	void removePlant(float in);
 private:
 	void init(std::vector<std::string> &files);
 };

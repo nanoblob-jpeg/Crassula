@@ -127,7 +127,8 @@ public:
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
 	short findPlayerDirection(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
-	
+	glm::vec4 findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y);
+
 	//game logic
 	void spawnPlayerProjectile();
 	glm::vec2 getProjectileStartPositionForPlayer(Projectile &p);
@@ -151,6 +152,7 @@ public:
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(const short i, const short j);
 	void calculatePlantOffsets(const short i, const short j);
+	void calculatePlantOffsets(int width, int height, int index);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
 
