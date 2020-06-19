@@ -55,9 +55,7 @@ void ResourceManager::LoadTexture2(const char *file){
 }
 // loads (and generates) a texture from file
 Texture& ResourceManager::LoadTexture(const char *file, bool alpha, std::string name){
-    std::cout << name << std::endl;
     Textures[name] = loadTextureFromFile(file, alpha);
-    std::cout << "t" << glGetError() << std::endl;
     return Textures[name];
 };
 // retrieves a stored texture
