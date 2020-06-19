@@ -643,7 +643,6 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
 
     Texture texture(width, height, depth);
     for(int i{}; i < textureDir.size(); ++i){
-        std::cout << names[i] << std::endl;
         int texWidth, texHeight, nrChannels;
         unsigned char* data = stbi_load(textureDir[i].c_str(), &texWidth, &texHeight, &nrChannels, 0);
         texture.generateArray(data, depth);
