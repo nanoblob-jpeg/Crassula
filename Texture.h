@@ -33,7 +33,7 @@ public:
 	void Generate(unsigned int width, unsigned int height, unsigned char* data);
 
 	//generates texture layer for array textures
-	void generateArray(unsigned char* data);
+	void generateArray(unsigned char* data, int depth);
 
 	//binds the texture as the current active GL_TEXTURE_2D texture object
 	void Bind() const;

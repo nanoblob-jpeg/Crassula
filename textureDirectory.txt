@@ -13,12 +13,3 @@ mountain_2
 bin/textures/mountain_3.png
 1
 mountain_3
-bin/textures/plants.png
-1
-plants
-bin/textures/projectiles.png
-1
-projectiles
-bin/textures/enemies.png
-1
-enemies

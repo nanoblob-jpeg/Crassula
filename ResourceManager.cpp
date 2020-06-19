@@ -55,7 +55,9 @@ void ResourceManager::LoadTexture2(const char *file){
 }
 // loads (and generates) a texture from file
 Texture& ResourceManager::LoadTexture(const char *file, bool alpha, std::string name){
+    std::cout << name << std::endl;
     Textures[name] = loadTextureFromFile(file, alpha);
+    std::cout << "t" << glGetError() << std::endl;
     return Textures[name];
 };
 // retrieves a stored texture
@@ -641,9 +643,10 @@ Texture ResourceManager::LoadArrayTexture(std::string directory){
 
     Texture texture(width, height, depth);
     for(int i{}; i < textureDir.size(); ++i){
+        std::cout << names[i] << std::endl;
         int texWidth, texHeight, nrChannels;
         unsigned char* data = stbi_load(textureDir[i].c_str(), &texWidth, &texHeight, &nrChannels, 0);
-        texture.generateArray(data);
+        texture.generateArray(data, depth);
         textureDepth[names[i]] = i;
         stbi_image_free(data);
     }
