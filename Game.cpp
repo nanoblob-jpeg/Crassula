@@ -1226,7 +1226,7 @@ void Game::renderHomeMain(){
 }
 
 void Game::renderGame(){
-	//renderGameBackground();
+	renderGameBackground();
 	//prepping data for the block rendering
 	if(generatedChunks){
 		calculateNewRenderValues();
