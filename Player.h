@@ -38,7 +38,7 @@ public:
 	int numPlants = 0;
 	int currentPlant{-1}; // -1 represents the basic attack
 	int numCurrentLevelFourPlants = 0;
-	std::vector<Plant *> plants;
+	std::vector<Plant *> plants = {nullptr, nullptr, nullptr, nullptr};
 
 	//if the player is currently on an interactalbe GameObject, this will store it
 	//the interact key is currently "i"
