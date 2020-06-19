@@ -30,12 +30,13 @@ void Texture::Generate(unsigned int width, unsigned int height, unsigned char* d
 void Texture::generateArray(unsigned char* data){
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->ID);
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, this->index, this->m_width, this->m_height, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    
+    std::cout << glGetError() << std::endl;
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, this->m_wrap_s);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, this->m_wrap_t);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, this->m_filter_min);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, this->m_filter_max);
     index++;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
 void Texture::Bind() const

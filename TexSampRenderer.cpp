@@ -41,7 +41,7 @@ void TexSampRenderer::initRenderData(){
 void TexSampRenderer::setOffset(glm::vec2 *data, int numOfOffsets){
 	glBindVertexArray(this->quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * numOfOffsets, data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * numOfOffsets, data, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
