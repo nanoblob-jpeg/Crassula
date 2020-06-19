@@ -1262,7 +1262,7 @@ void Game::renderBlocks(glm::mat4 &view){
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize);
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, 10.0f));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
