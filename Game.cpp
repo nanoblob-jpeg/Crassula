@@ -284,8 +284,8 @@ void Game::initializeGame(){
 							//position also accounts for the plant being smaller than the block
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
-							end->position.x = ((j-10)/10) * 50 + (50 - (it)->second.size[0])/2;
-							end->position.y = ((j-10)%10) * 50 + (50 - (it)->second.size[1]);
+							end->position.x += ((j-10)/10) * 50;
+							end->position.y += ((j-10)%10) * 50;
 						}else if(rnum <= 30){
 							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
@@ -1411,7 +1411,7 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		}
 		//subtracting for each little box in a chunk
 		temp[1] -= (j / 10) * 500;
-		temp[1] += board[i/3][i%3][j].plants[k].position[1];
+		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
 
 		temp[0] /= maxPlantSize;
 		temp[1] /= maxPlantSize;
