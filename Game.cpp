@@ -1298,9 +1298,12 @@ void Game::renderEnemies(glm::mat4 &view){
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-		player.bowl->size);
+	// Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+	// 	glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
+	// 	player.bowl->size);
+	Renderer->DrawSprite(backgroundTextures->layerOne, 
+		glm::vec2(0,0),
+		glm::vec2(800, 800));
 }
 
 void Game::renderText(){
