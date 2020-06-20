@@ -153,7 +153,6 @@ public:
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(const short i, const short j);
 	void calculatePlantOffsets(const short i, const short j);
-	void calculatePlantOffsets(int width, int height, int index);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
 

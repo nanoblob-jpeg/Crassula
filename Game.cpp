@@ -1246,6 +1246,7 @@ void Game::renderGame(){
 }
 
 void Game::renderGameBackground(){
+	std::cout << glGetError() << std::endl;
 	BackGround_l1->setOffset(backgroundLayerOneOffset);
 	std::cout << backgroundLayerOneOffset.x << "    " << backgroundLayerOneOffset.y << std::endl;
 	std::cout << glGetError() << std::endl;
@@ -1432,10 +1433,6 @@ void Game::calculatePlantOffsets(const short i, const short j){
 
 		plantTexCoords.push_back(ResourceManager::getDepth(board[i/3][i%3][j].plants[k].textureName));
 	}
-}
-
-void Game::calculatePlantOffsets(int width, int height, int index){
-
 }
 
 void Game::calculateProjectileRenderValues(){
