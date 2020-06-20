@@ -144,12 +144,6 @@ void Game::Update(float dt){
 
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
-	backgroundLayerOneOffset[0] += ((player.velocity[0]/12) * dt)/backgroundSize;
-	backgroundLayerOneOffset[1] += ((player.velocity[1]/12) * dt)/backgroundSize;
-	backgroundLayerTwoOffset[0] += ((player.velocity[0]/8) * dt)/backgroundSize;
-	backgroundLayerTwoOffset[1] += ((player.velocity[1]/8) * dt)/backgroundSize;
-	backgroundLayerThreeOffset[0] += ((player.velocity[0]/5) * dt)/backgroundSize;
-	backgroundLayerThreeOffset[1] += ((player.velocity[1]/5) * dt)/backgroundSize;
 	player.interact = nullptr;
 
 	if(m_state == HOME_MAIN){
@@ -210,6 +204,12 @@ void Game::Update(float dt){
 		if(player.isDead()){
 			gameEndProtocol();
 		}
+		backgroundLayerOneOffset[0] += ((player.velocity[0]/12) * dt)/backgroundSize;
+		backgroundLayerOneOffset[1] += ((player.velocity[1]/12) * dt)/backgroundSize;
+		backgroundLayerTwoOffset[0] += ((player.velocity[0]/8) * dt)/backgroundSize;
+		backgroundLayerTwoOffset[1] += ((player.velocity[1]/8) * dt)/backgroundSize;
+		backgroundLayerThreeOffset[0] += ((player.velocity[0]/5) * dt)/backgroundSize;
+		backgroundLayerThreeOffset[1] += ((player.velocity[1]/5) * dt)/backgroundSize;
 	}
 
 	//test for the other states else if()
@@ -1252,10 +1252,12 @@ void Game::renderGameBackground(){
 	BackGround_l1->DrawSprite(backgroundTextures->layerOne);
 	std::cout << glGetError() << std::endl;
 	BackGround_l2->setOffset(backgroundLayerTwoOffset);
+	std::cout << backgroundLayerTwoOffset.x << "    " << backgroundLayerTwoOffset.y << std::endl;
 	std::cout << glGetError() << std::endl;
 	BackGround_l2->DrawSprite(backgroundTextures->layerTwo);
 	std::cout << glGetError() << std::endl;
 	BackGround_l3->setOffset(backgroundLayerThreeOffset);
+	std::cout << backgroundLayerThreeOffset.x << "    " << backgroundLayerThreeOffset.y << std::endl;
 	std::cout << glGetError() << std::endl;
 	BackGround_l3->DrawSprite(backgroundTextures->layerThree);
 	std::cout << glGetError() << std::endl;
