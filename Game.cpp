@@ -1247,11 +1247,17 @@ void Game::renderGame(){
 
 void Game::renderGameBackground(){
 	BackGround_l1->setOffset(backgroundLayerOneOffset);
+	std::cout << glGetError() << std::endl;
 	BackGround_l1->DrawSprite(backgroundTextures->layerOne);
+	std::cout << glGetError() << std::endl;
 	BackGround_l2->setOffset(backgroundLayerTwoOffset);
+	std::cout << glGetError() << std::endl;
 	BackGround_l2->DrawSprite(backgroundTextures->layerTwo);
+	std::cout << glGetError() << std::endl;
 	BackGround_l3->setOffset(backgroundLayerThreeOffset);
+	std::cout << glGetError() << std::endl;
 	BackGround_l3->DrawSprite(backgroundTextures->layerThree);
+	std::cout << glGetError() << std::endl;
 }
 
 void Game::renderBlocks(glm::mat4 &view){
