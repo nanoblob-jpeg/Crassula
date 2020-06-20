@@ -33,7 +33,7 @@ public:
 	short maxEnemySize{40};
 	float maxSpeed = 90.0;
 	float acceleration = 130.0;
-	float backgroundSize{2500}
+	float backgroundSize{2500};
 
 	enum GameState{
 		START_SCREEN,
