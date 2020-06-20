@@ -12,6 +12,7 @@ class BackgroundRenderer{
 private:
 	Shader m_shader;
 	unsigned int m_quadVAO;
+	unsigned int offsetVBO;
 public:
 	BackgroundRenderer(Shader &shader);
 	~BackgroundRenderer();
