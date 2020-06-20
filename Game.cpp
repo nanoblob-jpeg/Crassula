@@ -1247,6 +1247,7 @@ void Game::renderGame(){
 
 void Game::renderGameBackground(){
 	BackGround_l1->setOffset(backgroundLayerOneOffset);
+	std::cout << backgroundLayerOneOffset.x << "    " << backgroundLayerOneOffset.y << std::endl;
 	std::cout << glGetError() << std::endl;
 	BackGround_l1->DrawSprite(backgroundTextures->layerOne);
 	std::cout << glGetError() << std::endl;
