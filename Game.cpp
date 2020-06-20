@@ -1258,6 +1258,7 @@ void Game::renderGameBackground(){
 	std::cout << glGetError() << std::endl;
 	BackGround_l3->DrawSprite(backgroundTextures->layerThree);
 	std::cout << glGetError() << std::endl;
+	std::cout << "\n\n\n\n\n";
 }
 
 void Game::renderBlocks(glm::mat4 &view){
