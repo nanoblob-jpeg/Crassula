@@ -15,8 +15,9 @@ void BackgroundRenderer::DrawSprite(Texture &texture){
 	model = glm::translate(model, glm::vec3(-7500.0f, 7500.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(15000.0f, 15000.0f, 1.0f));
 
+	glm::vec3 color(1.0f);
 	this->m_shader.setMat4("model", model);
-	this->m_shader.setVec3("spriteColor", glm::vec3(1.0f));
+	this->m_shader.setVec3("spriteColor", color);
 
 	glActiveTexture(GL_TEXTURE0);
 	texture.Bind();
@@ -52,6 +53,6 @@ void BackgroundRenderer::initRenderData(){
 	glBindVertexArray(0);
 }
 
-void BackgroundRenderer::setOffset(glm::vec2 &offset){
+void BackgroundRenderer::setOffset(glm::vec2 offset){
 	m_shader.setVec2("offset", offset);
 }

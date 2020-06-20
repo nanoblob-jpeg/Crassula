@@ -17,7 +17,7 @@ public:
 	~BackgroundRenderer();
 
 	void DrawSprite(Texture &texture);
-	void setOffset(glm::vec2 &offset);
+	void setOffset(glm::vec2 offset);
 private:
 	void initRenderData();
 };
