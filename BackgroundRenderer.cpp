@@ -16,7 +16,7 @@ void BackgroundRenderer::DrawSprite(Texture &texture){
 	model = glm::scale(model, glm::vec3(15000.0f, 15000.0f, 1.0f));
 
 	this->m_shader.setMat4("model", model);
-	this->m_shader.setVec3("spriteColor", color);
+	this->m_shader.setVec3("spriteColor", glm::vec3(1.0f));
 
 	glActiveTexture(GL_TEXTURE0);
 	texture.Bind();
