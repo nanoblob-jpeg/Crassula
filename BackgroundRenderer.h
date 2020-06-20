@@ -17,8 +17,9 @@ public:
 	BackgroundRenderer(Shader &shader);
 	~BackgroundRenderer();
 
-	void DrawSprite(Texture &texture);
-	void setOffset(glm::vec2 offset);
+	void DrawSprite(Texture &texture, glm::vec2 position);
+	void setOffset(glm::vec2 &offset);
+	void setViewMatrix(const std::string &name, glm::mat4 &view);
 private:
 	void initRenderData();
 };

@@ -12,8 +12,8 @@ BackgroundRenderer::~BackgroundRenderer(){
 void BackgroundRenderer::DrawSprite(Texture &texture, glm::vec2 position){
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-300 + position[0], 400.0f + position[1], 0.0f));
-	model = glm::scale(model, glm::vec3(600.0f, 800.0f, 1.0f));
+	model = glm::translate(model, glm::vec3(-302 + position[0], -400 + position[1], 0.0f));
+	model = glm::scale(model, glm::vec3(800.0f, 800.0f, 1.0f));
 
 	glm::vec3 color(1.0f);
 	this->m_shader.setMat4("model", model);
@@ -66,21 +66,25 @@ void BackgroundRenderer::setOffset(glm::vec2 &offset){
 			and 1- (that^^) for the top side
 	*/
 	float texturePositions[] = {
-		0.34 + offset[0], 0.62 + offset[1],
-		0.66 + offset[0], 0.38 + offset[1],
-		0.34 + offset[0], 0.38 + offset[1],
+		0.34f + offset[0], 0.62f + offset[1],
+		0.66f + offset[0], 0.38f + offset[1],
+		0.34f + offset[0], 0.38f + offset[1],
 
-		0.34 + offset[0], 0.62 + offset[1],
-		0.66 + offset[0], 0.62 + offset[1],
-		0.66 + offset[0], 0.38 + offset[1]
-	}
+		0.34f + offset[0], 0.62f + offset[1],
+		0.66f + offset[0], 0.62f + offset[1],
+		0.66f + offset[0], 0.38f + offset[1]
+	};
 
-	glBindVertexArray(this->m_quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, offsetVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texturePositions), texturePositions, GL_STATIC_DRAW);
 
+	glBindVertexArray(this->m_quadVAO);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void BackgroundRenderer::setViewMatrix(const std::string &name, glm::mat4 &view){
+	m_shader.setMat4(name, view);
 }

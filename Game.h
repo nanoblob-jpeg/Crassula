@@ -142,7 +142,7 @@ public:
 	//rendering
 	void renderHomeMain();
 	void renderGame();
-	void renderGameBackground();
+	void renderGameBackground(glm::mat4 &view);
 	void renderBlocks(glm::mat4 &view);
 	void renderPlants(glm::mat4 &view);
 	void renderEnemyProjectiles(glm::mat4 &view);

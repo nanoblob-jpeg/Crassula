@@ -1226,7 +1226,8 @@ void Game::renderHomeMain(){
 }
 
 void Game::renderGame(){
-	renderGameBackground();
+	glm::mat4 view = cam.GetViewMatrix();
+	renderGameBackground(view);
 	//prepping data for the block rendering
 	if(generatedChunks){
 		calculateNewRenderValues();
@@ -1235,7 +1236,6 @@ void Game::renderGame(){
 
 	calculateEnemyRenderValues();
 
-	glm::mat4 view = cam.GetViewMatrix();
 	renderBlocks(view);
 	renderPlants(view);
 	//renderEnemyProjectiles(view);
@@ -1245,24 +1245,18 @@ void Game::renderGame(){
 	//renderText();
 }
 
-void Game::renderGameBackground(){
-	std::cout << glGetError() << std::endl;
+void Game::renderGameBackground(glm::mat4 &view){
+	BackGround_l1->setViewMatrix("view", view);
 	BackGround_l1->setOffset(backgroundLayerOneOffset);
-	std::cout << backgroundLayerOneOffset.x << "    " << backgroundLayerOneOffset.y << std::endl;
-	std::cout << glGetError() << std::endl;
-	BackGround_l1->DrawSprite(backgroundTextures->layerOne, cam.Position);
-	std::cout << glGetError() << std::endl;
+	BackGround_l1->DrawSprite(backgroundTextures->layerOne, glm::vec2(cam.Position[0], cam.Position[1]));
+
+	BackGround_l2->setViewMatrix("view", view);
 	BackGround_l2->setOffset(backgroundLayerTwoOffset);
-	std::cout << backgroundLayerTwoOffset.x << "    " << backgroundLayerTwoOffset.y << std::endl;
-	std::cout << glGetError() << std::endl;
-	BackGround_l2->DrawSprite(backgroundTextures->layerTwo, cam.Position);
-	std::cout << glGetError() << std::endl;
+	BackGround_l2->DrawSprite(backgroundTextures->layerTwo, glm::vec2(cam.Position[0], cam.Position[1]));
+
+	BackGround_l3->setViewMatrix("view", view);
 	BackGround_l3->setOffset(backgroundLayerThreeOffset);
-	std::cout << backgroundLayerThreeOffset.x << "    " << backgroundLayerThreeOffset.y << std::endl;
-	std::cout << glGetError() << std::endl;
-	BackGround_l3->DrawSprite(backgroundTextures->layerThree, cam.Position);
-	std::cout << glGetError() << std::endl;
-	std::cout << "\n\n\n\n\n";
+	BackGround_l3->DrawSprite(backgroundTextures->layerThree, glm::vec2(cam.Position[0], cam.Position[1]));
 }
 
 void Game::renderBlocks(glm::mat4 &view){
@@ -1568,7 +1562,7 @@ void Game::initBackgroundRenderers(glm::mat4 &projection){
 	sProgram.use();
 	sProgram.setInt("image", 0);
 	sProgram.setMat4("projection", projection);
-	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("BackGround_l3"));
+	BackGround_l3 = new BackgroundRenderer(ResourceManager::GetShader("background_l3"));
 }
 
 void Game::initTextRenderer(glm::mat4 &view, glm::mat4 &projection){
