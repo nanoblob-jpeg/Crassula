@@ -12,8 +12,8 @@ BackgroundRenderer::~BackgroundRenderer(){
 void BackgroundRenderer::DrawSprite(Texture &texture){
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(800.0f, 800.0f, 1.0f));
+	model = glm::translate(model, glm::vec3(-300, 400.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(600.0f, 800.0f, 1.0f));
 
 	glm::vec3 color(1.0f);
 	this->m_shader.setMat4("model", model);
