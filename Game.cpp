@@ -1240,7 +1240,7 @@ void Game::renderGame(){
 	renderPlants(view);
 	//renderEnemyProjectiles(view);
 	//renderPlayerProjectiles(view);
-	//renderEnemies(view);
+	renderEnemies(view);
 	renderPlayer(view);
 	//renderText();
 }
@@ -1288,7 +1288,7 @@ void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
-	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize);
+	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, 0.0f));
 }
 
 void Game::renderPlayer(glm::mat4 &view){

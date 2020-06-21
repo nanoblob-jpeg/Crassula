@@ -1,6 +1,6 @@
 20
 20
-4
+5
 blossom1
 bin/textures/blossom1.png
 french1
@@ -9,3 +9,5 @@ lamp1
 bin/textures/lamp1.png
 rose1
 bin/textures/rose1.png
+basic
+bin/textures/basic.png
