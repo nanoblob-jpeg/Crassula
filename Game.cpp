@@ -106,6 +106,7 @@ void Game::ProcessInput(float dt){
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
 				if(player.canAttack(dt)){
+					std::cout << "attacked" << std::endl;
 					spawnPlayerProjectile();
 					player.bowl->startAnimationCounter();
 					player.bowl->addFrameTimer(dt);
@@ -145,6 +146,9 @@ void Game::Update(float dt){
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
 	player.interact = nullptr;
+	if(player.bowl->inAnimation){
+		player.bowl->addFrameTimer(dt);
+	}
 
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
@@ -1098,6 +1102,7 @@ void Game::spawnPlayerProjectile(){
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
 	}
+	std::cout << player_projectiles.size();
 }
 
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
