@@ -1239,8 +1239,8 @@ void Game::renderGame(){
 
 	renderBlocks(view);
 	renderPlants(view);
-	//renderEnemyProjectiles(view);
-	//renderPlayerProjectiles(view);
+	renderEnemyProjectiles(view);
+	renderPlayerProjectiles(view);
 	renderEnemies(view);
 	renderPlayer(view);
 	//renderText();

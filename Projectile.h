@@ -23,9 +23,9 @@ public:
 
 	void setDirection(const glm::vec2 &startPosition, const short direction){
 		if(direction < 0){
-			velocity[0] = -5;
+			velocity[0] = -200;
 		}else{
-			velocity[0] = 5;
+			velocity[0] = 200;
 		}
 		position = startPosition;
 	}
