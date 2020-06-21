@@ -254,6 +254,7 @@ GAME INITIALIZATION/DESTRUCTION
 */
 //this is to make the fix enemy location function work as intended
 const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
+const std::vector<short> generationCodes2{0, 1, 2, 1, 4, 1, 0, 1, 2};
 void Game::initializeGame(){
 	generatedChunks = true;
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
@@ -297,7 +298,7 @@ void Game::initializeGame(){
 							while(enemyNum--)
 								++it;
 							board_enemies.push_back((it)->second);
-							fixGeneratedEnemiesPosition(i, j, k%3, generationCode[k]);
+							fixGeneratedEnemiesPosition(i, j, generationCodes2[k], generationCode[k]);
 						}
 					}
 				}
