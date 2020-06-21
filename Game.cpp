@@ -602,7 +602,7 @@ void Game::fixGeneratedEnemiesPosition(const short i, const short j, const short
 	//j%10 gives the column
 	//
 	//k is the chunk being generated
-	end->position.x = ((i%10)-5)*500 + (((j-10)%10) * 50);
+	end->position.x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
 	end->position.y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
 
 	switch(direction){
