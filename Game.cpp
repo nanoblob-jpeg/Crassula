@@ -1289,9 +1289,9 @@ void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	enemyOffsets[0] = glm::vec2(1.0, 0);
 	enemyOffsets[1] = glm::vec2(1.0, 1.0);
-	EnemyRenderer->setOffset(&enemyOffsets[0], 1);
-	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], 1);
-	EnemyRenderer->DrawSprites(1, ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(cam.Position[0], cam.Position[1]));
+	EnemyRenderer->setOffset(&enemyOffsets[0], 2);
+	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], 2);
+	EnemyRenderer->DrawSprites(2, ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(cam.Position[0], cam.Position[1]));
 	//EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	//EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
 	//EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, 0.0f));
