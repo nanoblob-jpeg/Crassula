@@ -1288,6 +1288,7 @@ void Game::renderPlayerProjectiles(glm::mat4 &view){
 void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	enemyOffsets[0] = glm::vec2(1.0, 0);
+	enemyOffsets[1] = glm::vec2(1.0, 1.0);
 	EnemyRenderer->setOffset(&enemyOffsets[0], 1);
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], 1);
 	EnemyRenderer->DrawSprites(1, ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(cam.Position[0], cam.Position[1]));
