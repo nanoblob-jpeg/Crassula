@@ -1449,7 +1449,7 @@ void Game::calculateEnemyRenderValues(){
 	enemyOffsets.clear();
 	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
-		enemyOffsets.push_back(board_enemies[i].position);
+		enemyOffsets.push_back(glm::vec2(board_enemies[i].position[0]/maxEnemySize, board_enemies[i].position[1]/maxEnemySize));
 		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name));
 	}
 }
