@@ -150,7 +150,7 @@ void Game::Update(float dt){
 		player.bowl->addFrameTimer(dt);
 	}
 	//following line just makes sure that the attack timer is always added to
-	if(!Keys[GLFW_KEY_SPACE])
+	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
 		player.canAttack();
 
 	if(m_state == HOME_MAIN){
