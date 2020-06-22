@@ -1126,7 +1126,7 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	//if player.facing is true, it is firing to the right
 	if(player.facing){
 		output[0] = cam.Position[0] + player.bowl->size[0]/2;
-		output[1] = cam.Position[1] + p.size[1]/2;
+		output[1] = cam.Position[1] + p.size[1];
 	}else{
 		output[0] = cam.Position[0] - player.bowl->size[0]/2 - p.size[0];
 		output[1] = cam.Position[1] + p.size[1]/2;
@@ -1304,7 +1304,7 @@ void Game::renderPlayerProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
-	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, 10.0f));
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize);
 }
 
 void Game::renderEnemies(glm::mat4 &view){
