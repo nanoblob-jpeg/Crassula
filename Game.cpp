@@ -67,9 +67,9 @@ void Game::Init(){
 void Game::ProcessInput(float dt){
 	//this b key section is just for debugging and displaying when I need to
 	if(Keys[GLFW_KEY_B]){
-		std::cout << cam.Position << std::endl;
+		std::cout << cam.Position[0] << ',' << cam.Position[1] << std::endl;
 		for(int i{}; i < player_projectiles.size(); ++i){
-			std::cout << player_projectiles[i].position << std::endl;
+			std::cout << player_projectiles[i].position[0] << ',' << player_projectiles.position[1] << std::endl;
 		}
 	}
 	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
