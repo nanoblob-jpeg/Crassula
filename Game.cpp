@@ -1117,10 +1117,10 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	//if player.facing is true, it is firing to the right
 	if(player.facing){
 		output[0] = cam.Position[0] + player.bowl->size[0]/2;
-		output[1] = cam.Position[1] + p.size[1]/2;
+		output[1] = cam.Position[1] + player.bowl->size[1]/2 + p.size[1]/2;
 	}else{
 		output[0] = cam.Position[0] - player.bowl->size[0]/2 - p.size[0];
-		output[1] = cam.Position[1] + p.size[1]/2;
+		output[1] = cam.Position[1] + player.bowl->size[1]/2 + p.size[1]/2;
 	}
 	return output;
 }
