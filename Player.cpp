@@ -95,7 +95,7 @@ bool Player::canAttack(float dt){
 		return true;
 	}
 	timer += dt;
-	if(timer > 3 - (attackSpeed + statBoosts[3]))
+	if(timer > 3 - (attackSpeed))
 		timer = 0;
 	return false;
 }

@@ -88,6 +88,7 @@ int main()
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
             std::cout << glGetError() << std::endl;
+            std::cout << Crassula.player_projectiles.size();
             timeTracker = 0;
             frameCounter = 0;
     	}
