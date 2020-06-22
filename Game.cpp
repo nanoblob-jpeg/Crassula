@@ -151,7 +151,7 @@ void Game::Update(float dt){
 	}
 	//following line just makes sure that the attack timer is always added to
 	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
-		player.canAttack();
+		player.canAttack(dt);
 
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
