@@ -94,6 +94,7 @@ bool Player::canAttack(float dt){
 		timer += dt;
 		return true;
 	}
+	std::cout << timer << std::endl;
 	timer += dt;
 	if(timer > 3 - (attackSpeed))
 		timer = 0;
