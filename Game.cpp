@@ -70,7 +70,9 @@ void Game::ProcessInput(float dt){
 		std::cout << cam.Position[0] << ',' << cam.Position[1] << std::endl;
 		for(int i{}; i < player_projectiles.size(); ++i){
 			std::cout << player_projectiles[i].position[0] << ',' << player_projectiles[i].position[1] << std::endl;
+			std::cout << player_projectiles[i].size[0] << ',' << player_projectiles[i].size[1] << std::endl;
 		}
+		std::cout << std::endl;
 	}
 	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
 		processPlayerMovement(dt);
