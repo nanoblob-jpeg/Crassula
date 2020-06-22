@@ -1297,14 +1297,14 @@ void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize);
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, 10.0f));
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
-	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize);
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, 10.0f));
 }
 
 void Game::renderEnemies(glm::mat4 &view){
