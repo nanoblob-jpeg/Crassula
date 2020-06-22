@@ -923,6 +923,7 @@ void Game::player_projectile_collision_detection(){
 				continue;
 			else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
+					std::cout << "projectile hit an enemy" << std::endl;
 					//deal damage
 					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
 					//add effects
@@ -938,6 +939,7 @@ void Game::player_projectile_collision_detection(){
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
 			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1]) > 7500){
+				std::cout << "projectile hit edge of map" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -947,6 +949,7 @@ void Game::player_projectile_collision_detection(){
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, player_projectiles[i].position[0], player_projectiles[i].position[1]);
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(player_projectiles[i]))){
+				std::cout << "projectile hit block" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -955,6 +958,7 @@ void Game::player_projectile_collision_detection(){
 		//checking range for the projectile
 		if(!deletionTracker){
 			if(player_projectiles[i].rangeCheck()){
+				std::cout << "projectile hit range" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1110,11 +1114,12 @@ void Game::spawnPlayerProjectile(){
 
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	glm::vec2 output;
+	//if player.facing is true, it is firing to the right
 	if(player.facing){
 		output[0] = cam.Position[0] + player.size[0]/2;
 		output[1] = cam.Position[1] + p.size[1]/2;
 	}else{
-		output[0] = cam.Position[0] - player.size[0]/2;
+		output[0] = cam.Position[0] - player.size[0]/2 - p.size[0];
 		output[1] = cam.Position[1] + p.size[1]/2;
 	}
 	return output;
