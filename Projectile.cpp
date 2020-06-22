@@ -4,5 +4,5 @@ void Projectile::addEffect(Effect &effect){
 }
 
 bool Projectile::rangeCheck(){
-	return distanceTravelled >= range;
+	return abs(distanceTravelled) >= range;
 }

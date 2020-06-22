@@ -1109,7 +1109,7 @@ void Game::spawnPlayerProjectile(){
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
 	}
-	std::cout << "projectile array size: " << player_projectiles.size();
+	std::cout << "projectile array size: " << player_projectiles.size() <<std::endl;
 }
 
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
