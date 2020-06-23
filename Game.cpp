@@ -1440,6 +1440,7 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		//subtracting for each little box in a chunk
 		temp[1] -= (j / 10) * 500;
 		temp[1] -= board[i/3][i%3][j].plants[k].position[1];
+		temp[1] += board[i/3][i%3][j].plants[k].size[1];
 
 		temp[0] /= maxPlantSize;
 		temp[1] /= maxPlantSize;
