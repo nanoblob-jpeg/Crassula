@@ -1285,12 +1285,12 @@ void Game::renderGameBackground(glm::mat4 &view){
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
 	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
+		glm::vec2(0.0f, 50.0f - player.bowl->size[1]/2), glm::vec2(50.0f, 50.0f));
 }
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, player.bowl->size[1]/2));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, 50.of - player.bowl->size[1]/2));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
