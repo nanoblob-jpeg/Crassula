@@ -1290,14 +1290,14 @@ void Game::renderBlocks(glm::mat4 &view){
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, player.bowl->size[1]/2));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -(50.0f - player.bowl->size[1]/2)));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, -(40.0f - player.bowl->size[1])));
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize);
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
