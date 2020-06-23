@@ -1285,19 +1285,19 @@ void Game::renderGameBackground(glm::mat4 &view){
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
 	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, -10.0f), glm::vec2(50.0f, 50.0f));
+		glm::vec2(0.0f, 0.0f), glm::vec2(50.0f, 50.0f));
 }
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, 10.0f));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, player.bowl->size[1]/2));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, 10.0f));
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, player.bowl->size[1]/2));
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
@@ -1317,7 +1317,7 @@ void Game::renderEnemies(glm::mat4 &view){
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
 	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + 10.0),
+		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
 		player.bowl->size);
 }
 
