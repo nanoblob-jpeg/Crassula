@@ -302,7 +302,7 @@ void Game::initializeGame(){
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
 							end->position.x += ((j-10)%10) * 50;
-							end->position.y += (((j-10)/10)) * 50;
+							end->position.y += (((j-10)/10)+1) * 50;
 						}else if(rnum <= 30){
 							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
