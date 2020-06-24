@@ -302,7 +302,7 @@ void Game::initializeGame(){
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
 							end->position.x += ((j-10)%10) * 50;
-							end->position.y += (((j-10)/10)) * 50;
+							end->position.y += (((j-10)/10)+1) * 50;
 						}else if(rnum <= 30){
 							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
@@ -1285,12 +1285,12 @@ void Game::renderGameBackground(glm::mat4 &view){
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
 	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, -player.bowl->size[1]/2), glm::vec2(50.0f, 50.0f));
+		glm::vec2(0.0f, -player.bowl->size[1]/4), glm::vec2(50.0f, 50.0f));
 }
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -player.bowl->size[1]/2));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -player.bowl->size[1]/4));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
@@ -1311,7 +1311,7 @@ void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
-	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, 0.0f));
+	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, -(maxEnemySize - player.bowl->size[1])));
 }
 
 void Game::renderPlayer(glm::mat4 &view){
