@@ -786,7 +786,7 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *ob
 	bool collisionX =  object2->position[0] + object2->size[0] >= object->position[0] + gameobject_offset_x
 		&& object->position[0] + object->size[0] + gameobject_offset_x >= object2->position[0];
 	bool collisionY = object2->position[1] - object2->size[1] <= object->position[1] + gameobject_offset_y
-		&& object->position[1] - object->size[1] + gameobject_offset_y <= object->position[1];
+		&& object->position[1] - object->size[1] + gameobject_offset_y <= object2->position[1];
 	return (collisionX && collisionY);
 }
 
