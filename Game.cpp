@@ -483,7 +483,7 @@ void Game::generateChunks(const short direction){
 							//thus it would be offset a little bit
 							auto end = temp[i].plants.rbegin();
 							end->position.x += ((j-10)%10) * 50;
-							end->position.y += (((j-10)/10)+1) * 50;
+							end->position.y += (((j-10)/10)) * 50;
 						}else if(rnum <= 30){
 							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
 							//20% chance to spawn an enemy
@@ -1290,7 +1290,7 @@ void Game::renderBlocks(glm::mat4 &view){
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -(50 - player.bowl->size[1])));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -(maxPlantSize - player.bowl->size[1])));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
