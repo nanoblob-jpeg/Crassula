@@ -11,6 +11,7 @@ Plant::Plant(std::string pname, std::string ptname, glm::vec2 psize, glm::vec3 p
 };
 
 int Plant::interact(Game *game){
+	std::cout << "interacted correctly" << std::endl;
 	//testing if the player already has a plant of the same type
 	for(int i{}; i < game->player.numPlants; ++i){
 		if(game->player.plants[i]->name.compare(this->name) == 0){
@@ -29,6 +30,7 @@ int Plant::interact(Game *game){
 		}
 	}
 	if(game->player.numPlants == 0){
+		std::cout << "added plant" << std::endl;
 		game->player.plants[0] = this;
 		this->level = 1;
 		game->player.currentPlant = 0;

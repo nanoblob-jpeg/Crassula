@@ -115,7 +115,6 @@ void Game::ProcessInput(float dt){
 		}else if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
 				if(player.canAttack(dt)){
-					std::cout << "attacked" << std::endl;
 					spawnPlayerProjectile();
 					player.bowl->startAnimationCounter();
 					player.bowl->addFrameTimer(dt);
@@ -932,7 +931,6 @@ void Game::player_projectile_collision_detection(){
 				continue;
 			else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
-					std::cout << "projectile hit an enemy" << std::endl;
 					//deal damage
 					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
 					//add effects
@@ -948,7 +946,6 @@ void Game::player_projectile_collision_detection(){
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
 			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1]) > 7500){
-				std::cout << "projectile hit edge of map" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -958,7 +955,6 @@ void Game::player_projectile_collision_detection(){
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, player_projectiles[i].position[0], player_projectiles[i].position[1]);
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(player_projectiles[i]))){
-				std::cout << "projectile hit block" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -967,7 +963,6 @@ void Game::player_projectile_collision_detection(){
 		//checking range for the projectile
 		if(!deletionTracker){
 			if(player_projectiles[i].rangeCheck()){
-				std::cout << "projectile hit range" << std::endl;
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1118,7 +1113,6 @@ void Game::spawnPlayerProjectile(){
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
 	}
-	std::cout << "projectile array size: " << player_projectiles.size() <<std::endl;
 }
 
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
