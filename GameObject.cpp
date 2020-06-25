@@ -11,7 +11,7 @@ int GameObject::interact(Game *game){
 	exit(1);
 }
 
-GameObject& operator=(const GameObject &g){
+GameObject& GameObject::operator=(const GameObject &g){
 	this->position = g.position;
 	this->size = g.size;
 	this->velocity = g.velocity;
