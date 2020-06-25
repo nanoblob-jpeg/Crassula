@@ -127,7 +127,9 @@ void Game::ProcessInput(float dt){
 					std::cout << "registered that there was something to interact with\n";
 					player.interact->interact(this);
 					if(player.interact->type.compare("plant") == 0){
+						std::cout << "about to delete plant\n";
 						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
+						std::cout << "recalculating the values\n";
 						for(int i{}; i < 9; ++i){
 							for(int j{}; j < 100; ++j){
 								calculatePlantOffsets(i, j);

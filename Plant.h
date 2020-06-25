@@ -20,6 +20,5 @@ public:
 	Plant(std::string pname, std::string ptname, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
 
 	int interact(Game *game);
-	~Plant(){};
 };
 #endif
