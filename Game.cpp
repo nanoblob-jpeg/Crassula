@@ -380,9 +380,7 @@ void Game::gameEndProtocol(){
 	player.calculateLevel();
 	player.calculateStats();
 	player.interact = nullptr;
-	for(int i{}; i < player.plants.size(); ++i){
-		player.plants[i] = nullptr;
-	}
+	player.plants.clear();
 	player.effects.clear();
 	player.velocity[0] = 0;
 	player.velocity[1] = 0;
@@ -1109,7 +1107,7 @@ void Game::spawnPlayerProjectile(){
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
 	}else{
-		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant]->projectileName[player.plants[player.currentPlant]->level]));
+		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level]));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 		short direction = player.facing ? 1 : -1;

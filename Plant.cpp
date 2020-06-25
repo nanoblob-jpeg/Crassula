@@ -14,16 +14,16 @@ int Plant::interact(Game *game){
 	std::cout << "interacted correctly" << std::endl;
 	//testing if the player already has a plant of the same type
 	for(int i{}; i < game->player.numPlants; ++i){
-		if(game->player.plants[i]->name.compare(this->name) == 0){
-			if(game->player.plants[i]->level == 4)
+		if(game->player.plants[i].name.compare(this->name) == 0){
+			if(game->player.plants[i].level == 4)
 				return -1;
-			if(!(game->player.plants[i]->level == 3 && game->player.numCurrentLevelFourPlants == game->player.bowl->numOfLevelFour)){
-				if(game->player.plants[i]->level == 3){
-					game->player.plants[i]->level += 1;
+			if(!(game->player.plants[i].level == 3 && game->player.numCurrentLevelFourPlants == game->player.bowl->numOfLevelFour)){
+				if(game->player.plants[i].level == 3){
+					game->player.plants[i].level += 1;
 					game->player.numCurrentLevelFourPlants += 1;
 					return 0;
 				}else{
-					game->player.plants[i]->level += 1;
+					game->player.plants[i].level += 1;
 					return 0;
 				}
 			}
@@ -31,20 +31,20 @@ int Plant::interact(Game *game){
 	}
 	if(game->player.numPlants == 0){
 		std::cout << "added plant" << std::endl;
-		game->player.plants[0] = this;
-		this->level = 1;
+		game->player.plants[0] = ResourceManager::GetPlant(this->name);
+		game->player.plants[0].level = 1;
 		game->player.currentPlant = 0;
 		game->player.numPlants = 1;
 		std::cout << "1\n";
 		return 0;
 	}
 	if(game->player.numPlants == game->player.bowl->numOfPlants){
-		game->player.plants[game->player.currentPlant] = this;
-		this->level = 1;
+		game->player.plants[game->player.currentPlant] = ResourceManager::GetPlant(this->name);
+		game->player.plants[game->player.currentPlant].level = 1;
 		return 0;
 	}else{
-		game->player.plants[game->player.numPlants] = this;
-		this->level = 1;
+		game->player.plants[game->player.numPlants] = ResourceManager::GetPlant(this->name);
+		game->player.plants[game->player.numPlants].level = 1;
 		game->player.numPlants += 1;
 		return 0;
 	}
