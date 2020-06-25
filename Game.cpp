@@ -1083,6 +1083,7 @@ glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset
 		return p.position == object->position;
 	});
 	output[3] = index - it;
+	std::cout << output[3] << '\n';
 	return output;
 }
 /*
