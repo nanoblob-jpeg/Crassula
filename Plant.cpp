@@ -35,6 +35,7 @@ int Plant::interact(Game *game){
 		this->level = 1;
 		game->player.currentPlant = 0;
 		game->player.numPlants = 1;
+		std::cout << "1\n";
 		return 0;
 	}
 	if(game->player.numPlants == game->player.bowl->numOfPlants){
