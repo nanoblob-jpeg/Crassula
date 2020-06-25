@@ -11,14 +11,14 @@ int GameObject::interact(Game *game){
 	exit(1);
 }
 
-GameObject& GameObject::operator=(const GameObject &g){
-	this->position = g.position;
-	this->size = g.size;
-	this->velocity = g.velocity;
-	this->color = g.color;
-	this->rotation = g.rotation;
-	this->interactable = g.interactable;
-	this->type = g.type;
-	this->sprite = g.sprite;
-	return *this;
-}
+// GameObject& GameObject::operator=(const GameObject &g){
+// 	this->position = g.position;
+// 	this->size = g.size;
+// 	this->velocity = g.velocity;
+// 	this->color = g.color;
+// 	this->rotation = g.rotation;
+// 	this->interactable = g.interactable;
+// 	this->type = g.type;
+// 	this->sprite = g.sprite;
+// 	return *this;
+// }
