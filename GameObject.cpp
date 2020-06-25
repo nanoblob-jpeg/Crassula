@@ -10,3 +10,14 @@ int GameObject::interact(Game *game){
 	std::cout << "You're not supposed to be doing this, system exiting on crash\n Reason: Tried to interact with uninteractable object\n";
 	exit(1);
 }
+
+GameObject& operator=(const GameObject &g){
+	this->position = g.position;
+	this->size = g.size;
+	this->velocity = g.velocity;
+	this->color = g.color;
+	this->rotation = g.rotation;
+	this->interactable = g.interactable;
+	this->type - g.type;
+	this->sprite = g.sprite;
+}
