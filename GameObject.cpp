@@ -18,6 +18,7 @@ GameObject& GameObject::operator=(const GameObject &g){
 	this->color = g.color;
 	this->rotation = g.rotation;
 	this->interactable = g.interactable;
-	this->type - g.type;
+	this->type = g.type;
 	this->sprite = g.sprite;
+	return *this;
 }
