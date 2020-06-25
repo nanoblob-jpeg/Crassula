@@ -42,5 +42,6 @@ void Chunk::init(std::vector<std::string> &names){
 }
 
 void Chunk::removePlant(float in){
+	std::cout << in << "  " << plants.size() << '\n';
 	plants.erase(plants.begin() + in);
 }
