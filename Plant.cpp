@@ -31,7 +31,7 @@ int Plant::interact(Game *game){
 	}
 	if(game->player.numPlants == 0){
 		std::cout << "added plant" << std::endl;
-		game->player.plants[0] = ResourceManager::GetPlant(this->name);
+		game->player.plants.push_back(ResourceManager::GetPlant(this->name));
 		game->player.plants[0].level = 1;
 		game->player.currentPlant = 0;
 		game->player.numPlants = 1;
@@ -43,7 +43,7 @@ int Plant::interact(Game *game){
 		game->player.plants[game->player.currentPlant].level = 1;
 		return 0;
 	}else{
-		game->player.plants[game->player.numPlants] = ResourceManager::GetPlant(this->name);
+		game->player.plants.push_back(ResourceManager::GetPlant(this->name));
 		game->player.plants[game->player.numPlants].level = 1;
 		game->player.numPlants += 1;
 		return 0;
