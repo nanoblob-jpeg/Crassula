@@ -124,6 +124,7 @@ void Game::ProcessInput(float dt){
 			}
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
+					std::cout << "registered that there was something to interact with\n";
 					player.interact->interact(this);
 					if(player.interact->type.compare("plant") == 0){
 						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
@@ -732,6 +733,7 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
 			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
 		if(collisionX && collisionY){
+			std::cout << "on interactable object\n";
 			//set the object as the interactable object
 			player.interact = object;
 			player.location = findInteractPosition(object, gameobject_offset_x, gameobject_offset_y);
