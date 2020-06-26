@@ -120,6 +120,7 @@ public:
 
 	//collision detection
 	void player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
+	void player_and_object_collisions(GameObject *object, const float dt, const short index_x, const short index_y, const short index_chunk, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, const short width_offset, const short height_offset);
 	void findLocationCoordinates(short &width, short &height, const float x, const float y);
@@ -128,7 +129,7 @@ public:
 	void player_projectile_collision_detection();
 	void enemy_projectile_collision_detection();
 	short findPlayerDirection(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
-	glm::vec4 findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y);
+	glm::vec4 findInteractPosition(GameObject *object, short index_x, short index_y, short index_chunk);
 
 	//game logic
 	void spawnPlayerProjectile();
