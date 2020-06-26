@@ -108,6 +108,7 @@ void Game::ProcessInput(float dt){
 				m_state = GAME_ACTIVE_CLASSIC;
 				initializeGame();
 				player.setStatBoosts();
+				player.setFinalStats();
 				cam.Position[0] = 0;
 				cam.Position[1] = 0;
 				points = 0;
@@ -304,7 +305,7 @@ void Game::initializeGame(){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
-						if(rnum <= 5){
+						if(rnum <= 5 + player.luck){
 							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
 							//uses the plant object but puts a location
@@ -483,7 +484,7 @@ void Game::generateChunks(const short direction){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
-						if(rnum <= 5){
+						if(rnum <= 5 + player.luck){
 							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
 							//5% chance to spawn in a plant
 							//uses the plant object but puts a location

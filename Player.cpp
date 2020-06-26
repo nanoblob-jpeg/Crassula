@@ -79,20 +79,12 @@ void Player::switchPlant(bool direction){
 	}
 }
 
-int Player::getHealthBoost(){
-	return static_cast<int>(statBoosts[0]);
-}
-
-int Player::getDefenseBoost(){
-	return static_cast<int>(statBoosts[1]);
-}
-
 void Player::dealDamage(int damage){
-	health -= std::max(damage - getDefenseBoost(), 1);
+	health -= std::max(damage - defense, 1);
 }
 
 bool Player::isDead(){
-	return health + getHealthBoost() <= 0;
+	return health <= 0;
 }
 
 void Player::addEffects(Projectile &p){
@@ -123,7 +115,18 @@ void Player::setStatBoosts(){
 	statBoosts.push_back(bowl->health);
 	statBoosts.push_back(bowl->defense);
 	statBoosts.push_back(bowl->attack);
+	statBoosts.push_back(bowl->attackSpeed);
 	statBoosts.push_back(bowl->speed);
 	statBoosts.push_back(bowl->recovery);
 	statBoosts.push_back(bowl->luck);
+}
+
+void Player::setFinalStats(){
+	health += statBoosts[0];
+	defense += statBoosts[1];
+	attack += statBoosts[2];
+	attackSpeed += statBoosts[3];
+	speed += statBoosts[4];
+	recovery += statBoosts[5];
+	luck += statBoosts[6];
 }

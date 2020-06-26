@@ -71,6 +71,7 @@ public:
 	bool canAttack(float dt);
 	void calculateLevel();
 	void setStatBoosts();
+	void setFinalStats();
 private:
 	int getDefenseBoost();
 	int getHealthBoost();
