@@ -63,7 +63,7 @@ public:
 	void loadPlayer(const char *file);
 	void applyEffects(float dt);
 	void calculateStats();
-	void switchPlant();
+	void switchPlant(bool direction);
 	void dealDamage(int damage);
 	bool isDead();
 	void addEffects(Projectile &p);
