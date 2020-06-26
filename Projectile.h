@@ -15,6 +15,7 @@ public:
 	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
+	bool right{};
 	Projectile(){};
 	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, bool ppiercing = false)
 		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}{

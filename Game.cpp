@@ -1137,12 +1137,14 @@ void Game::spawnPlayerProjectile(){
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
+		it->right = true;
 	}else{
 		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level]));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 		short direction = player.facing ? 1 : -1;
 		it->setDirection(startPosition, direction);
+		it->right = player.facing;
 	}
 }
 
@@ -1492,7 +1494,7 @@ void Game::calculateProjectileRenderValues(){
 
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(glm::vec2(player_projectiles[i].position[0]/maxProjectileSize, player_projectiles[i].position[1]/maxProjectileSize));
-		if(player.facing)
+		if(player_projectiles[i].facing)
 			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name));
 		else
 			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name + "reverse"));
