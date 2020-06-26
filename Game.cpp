@@ -1492,7 +1492,10 @@ void Game::calculateProjectileRenderValues(){
 
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(glm::vec2(player_projectiles[i].position[0]/maxProjectileSize, player_projectiles[i].position[1]/maxProjectileSize));
-		playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name));
+		if(player.facing)
+			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name));
+		else
+			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name + "reverse"));
 	}
 }
 
