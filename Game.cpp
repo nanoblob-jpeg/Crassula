@@ -1084,7 +1084,7 @@ glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset
 		std::cout << object->position[0] << ',' << object->position[1] << '\n';
 
 		if(it->position == object->position){
-			output[3] = it - board[output[0]][output[1]][output[2]].begin();
+			output[3] = it - board[output[0]][output[1]][output[2]].plants.begin();
 			break;
 		}
 	}
