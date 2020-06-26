@@ -124,12 +124,9 @@ void Game::ProcessInput(float dt){
 			}
 			if(Keys[GLFW_KEY_I]){
 				if(player.interact){
-					std::cout << "registered that there was something to interact with\n";
 					player.interact->interact(this);
 					if(player.interact->type.compare("plant") == 0){
-						std::cout << "about to delete plant\n";
 						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
-						std::cout << "recalculating the values\n";
 						plantOffsets.clear();
 						plantTexCoords.clear();
 						numPlants = 0;
@@ -789,7 +786,6 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
 			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
 		if(collisionX && collisionY){
-			std::cout << "on interactable object\n";
 			//set the object as the interactable object
 			player.interact = object;
 			player.location = findInteractPosition(object, index_x, index_y, index_chunk);
@@ -1111,14 +1107,12 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 glm::vec4 Game::findInteractPosition(GameObject *object, short index_x, short index_y, short index_chunk){
 	short width, height;
 	glm::vec4 output = {index_x, index_y, index_chunk, 0.0f};
-	std::cout << board[output[0]][output[1]][output[2]].plants.size() << '\n';
 	for(auto it = board[output[0]][output[1]][output[2]].plants.begin(); it != board[output[0]][output[1]][output[2]].plants.end(); ++it){
 		if(it->position == object->position){
 			output[3] = it - board[output[0]][output[1]][output[2]].plants.begin();
 			break;
 		}
 	}
-	std::cout << output[3] << '\n';
 	return output;
 }
 /*
