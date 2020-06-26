@@ -145,6 +145,12 @@ void Game::ProcessInput(float dt){
 					player.experience += 2;
 				}
 			}
+			if(Keys[GLFW_KEY_U]){
+				player.switchPlant(false);
+			}
+			if(Keys[GLFW_KEY_O]){
+				player.switchPlant(true);
+			}
 		}
 	}else if(m_state == START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
@@ -1096,13 +1102,8 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 glm::vec4 Game::findInteractPosition(GameObject *object, short index_x, short index_y, short index_chunk){
 	short width, height;
 	glm::vec4 output = {index_x, index_y, index_chunk, 0.0f};
-
-	std::cout << output[0] << "  " << output[1] << "  " << output[2] << '\n';
 	std::cout << board[output[0]][output[1]][output[2]].plants.size() << '\n';
 	for(auto it = board[output[0]][output[1]][output[2]].plants.begin(); it != board[output[0]][output[1]][output[2]].plants.end(); ++it){
-		std::cout << it->position[0] << ',' << it->position[1] << '\n';
-		std::cout << object->position[0] << ',' << object->position[1] << '\n';
-
 		if(it->position == object->position){
 			output[3] = it - board[output[0]][output[1]][output[2]].plants.begin();
 			break;

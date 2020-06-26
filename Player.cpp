@@ -57,12 +57,24 @@ void Player::calculateStats(){
 	luck = level * 0.01 + 1;
 }
 
-void Player::switchPlant(){
+void Player::switchPlant(bool direction){
+	/*
+	direction = true is to the right
+	direction = false is to the left
+	*/
 	if(currentPlant != -1){
-		if(bowl->numOfPlants == 3){
-			currentPlant = (currentPlant + 1)%std::min(numPlants, 3);
-		}else if(bowl->numOfPlants == 4){
-			currentPlant = (currentPlant + 1)%std::min(numPlants, 4);
+		if(direction){
+			if(bowl->numOfPlants == 3){
+				currentPlant = (currentPlant + 1)%std::min(numPlants, 3);
+			}else if(bowl->numOfPlants == 4){
+				currentPlant = (currentPlant + 1)%std::min(numPlants, 4);
+			}
+		}else{
+			if(bowl->numOfPlants == 3){
+				currentPlant = (currentPlant-1)%std::min(numPlants, 3);
+			}else if(bowl->numOfPlants == 4){
+				currentPlant = (currentPlant - 1)%std::min(numPlants, 4);
+			}
 		}
 	}
 }
