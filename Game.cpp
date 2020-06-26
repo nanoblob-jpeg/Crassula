@@ -130,6 +130,9 @@ void Game::ProcessInput(float dt){
 						std::cout << "about to delete plant\n";
 						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
 						std::cout << "recalculating the values\n";
+						plantOffsets.clear();
+						plantTexCoords.clear();
+						numPlants = 0;
 						for(int i{}; i < 9; ++i){
 							for(int j{}; j < 100; ++j){
 								calculatePlantOffsets(i, j);
@@ -1053,7 +1056,7 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 }
 
 glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y){
-	short width, height, index_chunk;
+	short width, height;
 	glm::vec4 output = {0.0f, 0.0f, 0.0f, 0.0f};
 	findLocationCoordinates(width, height, gameobject_offset_x, gameobject_offset_y);
 
