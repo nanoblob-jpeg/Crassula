@@ -10,8 +10,9 @@
 class Player : public GameObject{
 	//insert all of the stuff that the GameObject does not keep track of
 public:
-	//movement logic variables
+	//input logic variables
 	bool falling{};
+	bool switchingPlants{};
 
 	//general information
 	int level = 0;

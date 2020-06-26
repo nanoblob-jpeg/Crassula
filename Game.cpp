@@ -146,10 +146,19 @@ void Game::ProcessInput(float dt){
 				}
 			}
 			if(Keys[GLFW_KEY_U]){
-				player.switchPlant(false);
+				if(!player.switchingPlants){
+					player.switchPlant(false);
+					player.switchingPlants = true;
+				}
 			}
 			if(Keys[GLFW_KEY_O]){
-				player.switchPlant(true);
+				if(!player.switchingPlants){
+					player.switchPlant(true);
+					player.switchingPlants = true;
+				}
+			}
+			if(player.switchingPlants && !Keys[GLFW_KEY_S] && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
+				player.switchinPlants = false;
 			}
 		}
 	}else if(m_state == START_SCREEN){
@@ -1193,7 +1202,10 @@ void Game::processPlayerMovement(const float dt){
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
-		player.switchPlant(true);
+		if(!player.switchingPlants){
+			player.switchPlant(true);
+			player.switchingPlants = true;
+		}
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
