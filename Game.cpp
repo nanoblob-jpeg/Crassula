@@ -1058,27 +1058,28 @@ glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset
 	findLocationCoordinates(width, height, gameobject_offset_x, gameobject_offset_y);
 
 	if(width <= -6){
-		output[0] = 0;
+		output[1] = 0;
 		output[2] = width + 15;
 	}else if(width <= 4){
-		output[0] = 1;
+		output[1] = 1;
 		output[2] = width + 5;
 	}else{
-		output[0] = 2;
+		output[1] = 2;
 		output[2] = width - 5;
 	}
 
 	if(height <= -6){
-		output[1] = 2;
+		output[0] = 2;
 		output[2] += (-6 - (height)) * 10;
 	}else if(height <= 4){
-		output[1] = 1;
+		output[0] = 1;
 		output[2] += (4 - (height)) * 10;
 	}else{
-		output[1] = 0;
+		output[0] = 0;
 		output[2] += (14 - (height)) * 10;
 	}
 
+	std::cout << board[output[0]][output[1]][output[2]].plants.size() << '\n';
 	for(auto it = board[output[0]][output[1]][output[2]].plants.begin(); it != board[output[0]][output[1]][output[2]].plants.end(); ++it){
 		std::cout << it->position[0] << ',' << it->position[1] << '\n';
 		std::cout << object->position[0] << ',' << object->position[1] << '\n';
