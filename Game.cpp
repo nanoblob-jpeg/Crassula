@@ -1193,7 +1193,7 @@ void Game::processPlayerMovement(const float dt){
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
-		player.switchPlant();
+		player.switchPlant(true);
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
