@@ -158,7 +158,7 @@ void Game::ProcessInput(float dt){
 				}
 			}
 			if(player.switchingPlants && !Keys[GLFW_KEY_S] && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
-				player.switchinPlants = false;
+				player.switchingPlants = false;
 			}
 		}
 	}else if(m_state == START_SCREEN){
