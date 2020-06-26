@@ -1060,8 +1060,8 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y){
 	short width, height;
 	glm::vec4 output = {0.0f, 0.0f, 0.0f, 0.0f};
-	findLocationCoordinates(width, height, gameobject_offset_x, gameobject_offset_y);
-	std::cout << width << "  " << height << '\n';
+	width = gameobject_offset_x/500;
+	height = gameobject_offset_y/500;
 	if(width <= -6){
 		output[1] = 0;
 		output[2] = width + 15;
