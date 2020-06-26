@@ -71,9 +71,9 @@ void Player::switchPlant(bool direction){
 			}
 		}else{
 			if(bowl->numOfPlants == 3){
-				currentPlant = (currentPlant-1)%std::min(numPlants, 3);
+				currentPlant = currentPlant - 1 < 0 ? numPlants-1 : currentPlant-1;
 			}else if(bowl->numOfPlants == 4){
-				currentPlant = (currentPlant - 1)%std::min(numPlants, 4);
+				currentPlant = currentPlant - 1 < 0 ? numPlants-1 : currentPlant-1;
 			}
 		}
 	}
