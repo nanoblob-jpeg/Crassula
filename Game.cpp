@@ -1079,12 +1079,15 @@ glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset
 		output[2] += (14 - (height)) * 10;
 	}
 
-	auto it = board[output[0]][output[1]][output[2]].plants.begin();
-	auto it2 = board[output[0]][output[1]][output[2]].plants.end();
-	auto index = std::find_if(it, it2, [=](Plant &p){
-		return p.position == object->position;
-	});
-	output[3] = index - it;
+	for(auto it = board[output[0]][output[1]][output[2]].plants.begin(); it != board[output[0]][output[1]][output[2]].plants.end(); ++it){
+		std::cout << it->position[0] << ',' << it->position[1] << '\n';
+		std::cout << object->position[0] << ',' << object->position[1] << '\n';
+
+		if(it->position == object->position){
+			output[3] = it - board[output[0]][output[1]][output[2]].begin();
+			break;
+		}
+	}
 	std::cout << output[3] << '\n';
 	return output;
 }
