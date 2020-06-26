@@ -730,52 +730,41 @@ COLLISION DETECTION
 
 */
 void Game::player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x, const short gameobject_offset_y){
-	if(object->interactable){
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
-			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
-			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
-		if(collisionX && collisionY){
-			std::cout << "on interactable object\n";
-			//set the object as the interactable object
-			player.interact = object;
-			player.location = findInteractPosition(object, index_x, index_y, index_chunk);
-		}
-	}else{
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
-			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
-			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+	
+	bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
+		&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
+	bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
+		&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
 
-		if(collisionX && collisionY){
-			//getting previous location
-			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
-			//applying the corrections to the players position
-			//while also fixing the velocity in that direction
-			//to make it seem like they were stopped by the object
-			switch(direction){
-				case 0:
-					cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
-					player.velocity[1] = 0.0f;
-					player.falling = false;
-					break;
-				case 1:
-					cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
-					player.velocity[0] = 0.0f;
-					break;
-				case 2:
-					cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
-					player.velocity[1] = 0.0f;
-					break;
-				case 3:
-					cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
-					player.velocity[0] = 0.0f;
-					break;
-				default:
-					break;
-			}
+	if(collisionX && collisionY){
+		//getting previous location
+		short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
+		//applying the corrections to the players position
+		//while also fixing the velocity in that direction
+		//to make it seem like they were stopped by the object
+		switch(direction){
+			case 0:
+				cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
+				player.velocity[1] = 0.0f;
+				player.falling = false;
+				break;
+			case 1:
+				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+				player.velocity[0] = 0.0f;
+				break;
+			case 2:
+				cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
+				player.velocity[1] = 0.0f;
+				break;
+			case 3:
+				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+				player.velocity[0] = 0.0f;
+				break;
+			default:
+				break;
 		}
 	}
+
 }
 
 void Game::player_and_object_collisions(GameObject *object, const float dt, const short index_x, const short index_y, const short index_chunk, const short gameobject_offset_x, const short gameobject_offset_y){
