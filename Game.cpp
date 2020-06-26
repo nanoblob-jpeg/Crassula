@@ -739,7 +739,7 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 			std::cout << "on interactable object\n";
 			//set the object as the interactable object
 			player.interact = object;
-			player.location = findInteractPosition(object, gameobject_offset_x, gameobject_offset_y);
+			player.location = findInteractPosition(object, index_x, index_y, index_chunk);
 		}
 	}else{
 		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
