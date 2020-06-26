@@ -778,6 +778,55 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 	}
 }
 
+void Game::player_and_object_collisions(GameObject *object, const float dt, const short index_x, const short index_y, const short index_chunk, const short gameobject_offset_x, const short gameobject_offset_y){
+	if(object->interactable){
+		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
+		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+		if(collisionX && collisionY){
+			std::cout << "on interactable object\n";
+			//set the object as the interactable object
+			player.interact = object;
+			player.location = findInteractPosition(object, index_x, index_y, index_chunk);
+		}
+	}else{
+		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
+		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+
+		if(collisionX && collisionY){
+			//getting previous location
+			short direction = findPlayerDirection(object, dt, gameobject_offset_x, gameobject_offset_y);
+			//applying the corrections to the players position
+			//while also fixing the velocity in that direction
+			//to make it seem like they were stopped by the object
+			switch(direction){
+				case 0:
+					cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
+					player.velocity[1] = 0.0f;
+					player.falling = false;
+					break;
+				case 1:
+					cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+					player.velocity[0] = 0.0f;
+					break;
+				case 2:
+					cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
+					player.velocity[1] = 0.0f;
+					break;
+				case 3:
+					cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+					player.velocity[0] = 0.0f;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+
 bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *projectile){
 	bool collisionX =  projectile->position[0] + projectile->size[0] >= object->position[0]
 		&& object->position[0] + object->size[0] >= projectile->position[0];
@@ -870,7 +919,7 @@ void Game::nineBlockCollisionDetectionPAndO(const short width, const short heigh
 			}
 			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].plants.size(); ++j){
 				//loop through all of the plants in the chunk
-				player_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk + index_chunk_2].plants[j]), dt, gameobject_offset_x, gameobject_offset_y);
+				player_and_object_collisions((GameObject *)&(board[index_x][index_y][index_chunk + index_chunk_2].plants[j]), dt, index_x, index_y, index_chunk + index_chunk_2, gameobject_offset_x, gameobject_offset_y);
 			}
 		}
 	}
@@ -1055,32 +1104,9 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 	return direction;
 }
 
-glm::vec4 Game::findInteractPosition(GameObject *object, short gameobject_offset_x, short gameobject_offset_y){
+glm::vec4 Game::findInteractPosition(GameObject *object, short index_x, short index_y, short index_chunk){
 	short width, height;
-	glm::vec4 output = {0.0f, 0.0f, 0.0f, 0.0f};
-	width = gameobject_offset_x/500;
-	height = gameobject_offset_y/500;
-	if(width <= -6){
-		output[1] = 0;
-		output[2] = width + 15;
-	}else if(width <= 4){
-		output[1] = 1;
-		output[2] = width + 5;
-	}else{
-		output[1] = 2;
-		output[2] = width - 5;
-	}
-
-	if(height <= -6){
-		output[0] = 2;
-		output[2] += (-6 - (height)) * 10;
-	}else if(height <= 4){
-		output[0] = 1;
-		output[2] += (4 - (height)) * 10;
-	}else{
-		output[0] = 0;
-		output[2] += (14 - (height)) * 10;
-	}
+	glm::vec4 output = {index_x, index_y, index_chunk, 0.0f};
 
 	std::cout << output[0] << "  " << output[1] << "  " << output[2] << '\n';
 	std::cout << board[output[0]][output[1]][output[2]].plants.size() << '\n';
