@@ -1526,7 +1526,10 @@ void Game::calculateEnemyRenderValues(){
 }
 
 void Game::calculateIconRenderValues(){
+	numEffectIcon = player.effects.size();
+	for(int i{}; i < player.effects.size(); ++i){
 
+	}
 }
 /*
 
@@ -1560,7 +1563,7 @@ void Game::initShaders(){
 void Game::initRenderers(){
 	//configure shaders
 	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
-		-400.0f , 400.0f, -1.0f, 1.0f);
+		-300.0f , 300.0f, -1.0f, 1.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	initRenderer(view, projection);
 	initBlockRenderer(view, projection);
