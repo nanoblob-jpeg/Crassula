@@ -1529,7 +1529,7 @@ void Game::calculateEnemyRenderValues(){
 
 void Game::calculateIconRenderValues(){
 	effectsIconOffsets.clear();
-	effectIconTexCoords.clear();
+	effectsIconTexCoords.clear();
 	plantIconOffsets.clear();
 	plantIconTexCoords.clear();
 	numEffectIcon = player.effects.size();
@@ -1540,10 +1540,10 @@ void Game::calculateIconRenderValues(){
 	//the first square for 3 plant ui goes from
 	//445 to 480
 	//top side is at 750
-	short starting offset = player.bowl->numOfPlants == 3 ? 145 : 95;
+	short starting_offset = player.bowl->numOfPlants == 3 ? 145 : 95;
 	for(int i{}; i < player.plants.size(); ++i){
-		plantIconOffsets.push_back(glm::vec2((offset + (50 * i) + (50-maxPlantIconSize)/2)/maxPlantIconSize, (-350 - (50-maxPlantIconSize)/2))/maxPlantIconSize);
-		plantIconTexCoords.push_back(ResourceManager::GetDepth(player.plants[i].name));
+		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (50-maxPlantIconSize)/2)/maxPlantIconSize, (-350 - (50-maxPlantIconSize)/2))/maxPlantIconSize);
+		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
 	}
 }
 /*
