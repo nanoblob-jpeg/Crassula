@@ -1291,7 +1291,7 @@ void Game::renderGame(){
 
 	calculateEnemyRenderValues();
 
-	calculateIconRenderValues();
+	//calculateIconRenderValues();
 
 	renderBlocks(view);
 	renderPlants(view);
@@ -1526,10 +1526,7 @@ void Game::calculateEnemyRenderValues(){
 }
 
 void Game::calculateIconRenderValues(){
-	numEffectIcon = player.effects.size();
-	for(int i{}; i < player.effects.size(); ++i){
 
-	}
 }
 /*
 
