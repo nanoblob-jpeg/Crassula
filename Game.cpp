@@ -1299,8 +1299,8 @@ void Game::renderGame(){
 	renderPlayerProjectiles(view);
 	renderEnemies(view);
 	renderPlayer(view);
-	renderUI();
-	//renderText();
+	renderUI(view);
+	//renderText(view);
 }
 
 void Game::renderGameBackground(glm::mat4 &view){
@@ -1356,12 +1356,12 @@ void Game::renderPlayer(glm::mat4 &view){
 		player.bowl->size);
 }
 
-void Game::renderText(){
+void Game::renderText(glm::mat4 &view){
 	textRenderer->setViewMatrix("view", view);
 
 }
 
-void Game::renderUI(){
+void Game::renderUI(glm::mat4 &view){
 	UIRenderer->setViewMatrix("view", view);
 	if(player.bowl->numOfPlants == 3){
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 

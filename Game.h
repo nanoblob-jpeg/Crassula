@@ -150,8 +150,8 @@ public:
 	void renderPlayerProjectiles(glm::mat4 &view);
 	void renderEnemies(glm::mat4 &view);
 	void renderPlayer(glm::mat4 &view);
-	void renderText();
-	void renderUI();
+	void renderText(glm::mat4 &view);
+	void renderUI(glm::mat4 &view);
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(const short i, const short j);
 	void calculatePlantOffsets(const short i, const short j);
