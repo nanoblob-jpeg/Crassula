@@ -4,6 +4,7 @@
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
 SpriteRenderer *textRenderer;
+SpriteRenderer *UIRenderer;
 //background renderer
 BackgroundRenderer *BackGround_l1;
 BackgroundRenderer *BackGround_l2;
@@ -13,6 +14,7 @@ BackgroundRenderer *BackGround_l3;
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
+TexSampRenderer *IconRenderer;
 
 Game::Game(unsigned int width, unsigned int height){
 	m_state = HOME_MAIN;
@@ -1289,12 +1291,15 @@ void Game::renderGame(){
 
 	calculateEnemyRenderValues();
 
+	calculateIconRenderValues();
+
 	renderBlocks(view);
 	renderPlants(view);
 	renderEnemyProjectiles(view);
 	renderPlayerProjectiles(view);
 	renderEnemies(view);
 	renderPlayer(view);
+	renderUI();
 	//renderText();
 }
 
@@ -1352,15 +1357,25 @@ void Game::renderPlayer(glm::mat4 &view){
 }
 
 void Game::renderText(){
-	for(int i{}; i < text.size(); ++i){
-		float tempSize = std::max(text[i]->size[0], text[i]->size[1]);
-		textRenderer->DrawSprite(text[i]->sprite, text[i]->position, glm::vec2(tempSize, tempSize));
+	textRenderer->setViewMatrix("view", view);
+
+}
+
+void Game::renderUI(){
+	UIRenderer->setViewMatrix("view", view);
+	if(player.bowl->numOfPlants == 3){
+		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 
+			glm::vec2(cam.Position[0] - 400, cam.Position[1] + 300),
+			glm::vec2(800, 600));
+	}else{
+		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_four_plant"), 
+			glm::vec2(cam.Position[0] - 400, cam.Position[1] + 300),
+			glm::vec2(800, 600));
 	}
-	// implement health/plant rendering once I know what the game screen looks like
-	// also need to implement point system
-	// todo also need to implement effect rendering
-	// Texture *hp = ResourceManager::GetTexture(to_string(player.health + player.getHealthBoost()));
-	// tempSize = std::max(hp->width, hp->height);
+
+	//IconRenderer->setViewMatrix("view", view);
+	//then write code to render all of the things
+
 }
 
 void Game::calculateNewRenderValues(){
@@ -1509,6 +1524,10 @@ void Game::calculateEnemyRenderValues(){
 		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name));
 	}
 }
+
+void Game::calculateIconRenderValues(){
+
+}
 /*
 
 
@@ -1534,6 +1553,8 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
 	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
+	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "UI");
+	ResourceManager::LoadShader("shader/texSamp_vshader.txt", "shader/fragShader_array.txt", nullptr, "icon");
 }
 
 void Game::initRenderers(){
@@ -1548,6 +1569,7 @@ void Game::initRenderers(){
 	initEnemyRenderer(view, projection);
 	initBackgroundRenderers(projection);
 	initTextRenderer(view, projection);
+	initUIRenderer(view, projection);
 }
 
 void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
@@ -1628,4 +1650,24 @@ void Game::initTextRenderer(glm::mat4 &view, glm::mat4 &projection){
 	sProgram.setInt("image", 0);
 	sProgram.setMat4("projection", projection);
 	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
+}
+
+void Game::initUIRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("UI");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	UIRenderer = new SpriteRenderer(ResourceManager::GetShader("UI"));
+}
+
+void Game::initIconRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("icon");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	IconRenderer = new TexSampRenderer(ResourceManager::GetShader("icon"));
 }

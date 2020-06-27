@@ -151,11 +151,13 @@ public:
 	void renderEnemies(glm::mat4 &view);
 	void renderPlayer(glm::mat4 &view);
 	void renderText();
+	void renderUI();
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(const short i, const short j);
 	void calculatePlantOffsets(const short i, const short j);
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
+	void calculateIconRenderValues();
 
 	//Shader && Renderer loading
 	void initShaders();
@@ -167,5 +169,7 @@ public:
 	void initEnemyRenderer(glm::mat4 &view, glm::mat4 &projection);
 	void initBackgroundRenderers(glm::mat4 &projection);
 	void initTextRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initUIRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initIconRenderer(glm::mat4 &view, glm::mat4 &projection);
 };
 #endif

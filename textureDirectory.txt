@@ -13,3 +13,9 @@ mountain_2
 bin/textures/mountain_3.png
 1
 mountain_3
+bin/textures/ui_three_plant.png
+1
+ui_three_plant
+bin/textures/ui_four_plant.png
+1
+ui_four_plant
