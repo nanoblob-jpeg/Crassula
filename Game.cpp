@@ -1365,11 +1365,11 @@ void Game::renderUI(glm::mat4 &view){
 	UIRenderer->setViewMatrix("view", view);
 	if(player.bowl->numOfPlants == 3){
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 
-			glm::vec2(cam.Position[0], cam.Position[1]),
+			glm::vec2(cam.Position[0] - 300, cam.Position[1] - 300),
 			glm::vec2(600, 600));
 	}else{
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_four_plant"), 
-			glm::vec2(cam.Position[0], cam.Position[1]),
+			glm::vec2(cam.Position[0] - 300, cam.Position[1] - 300),
 			glm::vec2(600, 600));
 	}
 
