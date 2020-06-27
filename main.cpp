@@ -18,7 +18,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 // settings
-const unsigned int SCR_WIDTH = 600;
+const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 //texture mixing
