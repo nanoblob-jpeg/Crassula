@@ -32,7 +32,7 @@ public:
 	short maxProjectileSize{20};
 	short maxEnemySize{40};
 	short maxEffectIconSize{50};
-	short maxPlantIconSize{40};
+	short maxPlantIconSize{20};
 	float maxSpeed = 90.0;
 	float acceleration = 130.0;
 	float backgroundSize{2500};
@@ -92,7 +92,7 @@ public:
 	std::vector<GameObject *> text{};
 	//icon render stuff
 	std::vector<glm::vec2> effectsIconOffsets{};
-	std::vector<float> effectsIconTextCoords{};
+	std::vector<float> effectsIconTexCoords{};
 	int numEffectIcon{};
 	std::vector<glm::vec2> plantIconOffsets{};
 	std::vector<float> plantIconTexCoords{};
