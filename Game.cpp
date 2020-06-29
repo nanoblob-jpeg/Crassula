@@ -1542,7 +1542,7 @@ void Game::calculateIconRenderValues(){
 	//top side is at 750
 	short starting_offset = player.bowl->numOfPlants == 3 ? 145 : 95;
 	for(int i{}; i < player.numPlants; ++i){
-		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-358 - (50-maxPlantIconSize)/2)/maxPlantIconSize));
+		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-358 - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
 		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
 	}
 }
