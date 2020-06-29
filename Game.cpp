@@ -1376,7 +1376,7 @@ void Game::renderUI(glm::mat4 &view){
 	IconRenderer->setViewMatrix("view", view);
 	IconRenderer->setOffset(&plantIconOffsets[0], numPlantIcon);
 	IconRenderer->setTextureCoords(&plantIconTexCoords[0], numPlantIcon);
-	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, glm::vec2(cam.Position[0], cam.Position[1] - player.bowl->size[1]/2));
+	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, glm::vec2(cam.Position[0], cam.Position[1] - 40));
 
 }
 
