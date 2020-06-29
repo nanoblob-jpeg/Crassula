@@ -1572,7 +1572,7 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
 	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "UI");
-	ResourceManager::LoadShader("shaders/icon_vshader.txt", "shaders/fragShader_array.txt", nullptr, "icon");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "icon");
 }
 
 void Game::initRenderers(){
@@ -1588,6 +1588,7 @@ void Game::initRenderers(){
 	initBackgroundRenderers(projection);
 	initTextRenderer(view, projection);
 	initUIRenderer(view, projection);
+	initIconRenderer(view, projection);
 }
 
 void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
