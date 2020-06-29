@@ -129,17 +129,7 @@ void Game::ProcessInput(float dt){
 				if(player.interact){
 					player.interact->interact(this);
 					if(player.interact->type.compare("plant") == 0){
-						board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
-						plantOffsets.clear();
-						plantTexCoords.clear();
-						numPlants = 0;
-						for(int i{}; i < 9; ++i){
-							for(int j{}; j < 100; ++j){
-								calculatePlantOffsets(i, j);
-							}
-						}
-						PlantRenderer->setOffset(&plantOffsets[0], numPlants);
-						PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
+						processPlantInteraction();
 					}
 					points += 5;
 					player.experience += 2;
@@ -240,12 +230,7 @@ void Game::Update(float dt){
 		if(player.isDead()){
 			gameEndProtocol();
 		}
-		backgroundLayerOneOffset[0] += ((player.velocity[0]/12) * dt)/backgroundSize;
-		backgroundLayerOneOffset[1] += ((player.velocity[1]/12) * dt)/backgroundSize;
-		backgroundLayerTwoOffset[0] += ((player.velocity[0]/8) * dt)/backgroundSize;
-		backgroundLayerTwoOffset[1] += ((player.velocity[1]/8) * dt)/backgroundSize;
-		backgroundLayerThreeOffset[0] += ((player.velocity[0]/5) * dt)/backgroundSize;
-		backgroundLayerThreeOffset[1] += ((player.velocity[1]/5) * dt)/backgroundSize;
+		moveBackground();
 	}
 
 	//test for the other states else if()
@@ -308,33 +293,9 @@ void Game::initializeGame(){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
 						if(rnum <= 5 + player.luck){
-							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
-							//5% chance to spawn in a plant
-							//uses the plant object but puts a location
-							//copies non-important data into the stuff
-							int plantNum = plantPicker(mersenne);
-							auto it = ResourceManager::Plants.begin();
-							while(plantNum--){
-								++it;
-							}
-							temp[i].plants.push_back((it)->second);
-							//position also accounts for the plant being smaller than the block
-							//thus it would be offset a little bit
-							auto end = temp[i].plants.rbegin();
-							end->position.x += ((j-10)%10) * 50;
-							end->position.y -= ((j-10)/10) * 50;
+							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
-							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
-							//20% chance to spawn an enemy
-							//stored inside of a vector for the Game class
-							//might change this to have a certain percentage per enemy
-							//and then spawn that enemy in
-							int enemyNum = enemyPicker(mersenne);
-							auto it = ResourceManager::Enemies.begin();
-							while(enemyNum--)
-								++it;
-							board_enemies.push_back((it)->second);
-							fixGeneratedEnemiesPosition(i, j, generationCodes2[k], generationCode[k]);
+							spawnEnemy(i, j, generationCodes2[k], generationCode[k]);
 						}
 					}
 				}
@@ -487,33 +448,9 @@ void Game::generateChunks(const short direction){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
 						if(rnum <= 5 + player.luck){
-							std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
-							//5% chance to spawn in a plant
-							//uses the plant object but puts a location
-							//copies non-important data into the stuff
-							int plantNum = plantPicker(mersenne);
-							auto it = ResourceManager::Plants.begin();
-							while(plantNum--){
-								++it;
-							}
-							temp[i].plants.push_back((it)->second);
-							//position also accounts for the plant being smaller than the block
-							//thus it would be offset a little bit
-							auto end = temp[i].plants.rbegin();
-							end->position.x += ((j-10)%10) * 50;
-							end->position.y -= (((j-10)/10)) * 50;
+							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
-							std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
-							//20% chance to spawn an enemy
-							//stored inside of a vector for the Game class
-							//might change this to have a certain percentage per enemy
-							//and then spawn that enemy in
-							int enemyNum = enemyPicker(mersenne);
-							auto it = ResourceManager::Enemies.begin();
-							while(enemyNum--)
-								++it;
-							board_enemies.push_back((it)->second);
-							fixGeneratedEnemiesPosition(i, j, k, direction);
+							spawnEnemy(i, j, k, direction);
 						}
 					}
 				}
@@ -732,6 +669,38 @@ void Game::fixPlayerPosition(const short direction){
 			cam.Position[0] += 5000;
 			break;
 	}
+}
+
+void Game::spawnPlant(std::vector<Chunk> &temp, short i, short j){
+	std::uniform_int_distribution plantPicker{0, static_cast<int>(numOfPlants) - 1};
+	//5% chance to spawn in a plant
+	//uses the plant object but puts a location
+	//copies non-important data into the stuff
+	int plantNum = plantPicker(mersenne);
+	auto it = ResourceManager::Plants.begin();
+	while(plantNum--){
+		++it;
+	}
+	temp[i].plants.push_back((it)->second);
+	//position also accounts for the plant being smaller than the block
+	//thus it would be offset a little bit
+	auto end = temp[i].plants.rbegin();
+	end->position.x += ((j-10)%10) * 50;
+	end->position.y -= ((j-10)/10) * 50;
+}
+
+void Game::spawnEnemy(short i, short j, short k, short l){
+	std::uniform_int_distribution enemyPicker{0, static_cast<int>(numOfEnemies) - 1};
+	//20% chance to spawn an enemy
+	//stored inside of a vector for the Game class
+	//might change this to have a certain percentage per enemy
+	//and then spawn that enemy in
+	int enemyNum = enemyPicker(mersenne);
+	auto it = ResourceManager::Enemies.begin();
+	while(enemyNum--)
+		++it;
+	board_enemies.push_back((it)->second);
+	fixGeneratedEnemiesPosition(i, j, k, l);
 }
 /*
 
@@ -1254,6 +1223,20 @@ void Game::moveAllProjectiles(const float dt){
 		enemy_projectiles[i].move(dt);
 	}
 }
+
+void Game::processPlantInteraction(){
+	board[player.location[0]][player.location[1]][player.location[2]].removePlant(player.location[3]);
+	plantOffsets.clear();
+	plantTexCoords.clear();
+	numPlants = 0;
+	for(int i{}; i < 9; ++i){
+		for(int j{}; j < 100; ++j){
+			calculatePlantOffsets(i, j);
+		}
+	}
+	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
+	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
+}
 /*
 
 
@@ -1545,6 +1528,15 @@ void Game::calculateIconRenderValues(){
 		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-358 - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
 		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
 	}
+}
+
+void Game::moveBackground(){
+	backgroundLayerOneOffset[0] += ((player.velocity[0]/12) * dt)/backgroundSize;
+	backgroundLayerOneOffset[1] += ((player.velocity[1]/12) * dt)/backgroundSize;
+	backgroundLayerTwoOffset[0] += ((player.velocity[0]/8) * dt)/backgroundSize;
+	backgroundLayerTwoOffset[1] += ((player.velocity[1]/8) * dt)/backgroundSize;
+	backgroundLayerThreeOffset[0] += ((player.velocity[0]/5) * dt)/backgroundSize;
+	backgroundLayerThreeOffset[1] += ((player.velocity[1]/5) * dt)/backgroundSize;
 }
 /*
 
