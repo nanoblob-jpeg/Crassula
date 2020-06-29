@@ -1376,7 +1376,7 @@ void Game::renderUI(glm::mat4 &view){
 	IconRenderer->setViewMatrix("view", view);
 	IconRenderer->setOffset(&plantIconOffsets[0], numPlantIcon);
 	IconRenderer->setTextureCoords(&plantIconTexCoords[0], numPlantIcon);
-	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, cam.Position);
+	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, glm::vec2(cam.Position[0], cam.Position[1] - player.bowl->size[1]/2));
 
 }
 
@@ -1542,7 +1542,7 @@ void Game::calculateIconRenderValues(){
 	//top side is at 750
 	short starting_offset = player.bowl->numOfPlants == 3 ? 145 : 95;
 	for(int i{}; i < player.numPlants; ++i){
-		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (50-maxPlantIconSize)/2)/maxPlantIconSize, (-350 - (50+maxPlantIconSize)/2)/maxPlantIconSize));
+		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (50-maxPlantIconSize)/2)/maxPlantIconSize, (-350 - (50-maxPlantIconSize)/2)/maxPlantIconSize));
 		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
 	}
 }
