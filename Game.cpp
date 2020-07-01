@@ -707,7 +707,7 @@ void Game::spawnEnemy(short i, short j, short k, short l){
 	auto it = ResourceManager::Enemies.begin();
 	while(enemyNum--)
 		++it;
-	std::cout << it->name << '\n';
+	std::cout << it->second.name << '\n';
 	board_enemies.push_back((it)->second);
 	fixGeneratedEnemiesPosition(i, j, k, l);
 }
