@@ -571,7 +571,7 @@ void Game::despawnProjectilesFromDeletedChunks(const short direction){
 }
 
 void Game::fixGeneratedEnemiesPosition(const short i, const short j, const short k, const short direction){
-	auto end = board_enemies.rbegin();
+	Enemy* end = *(board_enemies.rbegin());
 	//i is the mini chunk inside the larger chunk
 	//i/10 gives the row
 	//i%10 gives the column
