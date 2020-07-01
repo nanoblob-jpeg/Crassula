@@ -1141,8 +1141,6 @@ void Game::clearDeadEnemies(){
 			player.experience += 5;
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
-		}else{
-			std::cout << board_enemies[i].health << ", ";
 		}
 	}
 }
