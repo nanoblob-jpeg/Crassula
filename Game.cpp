@@ -1135,10 +1135,14 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i].health <= 0){
+			std::cout << "deleted an enemy: " << board_enemies[i].position[0] << ',' << board_enemies[i].position[1] << '\n';
+			std::cout << cam.Position[0] << ',' << cam.Position[1] << '\n';
 			points += 2;
 			player.experience += 5;
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
+		}else{
+			std::cout << board_enemies[i].health << ", ";
 		}
 	}
 }
