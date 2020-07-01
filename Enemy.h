@@ -33,7 +33,7 @@ public:
 
 	bool hitByPiercing{false};
 
-	virtual bool attackFunc(glm::vec2 &playerPosition){
+	virtual bool attackFunc(glm::vec3 &playerPosition){
 		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
 		return false;
 	};

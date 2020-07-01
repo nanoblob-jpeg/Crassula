@@ -1259,7 +1259,7 @@ void Game::processPlantInteraction(){
 void Game::enemyAttackLogic(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(!abs(board_enemies[i].position[0] - cam.Position[0]) > 1000 && !abs(board_enemies[i].position[1] - cam.Position[1]) > 1000){
-			if(board_enemies[i].attackFunc(glm::vec2(cam.Position[0], cam.Position[1]))){
+			if(board_enemies[i].attackFunc(cam.Position)){
 				enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i].projectileName));
 				auto it = enemy_projectiles.rbegin();
 				glm::vec2 startPosition = board_enemies[i].getProjectileStartPositionForEnemy(*it);
@@ -1523,7 +1523,7 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxProjectileSize, enemy_projectiles[i].position[1]/maxProjectileSize));
-		if(enemy_projectiles.attackRight)
+		if(enemy_projectiles[i].attackRight)
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
 		else
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name + "reverse"));

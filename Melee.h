@@ -46,7 +46,7 @@ public:
 		size = glm::vec2(40, 40);
 		name = "Melee";
 	}
-	bool attackFunc(glm::vec2 &playerPosition){
+	bool attackFunc(glm::vec3 &playerPosition){
 		if(!attacking){
 			short distance = playerPosition[0] - position[0];
 			if(abs(distance) <= 500){
