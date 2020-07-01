@@ -974,7 +974,7 @@ void Game::player_projectile_collision_detection(){
 						--i;
 						deletionTracker = true;
 						break;
-					}else if(player.projectiles[i].piercing){
+					}else if(player_projectiles[i].piercing){
 						board_enemies[j].hitByPiercing = true;
 					}
 				}else if(board_enemies[j].hitByPiercing)
