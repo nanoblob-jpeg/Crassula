@@ -35,12 +35,14 @@ public:
 
 	virtual bool attackFunc(glm::vec2 &playerPosition){
 		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
+		return false;
 	};
 	virtual void move(){
 		std::cout << "illegal action performed, enemy tried moving, not an enemy";
 	};
 	virtual glm::vec2 getProjectileStartPositionForEnemy(Projectile &p){
 		std::cout << "illegal action performed, tried to spawn enemy projectile, not an enemy";
+		return glm::vec2(0,0);
 	}
 	void addAttackTimer(float dt){
 		if(attackingTimer + dt >= 3 - attackSpeed){

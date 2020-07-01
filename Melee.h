@@ -11,7 +11,7 @@ public:
 		attack = 3;
 		attackSpeed = 0.5;
 		speed = 0.5;
-		prjectileSpeed = 180;
+		projectileSpeed = 180;
 		sprite = (ResourceManager::GetTexture("enemies"));
 		glm::vec2 texCoord = glm::vec2(0.0, 0.0);
 		projectileName = "meleeEnemyProjectile";
