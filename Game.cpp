@@ -230,7 +230,7 @@ void Game::Update(float dt){
 		if(player.isDead()){
 			gameEndProtocol();
 		}
-		moveBackground();
+		moveBackground(dt);
 	}
 
 	//test for the other states else if()
@@ -1534,7 +1534,7 @@ void Game::calculateIconRenderValues(){
 	}
 }
 
-void Game::moveBackground(){
+void Game::moveBackground(float dt){
 	backgroundLayerOneOffset[0] += ((player.velocity[0]/12) * dt)/backgroundSize;
 	backgroundLayerOneOffset[1] += ((player.velocity[1]/12) * dt)/backgroundSize;
 	backgroundLayerTwoOffset[0] += ((player.velocity[0]/8) * dt)/backgroundSize;

@@ -170,7 +170,7 @@ public:
 	void calculateProjectileRenderValues();
 	void calculateEnemyRenderValues();
 	void calculateIconRenderValues();
-	void moveBackground();
+	void moveBackground(float dt);
 
 	//Shader && Renderer loading
 	void initShaders();
