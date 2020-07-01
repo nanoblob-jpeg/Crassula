@@ -823,6 +823,14 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *ob
 	return (collisionX && collisionY);
 }
 
+bool Game::game_classic_two_object_collisions(glm::vec2 position, glm::vec2 size, GameObject *projectile){
+	bool collisionX =  projectile->position[0] + projectile->size[0] >= position[0]
+		&& position[0] + size[0] >= projectile->position[0];
+	bool collisionY = projectile->position[1] - projectile->size[1] <= position[1] + gameobject_offset_y
+		&& position[1] - size[1] <= object2->position[1];
+	return (collisionX && collisionY);
+}
+
 void Game::findLocationCoordinates(short &width, short &height, const float x, const float y){
 	//this changes the variables to the index
 	//no returns, just changes the variables passed to it
@@ -1022,7 +1030,8 @@ void Game::enemy_projectile_collision_detection(){
 		else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
 			continue;
 		else
-			if(game_classic_two_object_collisions((GameObject *)&(player), (GameObject *)&(enemy_projectiles[i]))){
+			if(game_classic_two_object_collisions(glm::vec2(cam.Position[0]-player.bowl->size[0]/2, cam.Position[1]+player.bowl->size[1]/2), player.bowl->size, (GameObject *)&(enemy_projectiles[i]))){
+				std::cout << "hit player\n";
 				player.dealDamage(enemy_projectiles[i].damage);
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
@@ -1032,6 +1041,7 @@ void Game::enemy_projectile_collision_detection(){
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
 			if(abs(enemy_projectiles[i].position[0]) > 7500 || abs(enemy_projectiles[i].position[1]) > 7500){
+				std::cout << "hit edge\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1041,6 +1051,7 @@ void Game::enemy_projectile_collision_detection(){
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, enemy_projectiles[i].position[0], enemy_projectiles[i].position[1]);
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(enemy_projectiles[i]))){
+				std::cout << "hit blocks\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 			}
@@ -1048,6 +1059,7 @@ void Game::enemy_projectile_collision_detection(){
 		//checking range for the projectile
 		if(!deletionTracker){
 			if(enemy_projectiles[i].rangeCheck()){
+				std::cout << "hit range\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;

@@ -134,6 +134,7 @@ public:
 	void player_and_object_collisions(GameObject *object, const float dt, const short index_x, const short index_y, const short index_chunk, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *projectile);
 	bool game_classic_two_object_collisions(GameObject *object, GameObject *object2, const short width_offset, const short height_offset);
+	bool game_classic_two_object_collisions(glm::vec2 position, glm::vec2 size, GameObject *projectile);
 	void findLocationCoordinates(short &width, short &height, const float x, const float y);
 	void nineBlockCollisionDetectionPAndO(const short width, const short height, const float dt);
 	bool nineBlockCollisionDetectionGeneral(const short width, const short height, GameObject *object);
