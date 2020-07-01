@@ -72,7 +72,7 @@ public:
 		if(attackRight){
 			output[0] = position[0] + size[0];
 		}else{
-			output[0] = position[0];
+			output[0] = position[0] - p.size[0];
 		}
 		output[1] = position[1] - (size[1] - p.size[1])/2;
 		return output;
