@@ -826,8 +826,8 @@ bool Game::game_classic_two_object_collisions(GameObject *object, GameObject *ob
 bool Game::game_classic_two_object_collisions(glm::vec2 position, glm::vec2 size, GameObject *projectile){
 	bool collisionX =  projectile->position[0] + projectile->size[0] >= position[0]
 		&& position[0] + size[0] >= projectile->position[0];
-	bool collisionY = projectile->position[1] - projectile->size[1] <= position[1] + gameobject_offset_y
-		&& position[1] - size[1] <= object2->position[1];
+	bool collisionY = projectile->position[1] - projectile->size[1] <= position[1]
+		&& position[1] - size[1] <= projectile->position[1];
 	return (collisionX && collisionY);
 }
 
