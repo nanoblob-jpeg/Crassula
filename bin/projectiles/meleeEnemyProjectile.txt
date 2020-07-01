@@ -1,0 +1,7 @@
+meleeEnemyProjectile
+1
+200
+0
+40
+40
+0

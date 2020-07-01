@@ -14,6 +14,12 @@ public:
 	float attackSpeed;
 	float speed;
 	std::string name;
+	std::string projectileName;
+
+	bool attacking{false};
+	float attackingTimer{};
+	bool attackRight{};
+	float projectileSpeed{};
 
 	int frameCounter{};
 
@@ -27,12 +33,24 @@ public:
 
 	bool hitByPiercing{false};
 
-	virtual void attackFunc(){
+	virtual bool attackFunc(glm::vec2 &playerPosition){
 		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
 	};
 	virtual void move(){
 		std::cout << "illegal action performed, enemy tried moving, not an enemy";
 	};
+	virtual glm::vec2 getProjectileStartPositionForEnemy(Projectile &p){
+		std::cout << "illegal action performed, tried to spawn enemy projectile, not an enemy";
+	}
+	void addAttackTimer(float dt){
+		if(attackingTimer + dt >= 3 - attackSpeed){
+			attacking = false;
+			attackingTimer = 0;
+			return;
+		}else{
+			attackingTimer += dt;
+		}
+	}
 	void applyEffects(float dt){
 		float temp = 0.0f;
 		for(int i{}; i < effects.size(); ++i){

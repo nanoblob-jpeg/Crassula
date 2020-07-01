@@ -22,11 +22,11 @@ public:
 			size = psize;
 		};
 
-	void setDirection(const glm::vec2 &startPosition, const short direction){
+	void setDirection(const glm::vec2 &startPosition, const short direction, float speed = 200){
 		if(direction < 0){
-			velocity[0] = -200;
+			velocity[0] = -speed;
 		}else{
-			velocity[0] = 200;
+			velocity[0] = speed;
 		}
 		position = startPosition;
 	}

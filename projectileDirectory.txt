@@ -3,3 +3,4 @@ bin/projectiles/french1.txt
 bin/projectiles/lamp1.txt
 bin/projectiles/rose1.txt
 bin/projectiles/basic.txt
+bin/projectiles/meleeEnemyProjectile.txt

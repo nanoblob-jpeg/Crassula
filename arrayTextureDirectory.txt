@@ -4,3 +4,5 @@ projectiles
 bin/textures/projectiles.txt
 enemies
 bin/textures/enemies.txt
+enemyProjectiles
+bin/textures/enemyProjectiles.txt

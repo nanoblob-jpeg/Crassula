@@ -151,6 +151,7 @@ public:
 	void processPlayerMovement(const float dt);
 	void moveAllProjectiles(const float dt);
 	void processPlantInteraction();
+	void enemyAttackLogic();
 
 	//rendering
 	void renderHomeMain();

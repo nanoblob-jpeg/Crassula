@@ -11,8 +11,10 @@ public:
 		attack = 3;
 		attackSpeed = 0.5;
 		speed = 0.5;
+		prjectileSpeed = 180;
 		sprite = (ResourceManager::GetTexture("enemies"));
 		glm::vec2 texCoord = glm::vec2(0.0, 0.0);
+		projectileName = "meleeEnemyProjectile";
 		for(int i{}; i < 1; ++i){
 			std::vector<glm::vec2> tempVec;
 			int temp = 40;
@@ -44,11 +46,36 @@ public:
 		size = glm::vec2(40, 40);
 		name = "Melee";
 	}
-	void attackFunc(){
-		std::cout << "enemy attacked";
+	bool attackFunc(glm::vec2 &playerPosition){
+		if(!attacking){
+			short distance = playerPosition[0] - position[0];
+			if(abs(distance) <= 500){
+				if(distance < 0){
+					attackRight = false;
+				}else{
+					attackRight = true;
+				}
+				attacking = true;
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
 	}
 	void move(){
 		position[0] += 0.01;
+	}
+	glm::vec2 getProjectileStartPositionForEnemy(Projectile &p){
+		glm::vec2 output;
+		if(attackRight){
+			output[0] = position[0] + size[0];
+		}else{
+			output[0] = position[0];
+		}
+		output[1] = position[1] - (size[1] - p.size[1])/2;
+		return output;
 	}
 };
 #endif

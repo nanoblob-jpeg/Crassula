@@ -172,6 +172,13 @@ void Game::Update(float dt){
 	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
 		player.canAttack(dt);
 
+	//adding to the attack timers of the enemies
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(board_enemies[i].attacking){
+			board_enemies[i].addAttackTimer(dt);
+		}
+	}
+
 	if(m_state == HOME_MAIN){
 		//don't know what I'm doing here, need to set it to the chunk that is displayed
 		Chunk *home_main = &ResourceManager::GetChunk("home_main");
@@ -230,6 +237,7 @@ void Game::Update(float dt){
 		if(player.isDead()){
 			gameEndProtocol();
 		}
+		enemyAttackLogic();
 		moveBackground(dt);
 	}
 
@@ -962,11 +970,8 @@ void Game::player_projectile_collision_detection(){
 			}else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					std::cout << board_enemies[j].health << ',';
 					if(!player_projectiles[i].piercing || !board_enemies[j].hitByPiercing)
 						board_enemies[j].health -= std::max(player_projectiles[i].damage - board_enemies[j].defense, 1);
-					std::cout << "\nsegfault checkpoing\n";
-					std::cout << board_enemies[j].health << '\n';
 					//add effects
 					board_enemies[j].addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
@@ -1250,6 +1255,22 @@ void Game::processPlantInteraction(){
 	PlantRenderer->setOffset(&plantOffsets[0], numPlants);
 	PlantRenderer->setTextureCoords(&plantTexCoords[0], numPlants);
 }
+
+void Game::enemyAttackLogic(){
+	for(int i{}; i < board_enemies.size(); ++i){
+		if(!abs(board_enemies[i].position[0] - cam.Position[0]) > 1000 && !abs(board_enemies[i].position[1] - cam.Position[1]) > 1000){
+			if(board_enemies[i].attackFunc(cam.Position)){
+				enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i].projectileName));
+				auto it = enemy_projectiles.rbegin();
+				glm::vec2 startPosition = board_enemies[i].getProjectileStartPositionForEnemy(*it);
+				short direction = board_enemies[i].attackRight ? 1 : -1;
+				it->setDirection(startPosition, direction, board_enemies[i].projectileSpeed);
+				it->right = board_enemies[i].attackRight;
+				it->damage = board_enemies[i].attack;
+			};
+		}
+	}
+}
 /*
 
 
@@ -1328,7 +1349,7 @@ void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize);
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
@@ -1502,7 +1523,10 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxProjectileSize, enemy_projectiles[i].position[1]/maxProjectileSize));
-		enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
+		if(enemy_projectiles.right)
+			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
+		else
+			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name + "reverse"));
 	}
 
 	for(int i{}; i < player_projectiles.size(); ++i){
