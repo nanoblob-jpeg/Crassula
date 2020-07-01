@@ -958,15 +958,18 @@ void Game::player_projectile_collision_detection(){
 			else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
+					std::cout << board_enemies[j].health << ',';
 					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
 					//add effects
 					board_enemies[j].addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
-						deletionTracker = true;
 						break;
 					}
+					deletionTracker = true;
+					std::cout << board_enemies[j].health<< '\n';
+
 				}
 		}
 		//collision detection between the projectile and the edge
