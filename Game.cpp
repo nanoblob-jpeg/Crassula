@@ -951,15 +951,20 @@ void Game::player_projectile_collision_detection(){
 	for(int i{}; i < player_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		for(int j{}; j < board_enemies.size(); ++j){
-			if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500)
+			if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500){
+				if(board_enemies[j].hitByPiercing)
+					board_enemies[j].hitByPiercing = false;
 				continue;
-			else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500)
+			}else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500){
+				if(board_enemies[j].hitByPiercing)
+					board_enemies[j].hitByPiercing = false;
 				continue;
-			else
+			}else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
 					std::cout << board_enemies[j].health << ',';
-					board_enemies[j].health -= std::max(player_projectiles[i].damage - board_enemies[j].defense, 1);
+					if(!player_projectiles[i].piercing || !board_enemies[j].hitByPiercing)
+						board_enemies[j].health -= std::max(player_projectiles[i].damage - board_enemies[j].defense, 1);
 					std::cout << "\nsegfault checkpoing\n";
 					std::cout << board_enemies[j].health << '\n';
 					//add effects
@@ -969,8 +974,11 @@ void Game::player_projectile_collision_detection(){
 						--i;
 						deletionTracker = true;
 						break;
+					}else if(player.projectiles[i].piercing){
+						board_enemies[j].hitByPiercing = true;
 					}
-				}
+				}else if(board_enemies[j].hitByPiercing)
+					board_enemies[j].hitByPiercing = false;
 		}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){

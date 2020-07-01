@@ -25,6 +25,8 @@ public:
 
 	std::vector<Effect> attackEffects;
 
+	bool hitByPiercing{false};
+
 	virtual void attackFunc(){
 		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
 	};
