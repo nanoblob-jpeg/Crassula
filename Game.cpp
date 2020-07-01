@@ -960,16 +960,16 @@ void Game::player_projectile_collision_detection(){
 					//deal damage
 					std::cout << board_enemies[j].health << ',';
 					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
+					std::cout << "\nsegfault checkpoing\n";
 					//add effects
 					board_enemies[j].addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
+						deletionTracker = true;
 						break;
 					}
-					deletionTracker = true;
-					std::cout << board_enemies[j].health<< '\n';
-
+					std::cout << board_enemies[j].health << '\n';
 				}
 		}
 		//collision detection between the projectile and the edge
