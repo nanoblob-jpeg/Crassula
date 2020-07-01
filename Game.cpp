@@ -959,8 +959,9 @@ void Game::player_projectile_collision_detection(){
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
 					std::cout << board_enemies[j].health << ',';
-					board_enemies[j].health -= (player_projectiles[i].damage - board_enemies[j].defense);
+					board_enemies[j].health -= std::max(player_projectiles[i].damage - board_enemies[j].defense, 1);
 					std::cout << "\nsegfault checkpoing\n";
+					std::cout << board_enemies[j].health << '\n';
 					//add effects
 					board_enemies[j].addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
@@ -969,7 +970,6 @@ void Game::player_projectile_collision_detection(){
 						deletionTracker = true;
 						break;
 					}
-					std::cout << board_enemies[j].health << '\n';
 				}
 		}
 		//collision detection between the projectile and the edge
