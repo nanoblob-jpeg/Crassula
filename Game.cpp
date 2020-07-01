@@ -1360,7 +1360,7 @@ void Game::renderEnemyProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize);
+	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxProjectileSize, glm::vec2(0.0f, player.bowl->size[1] - maxEnemyProjectileSize));
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
@@ -1533,7 +1533,7 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileOffsets.clear();
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
-		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxProjectileSize, enemy_projectiles[i].position[1]/maxProjectileSize));
+		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxEnemyProjectileSize, enemy_projectiles[i].position[1]/maxEnemyProjectileSize));
 		if(enemy_projectiles[i].right)
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
 		else
