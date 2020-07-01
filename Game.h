@@ -126,8 +126,8 @@ public:
 	void fixRemainingProjectilePosition(const short direction);
 	short findAddingAmountOffsetWhenGeneratingChunks(const short direction);
 	void fixPlayerPosition(const short direction);
-	void spawnPlant(std::vector<Chunk> &temp, short j);
-	void spawnEnemy(short i, short j, short k, short, l);
+	void spawnPlant(std::vector<Chunk> &temp, short i, short j);
+	void spawnEnemy(short i, short j, short k, short l);
 
 	//collision detection
 	void player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x = 0, const short gameobject_offset_y = 0);
