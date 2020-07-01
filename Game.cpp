@@ -174,8 +174,8 @@ void Game::Update(float dt){
 
 	//adding to the attack timers of the enemies
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].attacking){
-			board_enemies[i].addAttackTimer(dt);
+		if(board_enemies[i]->attacking){
+			board_enemies[i]->addAttackTimer(dt);
 		}
 	}
 
@@ -318,7 +318,6 @@ void Game::loadEnemies(){
 	//then save it to the map as a broad class enemy not
 	//as the specific one
 	//then they select it and set the position
-	ResourceManager::Enemies["Melee"] = Melee();
 	ResourceManager::setDepth("Melee", 0);
 }
 
@@ -514,8 +513,9 @@ void Game::despawnEnemiesFromDeletedChunks(const short direction){
 			break;
 	}
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].position[0] >= min_x && board_enemies[i].position[0] <= max_x 
-			&& board_enemies[i].position[1] >= min_y && board_enemies[i].position[1] <= max_y){
+		if(board_enemies[i]->position[0] >= min_x && board_enemies[i]->position[0] <= max_x 
+			&& board_enemies[i]->position[1] >= min_y && board_enemies[i]->position[1] <= max_y){
+			delete board_enemies[i];
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
 		}
@@ -581,37 +581,37 @@ void Game::fixGeneratedEnemiesPosition(const short i, const short j, const short
 	//j%10 gives the column
 	//
 	//k is the chunk being generated
-	end->position.x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
-	end->position.y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
+	end->position->x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
+	end->position->y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
 
 	switch(direction){
 		case 0 :
-			end->position.y += 5000;
+			end->position->y += 5000;
 			if(k == 0)
-				end->position.x -= 5000;
+				end->position->x -= 5000;
 			else if(k == 2)
-				end->position.x += 5000;
+				end->position->x += 5000;
 			break;
 		case 1 :
-			end->position.x += 5000;
+			end->position->x += 5000;
 			if(k == 0)
-				end->position.y += 5000;
+				end->position->y += 5000;
 			else if(k == 2)
-				end->position.y -= 5000;
+				end->position->y -= 5000;
 			break;
 		case 2 :
-			end->position.y -= 5000;
+			end->position->y -= 5000;
 			if(k == 0)
-				end->position.x -= 5000;
+				end->position->x -= 5000;
 			else if(k == 2)
-				end->position.x += 5000;
+				end->position->x += 5000;
 			break;
 		case 3 :
-			end->position.x -= 5000;
+			end->position->x -= 5000;
 			if(k == 0)
-				end->position.y += 5000;
+				end->position->y += 5000;
 			else if(k == 2)
-				end->position.y -= 5000;
+				end->position->y -= 5000;
 			break;
 	}
 }
@@ -625,9 +625,9 @@ void Game::fixRemainingEnemyPosition(const short direction){
 	int adder = findAddingAmountOffsetWhenGeneratingChunks(direction);
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(vert)
-			board_enemies[i].position[1] += adder;
+			board_enemies[i]->position[1] += adder;
 		else
-			board_enemies[i].position[0] += adder;
+			board_enemies[i]->position[0] += adder;
 	}
 }
 
@@ -704,11 +704,10 @@ void Game::spawnEnemy(short i, short j, short k, short l){
 	//might change this to have a certain percentage per enemy
 	//and then spawn that enemy in
 	int enemyNum = enemyPicker(mersenne);
-	auto it = ResourceManager::Enemies.begin();
-	while(enemyNum--)
-		++it;
-	std::cout << it->second.name << '\n';
-	board_enemies.push_back((it)->second);
+	if(enemyNum == 0){
+		Enemy *temp = new Melee();
+		board_enemies.push_back(temp);
+	}
 	fixGeneratedEnemiesPosition(i, j, k, l);
 }
 /*
@@ -960,31 +959,31 @@ void Game::player_projectile_collision_detection(){
 	for(int i{}; i < player_projectiles.size(); ++i){
 		bool deletionTracker{false};
 		for(int j{}; j < board_enemies.size(); ++j){
-			if(abs(board_enemies[j].position[0] - player_projectiles[i].position[0]) > 500){
-				if(board_enemies[j].hitByPiercing)
-					board_enemies[j].hitByPiercing = false;
+			if(abs(board_enemies[j]->position[0] - player_projectiles[i].position[0]) > 500){
+				if(board_enemies[j]->hitByPiercing)
+					board_enemies[j]->hitByPiercing = false;
 				continue;
-			}else if(abs(board_enemies[j].position[1] - player_projectiles[i].position[1]) > 500){
-				if(board_enemies[j].hitByPiercing)
-					board_enemies[j].hitByPiercing = false;
+			}else if(abs(board_enemies[j]->position[1] - player_projectiles[i].position[1]) > 500){
+				if(board_enemies[j]->hitByPiercing)
+					board_enemies[j]->hitByPiercing = false;
 				continue;
 			}else
 				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					if(!player_projectiles[i].piercing || !board_enemies[j].hitByPiercing)
-						board_enemies[j].health -= std::max(player_projectiles[i].damage - board_enemies[j].defense, 1);
+					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing)
+						board_enemies[j]->health -= std::max(player_projectiles[i].damage - board_enemies[j]->defense, 1);
 					//add effects
-					board_enemies[j].addEffects(player_projectiles[i]);
+					board_enemies[j]->addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
 						deletionTracker = true;
 						break;
 					}else if(player_projectiles[i].piercing){
-						board_enemies[j].hitByPiercing = true;
+						board_enemies[j]->hitByPiercing = true;
 					}
-				}else if(board_enemies[j].hitByPiercing)
-					board_enemies[j].hitByPiercing = false;
+				}else if(board_enemies[j]->hitByPiercing)
+					board_enemies[j]->hitByPiercing = false;
 		}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
@@ -1151,11 +1150,10 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 
 void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].health <= 0){
-			std::cout << "deleted an enemy: " << board_enemies[i].position[0] << ',' << board_enemies[i].position[1] << '\n';
-			std::cout << cam.Position[0] << ',' << cam.Position[1] << '\n';
+		if(board_enemies[i]->health <= 0){
 			points += 2;
 			player.experience += 5;
+			delete board_enemies[i];
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
 		}
@@ -1164,8 +1162,8 @@ void Game::clearDeadEnemies(){
 
 void Game::processEffectsForEnemies(const float dt){
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(board_enemies[i].effects.size() > 0){
-			board_enemies[i].applyEffects(dt);
+		if(board_enemies[i]->effects.size() > 0){
+			board_enemies[i]->applyEffects(dt);
 		}
 	}
 }
@@ -1259,15 +1257,15 @@ void Game::processPlantInteraction(){
 
 void Game::enemyAttackLogic(){
 	for(int i{}; i < board_enemies.size(); ++i){
-		if(!(abs(board_enemies[i].position[0] - cam.Position[0]) > 1000) && !(abs(board_enemies[i].position[1] - cam.Position[1]) > 1000)){
-			if(board_enemies[i].attackFunc(cam.Position)){
-				enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i].projectileName));
+		if(!(abs(board_enemies[i]->position[0] - cam.Position[0]) > 1000) && !(abs(board_enemies[i]->position[1] - cam.Position[1]) > 1000)){
+			if(board_enemies[i]->attackFunc(cam.Position)){
+				enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i]->projectileName));
 				auto it = enemy_projectiles.rbegin();
-				glm::vec2 startPosition = board_enemies[i].getProjectileStartPositionForEnemy(*it);
-				short direction = board_enemies[i].attackRight ? 1 : -1;
-				it->setDirection(startPosition, direction, board_enemies[i].projectileSpeed);
-				it->right = board_enemies[i].attackRight;
-				it->damage = board_enemies[i].attack;
+				glm::vec2 startPosition = board_enemies[i]->getProjectileStartPositionForEnemy(*it);
+				short direction = board_enemies[i]->attackRight ? 1 : -1;
+				it->setDirection(startPosition, direction, board_enemies[i]->projectileSpeed);
+				it->right = board_enemies[i]->attackRight;
+				it->damage = board_enemies[i]->attack;
 			};
 		}
 	}
@@ -1543,8 +1541,8 @@ void Game::calculateEnemyRenderValues(){
 	enemyOffsets.clear();
 	enemyTexCoords.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
-		enemyOffsets.push_back(glm::vec2(board_enemies[i].position[0]/maxEnemySize, board_enemies[i].position[1]/maxEnemySize));
-		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i].name));
+		enemyOffsets.push_back(glm::vec2(board_enemies[i]->position[0]/maxEnemySize, board_enemies[i]->position[1]/maxEnemySize));
+		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i]->name));
 	}
 }
 

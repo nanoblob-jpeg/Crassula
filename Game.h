@@ -65,7 +65,7 @@ public:
 	float upCounter{};
 	//game storage system
 	std::deque<std::deque<std::vector<Chunk>>> board{};
-	std::vector<Enemy> board_enemies{};
+	std::vector<Enemy*> board_enemies{};
 	std::vector<Projectile> enemy_projectiles{};
 	std::vector<Projectile> player_projectiles{};
 	float points{};
