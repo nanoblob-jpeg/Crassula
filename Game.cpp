@@ -1523,7 +1523,7 @@ void Game::calculateProjectileRenderValues(){
 	playerProjectileTexCoords.clear();
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxProjectileSize, enemy_projectiles[i].position[1]/maxProjectileSize));
-		if(enemy_projectiles[i].attackRight)
+		if(enemy_projectiles[i].right)
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
 		else
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name + "reverse"));
