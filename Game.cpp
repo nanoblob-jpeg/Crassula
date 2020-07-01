@@ -581,37 +581,37 @@ void Game::fixGeneratedEnemiesPosition(const short i, const short j, const short
 	//j%10 gives the column
 	//
 	//k is the chunk being generated
-	end->position->x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
-	end->position->y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
+	end->position.x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
+	end->position.y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
 
 	switch(direction){
 		case 0 :
-			end->position->y += 5000;
+			end->position.y += 5000;
 			if(k == 0)
-				end->position->x -= 5000;
+				end->position.x -= 5000;
 			else if(k == 2)
-				end->position->x += 5000;
+				end->position.x += 5000;
 			break;
 		case 1 :
-			end->position->x += 5000;
+			end->position.x += 5000;
 			if(k == 0)
-				end->position->y += 5000;
+				end->position.y += 5000;
 			else if(k == 2)
-				end->position->y -= 5000;
+				end->position.y -= 5000;
 			break;
 		case 2 :
-			end->position->y -= 5000;
+			end->position.y -= 5000;
 			if(k == 0)
-				end->position->x -= 5000;
+				end->position.x -= 5000;
 			else if(k == 2)
-				end->position->x += 5000;
+				end->position.x += 5000;
 			break;
 		case 3 :
-			end->position->x -= 5000;
+			end->position.x -= 5000;
 			if(k == 0)
-				end->position->y += 5000;
+				end->position.y += 5000;
 			else if(k == 2)
-				end->position->y -= 5000;
+				end->position.y -= 5000;
 			break;
 	}
 }
