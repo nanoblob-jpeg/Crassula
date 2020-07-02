@@ -187,5 +187,6 @@ public:
 	void initTextRenderer(glm::mat4 &view, glm::mat4 &projection);
 	void initUIRenderer(glm::mat4 &view, glm::mat4 &projection);
 	void initIconRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initEnemyProjectileRenderer(glm::mat4 &view, glm::mat4 &projection);
 };
 #endif
