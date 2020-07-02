@@ -977,7 +977,7 @@ void Game::player_projectile_collision_detection(){
 					board_enemies[j]->hitByPiercing = false;
 				continue;
 			}else
-				if(game_classic_two_object_collisions((GameObject *)(&(board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
+				if(game_classic_two_object_collisions((GameObject *)((board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
 					std::cout << "player projectile hit an enemy\n";
 					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing)
