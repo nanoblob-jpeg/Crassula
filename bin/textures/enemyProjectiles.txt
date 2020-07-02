@@ -3,5 +3,5 @@
 2
 meleeEnemyProjectile
 bin/textures/meleeEnemyProjectile.png
-meleeEnemyProjetilereverse
+meleeEnemyProjectilereverse
 bin/textures/meleeEnemyProjectilereverse.png
