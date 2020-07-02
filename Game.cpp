@@ -1632,6 +1632,7 @@ void Game::initRenderers(){
 	initTextRenderer(view, projection);
 	initUIRenderer(view, projection);
 	initIconRenderer(view, projection);
+	initEnemyProjectileRenderer(view, projection);
 }
 
 void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
