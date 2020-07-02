@@ -17,7 +17,7 @@ TexSampRenderer *EnemyProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
 
-Game::Game(unsigned int width, unsigned int height){
+Game::Game(unsigned int height, unsigned int width){
 	m_state = HOME_MAIN;
 	Width = width;
 	Height = height;

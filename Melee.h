@@ -49,7 +49,7 @@ public:
 	bool attackFunc(glm::vec3 &playerPosition){
 		if(!attacking){
 			short distance = playerPosition[0] - position[0];
-			if(abs(distance) <= 500){
+			if(abs(distance) <= 500 && abs(playerPosition[1] - position[1]) < 50){
 				if(distance < 0){
 					attackRight = false;
 				}else{
