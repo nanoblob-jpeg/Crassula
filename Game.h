@@ -30,7 +30,7 @@ class Game
 public:
 	short maxPlantSize{20};
 	short maxProjectileSize{20};
-	short maxEnemyProjectileSize{40};
+	short maxEnemyProjectileSize{30};
 	short maxEnemySize{40};
 	short maxEffectIconSize{50};
 	short maxPlantIconSize{20};
