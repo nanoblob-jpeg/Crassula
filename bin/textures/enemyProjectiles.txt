@@ -1,5 +1,5 @@
-40
-40
+30
+30
 2
 meleeEnemyProjectile
 bin/textures/meleeEnemyProjectile.png
