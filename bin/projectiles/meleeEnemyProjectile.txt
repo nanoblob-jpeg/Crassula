@@ -2,6 +2,6 @@ meleeEnemyProjectile
 1
 200
 0
-40
-40
+30
+30
 0
