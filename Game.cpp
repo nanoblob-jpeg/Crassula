@@ -1054,6 +1054,7 @@ void Game::enemy_projectile_collision_detection(){
 				std::cout << "hit blocks\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
+				deletionTracker = true;
 			}
 		}
 		//checking range for the projectile
