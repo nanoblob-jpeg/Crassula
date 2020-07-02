@@ -51,7 +51,8 @@ void Player::calculateStats(){
 	health = level * 2 + 5;
 	defense = level * 0.25 + 2;
 	attack = level * 0.5 + 1;
-	attackSpeed = level * 0.02 + 0.5;
+	//attackSpeed = level * 0.02 + 0.5;
+	attackSpeed = 2.5;
 	speed = level * 0.2 + 1.0;
 	recovery = level * 0.1 + 0.1;
 	luck = level * 0.01 + 1;
