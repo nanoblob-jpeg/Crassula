@@ -13,6 +13,7 @@ BackgroundRenderer *BackGround_l3;
 //same space or else I can't load the model matrix
 TexSampRenderer *PlantRenderer;
 TexSampRenderer *ProjectileRenderer;
+TexSampRenderer *EnemyProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
 
@@ -1358,10 +1359,10 @@ void Game::renderPlants(glm::mat4 &view){
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
-	ProjectileRenderer->setViewMatrix("view", view);
-	ProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
-	ProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	ProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxEnemyProjectileSize, glm::vec2(0.0f, player.bowl->size[1] - maxEnemyProjectileSize));
+	EnemyProjectileRenderer->setViewMatrix("view", view);
+	EnemyProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
+	EnemyProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
+	EnemyProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxEnemyProjectileSize, glm::vec2(0.0f, player.bowl->size[1] - maxEnemyProjectileSize));
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
@@ -1607,6 +1608,7 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "plant");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "projectiles");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "enemyProjectiles");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "enemy");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
@@ -1730,4 +1732,14 @@ void Game::initIconRenderer(glm::mat4 &view, glm::mat4 &projection){
 	sProgram.setMat4("projection", projection);
 	sProgram.setMat4("view", view);
 	IconRenderer = new TexSampRenderer(ResourceManager::GetShader("icon"));
+}
+
+void Game::initEnemyProjectileRenderer(glm::mat4 &view, glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("enemyProjectiles");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
+	EnemyProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("enemyProjectiles"));
 }
