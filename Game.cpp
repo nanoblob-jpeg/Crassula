@@ -17,7 +17,7 @@ TexSampRenderer *EnemyProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
 
-Game::Game(unsigned int height, unsigned int width){
+Game::Game(unsigned int width, unsigned int height){
 	m_state = HOME_MAIN;
 	Width = width;
 	Height = height;
@@ -1323,6 +1323,11 @@ void Game::renderGame(){
 
 	calculateIconRenderValues();
 
+	if(player.currentPlant != -1){
+		findHighlightPosition();
+		findLevelIconPosition();
+	}
+
 	renderBlocks(view);
 	renderPlants(view);
 	renderEnemyProjectiles(view);
@@ -1369,7 +1374,7 @@ void Game::renderPlayerProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
-	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, player.bowl->size[1] - maxProjectileSize));
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, (player.bowl->size[1] - maxProjectileSize)));
 }
 
 void Game::renderEnemies(glm::mat4 &view){
@@ -1395,12 +1400,12 @@ void Game::renderUI(glm::mat4 &view){
 	UIRenderer->setViewMatrix("view", view);
 	if(player.bowl->numOfPlants == 3){
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 
-			glm::vec2(cam.Position[0] - 300, cam.Position[1] - 400),
-			glm::vec2(600, 800));
+			glm::vec2(cam.Position[0] - 400, cam.Position[1] - 300),
+			glm::vec2(800, 600));
 	}else{
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_four_plant"), 
-			glm::vec2(cam.Position[0] - 300, cam.Position[1] - 400),
-			glm::vec2(600, 800));
+			glm::vec2(cam.Position[0] - 400, cam.Position[1] - 300),
+			glm::vec2(800, 600));
 	}
 
 	IconRenderer->setViewMatrix("view", view);
@@ -1408,6 +1413,16 @@ void Game::renderUI(glm::mat4 &view){
 	IconRenderer->setTextureCoords(&plantIconTexCoords[0], numPlantIcon);
 	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxPlantIconSize));
 
+	if(player.currentPlant != -1){
+		Renderer->setViewMatrix("view", view);
+		Renderer->DrawSprite(ResourceManager::GetTexture("highlight"), 
+			highlightPosition, glm::vec2(35, 35));
+
+		IconRenderer->setViewMatrix("view", view);
+		IconRenderer->setOffset(&levelIconOffsets[0], player.numPlants);
+		IconRenderer->setTextureCoords(&levelIconTexCoords[0], player.numPlants);
+		IconRenderer->DrawSprites(player.numPlants, ResourceManager::GetTexture("levels"), 28, glm::vec2(cam.Position[0], cam.Position[1] - 28));
+	}
 }
 
 void Game::calculateNewRenderValues(){
@@ -1537,7 +1552,7 @@ void Game::calculateProjectileRenderValues(){
 	for(int i{}; i < enemy_projectiles.size(); ++i){
 		enemyProjectileOffsets.push_back(glm::vec2(enemy_projectiles[i].position[0]/maxEnemyProjectileSize, enemy_projectiles[i].position[1]/maxEnemyProjectileSize));
 		if(enemy_projectiles[i].right)
-			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name));
+			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name + ""));
 		else
 			enemyProjectileTexCoords.push_back(ResourceManager::getDepth(enemy_projectiles[i].name + "reverse"));
 	}
@@ -1545,7 +1560,7 @@ void Game::calculateProjectileRenderValues(){
 	for(int i{}; i < player_projectiles.size(); ++i){
 		playerProjectileOffsets.push_back(glm::vec2(player_projectiles[i].position[0]/maxProjectileSize, player_projectiles[i].position[1]/maxProjectileSize));
 		if(player_projectiles[i].right)
-			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name));
+			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name + ""));
 		else
 			playerProjectileTexCoords.push_back(ResourceManager::getDepth(player_projectiles[i].name + "reverse"));
 	}
@@ -1573,9 +1588,9 @@ void Game::calculateIconRenderValues(){
 	//the first square for 3 plant ui goes from
 	//445 to 480
 	//top side is at 750
-	short starting_offset = player.bowl->numOfPlants == 3 ? 145 : 95;
+	short starting_offset = player.bowl->numOfPlants == 3 ? 253 : 203;
 	for(int i{}; i < player.numPlants; ++i){
-		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-358 - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
+		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-258 - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
 		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
 	}
 }
@@ -1587,6 +1602,30 @@ void Game::moveBackground(float dt){
 	backgroundLayerTwoOffset[1] += ((player.velocity[1]/8) * dt)/backgroundSize;
 	backgroundLayerThreeOffset[0] += ((player.velocity[0]/5) * dt)/backgroundSize;
 	backgroundLayerThreeOffset[1] += ((player.velocity[1]/5) * dt)/backgroundSize;
+}
+
+void Game::findHighlightPosition(){
+	if(player.numPlants >= 1){
+		if(player.bowl->numOfPlants == 3){
+			highlightPosition = glm::vec2(253 + (50 * player.currentPlant), -258);
+		}else{
+			highlightPosition = glm::vec2(203 + (50 * player.currentPlant), -258);
+		}
+		highlightPosition[0] += cam.Position[0];
+		highlightPosition[1] += cam.Position[1] - 35;
+	}
+}
+
+void Game::findLevelIconPosition(){
+	levelIconOffsets.clear();
+	levelIconTexCoords.clear();
+	for(int i{}; i < player.numPlants; ++i){
+		levelIconTexCoords.push_back(player.plants[i].level - 1);
+		if(player.bowl->numOfPlants == 3)
+			levelIconOffsets.push_back(glm::vec2((253 + (50 * i) + 3)/28.0, (-258 - 3)/28.0));
+		else
+			levelIconOffsets.push_back(glm::vec2((203 + (50 * i) + 3)/28.0, (-258 - 3)/28.0));
+	}
 }
 /*
 
@@ -1620,8 +1659,8 @@ void Game::initShaders(){
 
 void Game::initRenderers(){
 	//configure shaders
-	glm::mat4 projection = glm::ortho(-300.0f, 300.0f,
-		-400.0f , 400.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(-400.0f, 400.0f,
+		-300.0f , 300.0f, -1.0f, 1.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	initRenderer(view, projection);
 	initBlockRenderer(view, projection);

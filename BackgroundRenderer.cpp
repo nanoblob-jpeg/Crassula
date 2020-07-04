@@ -12,7 +12,7 @@ BackgroundRenderer::~BackgroundRenderer(){
 void BackgroundRenderer::DrawSprite(Texture &texture, glm::vec2 position){
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-302 + position[0], -402 + position[1], 0.0f));
+	model = glm::translate(model, glm::vec3(-402 + position[0], -302 + position[1], 0.0f));
 	model = glm::scale(model, glm::vec3(900.0f, 800.0f, 1.0f));
 
 	glm::vec3 color(1.0f);

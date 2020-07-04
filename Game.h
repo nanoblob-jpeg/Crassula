@@ -98,6 +98,9 @@ public:
 	std::vector<glm::vec2> plantIconOffsets{};
 	std::vector<float> plantIconTexCoords{};
 	int numPlantIcon{};
+	glm::vec2 highlightPosition{};
+	std::vector<glm::vec2> levelIconOffsets{};
+	std::vector<float> levelIconTexCoords{};
 
 	Game(unsigned int width, unsigned int height);
 	~Game();
@@ -174,6 +177,8 @@ public:
 	void calculateEnemyRenderValues();
 	void calculateIconRenderValues();
 	void moveBackground(float dt);
+	void findHighlightPosition();
+	void findLevelIconPosition();
 
 	//Shader && Renderer loading
 	void initShaders();

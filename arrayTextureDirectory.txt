@@ -6,3 +6,5 @@ enemies
 bin/textures/enemies.txt
 enemyProjectiles
 bin/textures/enemyProjectiles.txt
+levels
+bin/textures/levels.txt

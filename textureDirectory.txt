@@ -19,3 +19,6 @@ ui_three_plant
 bin/textures/ui_four_plant.png
 1
 ui_four_plant
+bin/textures/highlight.png
+1
+highlight
