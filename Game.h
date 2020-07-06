@@ -28,16 +28,41 @@
 class Game
 {
 public:
+	//constants
 	short maxPlantSize{20};
 	short maxProjectileSize{20};
 	short maxEnemyProjectileSize{30};
 	short maxEnemySize{40};
-	short maxEffectIconSize{50};
 	short maxPlantIconSize{20};
-	float maxSpeed = 90.0;
-	float acceleration = 130.0;
+	float maxLevelIconSize{28.0};
+	float maxEffectIconSize{20.0};
+	short effectIconSpacing{5};
 	float backgroundSize{2500};
 
+	short plantBoxSize{35};
+	short plantBoxSpacing{15};
+	short threePlantFirstBoxX{253};
+	short fourPlantFirstBoxX{203};
+	short plantFirstBoxY{-258};
+	short levelBarSpacing{3};
+
+	float maxSpeed = 150.0;
+	float acceleration = 130.0;
+
+	short distanceFromCenterForGeneration{4500};
+	short regionSize{5000};
+	short chunkSize{500};
+	short blockSize{50};
+	short edgeDistace{7500};
+	short innerRegionEdgeDistance{2500};
+
+	unsigned short numOfChunks{40};
+	unsigned short numOfPlants{4};
+	unsigned short numOfEnemies{1};
+
+	float Width, Height;
+
+	//gamestates
 	enum GameState{
 		START_SCREEN,
 		GAME_ACTIVE_CLASSIC,
@@ -52,10 +77,6 @@ public:
 
 	GameState m_state;
 	bool Keys[1024]{};
-	unsigned int Width, Height;
-	unsigned short numOfChunks{40};
-	unsigned short numOfPlants{4};
-	unsigned short numOfEnemies{1};
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
@@ -72,35 +93,49 @@ public:
 	float points{};
 
 	//render logic stuff
+	bool generatedChunks{false};
+
 	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
-	bool generatedChunks{false};
+	
 	std::vector<glm::vec2> plantOffsets{};
 	std::vector<float> plantTexCoords{};
 	int numPlants{};
+
 	std::vector<glm::vec2> enemyProjectileOffsets{};
 	std::vector<float> enemyProjectileTexCoords{};
+
 	std::vector<glm::vec2> playerProjectileOffsets{};
 	std::vector<float> playerProjectileTexCoords{};
+
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<float> enemyTexCoords{};
+
 	//background render logic stuff
 	Background *backgroundTextures = nullptr;
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
+
 	//text render stuff
 	std::vector<GameObject *> text{};
+
 	//icon render stuff
 	std::vector<glm::vec2> effectsIconOffsets{};
 	std::vector<float> effectsIconTexCoords{};
 	int numEffectIcon{};
+
 	std::vector<glm::vec2> plantIconOffsets{};
 	std::vector<float> plantIconTexCoords{};
 	int numPlantIcon{};
+
 	glm::vec2 highlightPosition{};
+
 	std::vector<glm::vec2> levelIconOffsets{};
 	std::vector<float> levelIconTexCoords{};
+
+	std::vector<glm::vec2> effectIconOffsets{};
+	std::vector<float> effectIconTexCoords{};
 
 	Game(unsigned int width, unsigned int height);
 	~Game();
@@ -170,6 +205,8 @@ public:
 	void renderPlayer(glm::mat4 &view);
 	void renderText(glm::mat4 &view);
 	void renderUI(glm::mat4 &view);
+
+	//calculating render values
 	void calculateNewRenderValues();
 	void calculateBlockOffsets(const short i, const short j);
 	void calculatePlantOffsets(const short i, const short j);

@@ -1,8 +1,10 @@
 #ifndef EFFECT
 #define EFFECT
 //interface for effects
+#include <string>
 class Effect{
 public:
+	std::string name;
 	//variables for applying effects
 	int dehealth{};
 	int dedefense{};
@@ -28,8 +30,8 @@ public:
 	timeCounter goes to t - frameTimeCounter after it runs
 	 */
 	Effect(){};
-	Effect(int dh, int dd, int da, float ds, float dr, float ptime, float pframeTimeCounter, bool ponce = false):
-		dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}, time{ptime}, frameTimeCounter{pframeTimeCounter}, once{ponce}{};
+	Effect(std::string &pname, int dh, int dd, int da, float ds, float dr, float ptime, float pframeTimeCounter, bool ponce = false):
+		name{pname}, dehealth{dh}, dedefense{dd}, deattack{da}, despeed{ds}, derecovery{dr}, time{ptime}, frameTimeCounter{pframeTimeCounter}, once{ponce}{};
 
 	//false if it can still run
 	//true if it can't run anymore

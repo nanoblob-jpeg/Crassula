@@ -148,7 +148,7 @@ void Game::ProcessInput(float dt){
 					player.switchingPlants = true;
 				}
 			}
-			if(player.switchingPlants && !Keys[GLFW_KEY_S] && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
+			if(player.switchingPlants && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
 				player.switchingPlants = false;
 			}
 		}
@@ -200,18 +200,18 @@ void Game::Update(float dt){
 		//1 right
 		//2 down
 		//3 left
-		if(cam.Position[0] >= 4500){
+		if(cam.Position[0] >= distanceFromCenterForGeneration){
 			generateChunks(1);
 			fixPlayerPosition(1);
-		}else if(cam.Position[0] <= -4500){
+		}else if(cam.Position[0] <= -distanceFromCenterForGeneration){
 			generateChunks(3);
 			fixPlayerPosition(3);
 		}
 
-		if(cam.Position[1] >= 4500){
+		if(cam.Position[1] >= distanceFromCenterForGeneration){
 			generateChunks(0);
 			fixPlayerPosition(0);
-		}else if(cam.Position[1] <= -4500){
+		}else if(cam.Position[1] <= -distanceFromCenterForGeneration){
 			generateChunks(2);
 			fixPlayerPosition(2);
 		}
@@ -489,28 +489,28 @@ void Game::despawnEnemiesFromDeletedChunks(const short direction){
 	short min_x, max_x, min_y, max_y;
 	switch(direction){
 		case 0 :
-			min_y = -7500;
-			max_y = -2500;
-			min_x = -7500;
-			max_x = 7500;
+			min_y = -edgeDistace;
+			max_y = -innerRegionEdgeDistance;
+			min_x = -edgeDistace;
+			max_x = edgeDistace;
 			break;
 		case 1 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = -2500;
+			min_y = -edgeDistace;
+			max_y = edgeDistace;
+			min_x = -edgeDistace;
+			max_x = -innerRegionEdgeDistance;
 			break;
 		case 2 :
-			min_y = 2500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = 7500;
+			min_y = innerRegionEdgeDistance;
+			max_y = edgeDistace;
+			min_x = -edgeDistace;
+			max_x = edgeDistace;
 			break;
 		case 3 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = 2500;
-			max_x = 7500;
+			min_y = -edgeDistace;
+			max_y = edgeDistace;
+			min_x = innerRegionEdgeDistance;
+			max_x = edgeDistace;
 			break;
 	}
 	for(int i{}; i < board_enemies.size(); ++i){
@@ -531,28 +531,28 @@ void Game::despawnProjectilesFromDeletedChunks(const short direction){
 	short min_x, max_x, min_y, max_y;
 	switch(direction){
 		case 0 :
-			min_y = -7500;
-			max_y = -2500;
-			min_x = -7500;
-			max_x = 7500;
+			min_y = -edgeDistace;
+			max_y = -innerRegionEdgeDistance;
+			min_x = -edgeDistace;
+			max_x = edgeDistace;
 			break;
 		case 1 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = -2500;
+			min_y = -edgeDistace;
+			max_y = edgeDistace;
+			min_x = -edgeDistace;
+			max_x = -innerRegionEdgeDistance;
 			break;
 		case 2 :
-			min_y = 2500;
-			max_y = 7500;
-			min_x = -7500;
-			max_x = 7500;
+			min_y = innerRegionEdgeDistance;
+			max_y = edgeDistace;
+			min_x = -edgeDistace;
+			max_x = edgeDistace;
 			break;
 		case 3 :
-			min_y = -7500;
-			max_y = 7500;
-			min_x = 2500;
-			max_x = 7500;
+			min_y = -edgeDistace;
+			max_y = edgeDistace;
+			min_x = innerRegionEdgeDistance;
+			max_x = edgeDistace;
 			break;
 	}
 	for(int i{}; i < enemy_projectiles.size(); ++i){
@@ -582,37 +582,37 @@ void Game::fixGeneratedEnemiesPosition(const short i, const short j, const short
 	//j%10 gives the column
 	//
 	//k is the chunk being generated
-	end->position.x = ((i%10)-5)*500 + (((j-10)%10) * 50) + ((50-maxEnemySize)/2);
-	end->position.y = (5-(i/10))*500 - (((j-10)/10) * 50) - (50-maxEnemySize);
+	end->position.x = ((i%10)-5)*chunkSize + (((j-10)%10) * blockSize) + ((blockSize-maxEnemySize)/2);
+	end->position.y = (5-(i/10))*chunkSize - (((j-10)/10) * blockSize) - (blockSize-maxEnemySize);
 
 	switch(direction){
 		case 0 :
-			end->position.y += 5000;
+			end->position.y += regionSize;
 			if(k == 0)
-				end->position.x -= 5000;
+				end->position.x -= regionSize;
 			else if(k == 2)
-				end->position.x += 5000;
+				end->position.x += regionSize;
 			break;
 		case 1 :
-			end->position.x += 5000;
+			end->position.x += regionSize;
 			if(k == 0)
-				end->position.y += 5000;
+				end->position.y += regionSize;
 			else if(k == 2)
-				end->position.y -= 5000;
+				end->position.y -= regionSize;
 			break;
 		case 2 :
-			end->position.y -= 5000;
+			end->position.y -= regionSize;
 			if(k == 0)
-				end->position.x -= 5000;
+				end->position.x -= regionSize;
 			else if(k == 2)
-				end->position.x += 5000;
+				end->position.x += regionSize;
 			break;
 		case 3 :
-			end->position.x -= 5000;
+			end->position.x -= regionSize;
 			if(k == 0)
-				end->position.y += 5000;
+				end->position.y += regionSize;
 			else if(k == 2)
-				end->position.y -= 5000;
+				end->position.y -= regionSize;
 			break;
 	}
 }
@@ -655,10 +655,10 @@ short Game::findAddingAmountOffsetWhenGeneratingChunks(const short direction){
 	switch(direction){
 		case 2 :
 		case 3 :
-			return 5000;
+			return regionSize;
 		case 0 :
 		case 1 :
-			return -5000;
+			return -regionSize;
 	}
 	return 0;
 }
@@ -666,16 +666,16 @@ short Game::findAddingAmountOffsetWhenGeneratingChunks(const short direction){
 void Game::fixPlayerPosition(const short direction){
 	switch(direction){
 		case 0:
-			cam.Position[1] -= 5000;
+			cam.Position[1] -= regionSize;
 			break;
 		case 1:
-			cam.Position[0] -= 5000;
+			cam.Position[0] -= regionSize;
 			break;
 		case 2:
-			cam.Position[1] += 5000;
+			cam.Position[1] += regionSize;
 			break;
 		case 3:
-			cam.Position[0] += 5000;
+			cam.Position[0] += regionSize;
 			break;
 	}
 }
@@ -694,8 +694,8 @@ void Game::spawnPlant(std::vector<Chunk> &temp, short i, short j){
 	//position also accounts for the plant being smaller than the block
 	//thus it would be offset a little bit
 	auto end = temp[i].plants.rbegin();
-	end->position.x += ((j-10)%10) * 50;
-	end->position.y -= ((j-10)/10) * 50;
+	end->position.x += ((j-10)%10) * blockSize;
+	end->position.y -= ((j-10)/10) * blockSize;
 }
 
 void Game::spawnEnemy(short i, short j, short k, short l){
@@ -835,7 +835,7 @@ bool Game::game_classic_two_object_collisions(glm::vec2 position, glm::vec2 size
 void Game::findLocationCoordinates(short &width, short &height, const float x, const float y){
 	//this changes the variables to the index
 	//no returns, just changes the variables passed to it
-	if(y / 500 == 0){
+	if(y / chunkSize == 0){
 		if(y < 0){
 			height = -1;
 		}else{
@@ -843,12 +843,12 @@ void Game::findLocationCoordinates(short &width, short &height, const float x, c
 		}
 	}else{
 		if(y < 0){
-			height = y/500 -1;
+			height = y/chunkSize -1;
 		}else{
-			height = y/ 500;
+			height = y/ chunkSize;
 		}
 	}
-	if(x / 500 == 0){
+	if(x / chunkSize == 0){
 		if(x < 0){
 			width = -1;
 		}else{
@@ -856,9 +856,9 @@ void Game::findLocationCoordinates(short &width, short &height, const float x, c
 		}
 	}else{
 		if(x < 0){
-			width = x/500 -1;
+			width = x/chunkSize -1;
 		}else{
-			width = x/ 500;
+			width = x/ chunkSize;
 		}
 	}
 }
@@ -900,8 +900,8 @@ void Game::nineBlockCollisionDetectionPAndO(const short width, const short heigh
 			//detect collisions between them and the player object
 			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
-			short gameobject_offset_y = (height + 1 + i) * 500;
-			short gameobject_offset_x = (width + chunk_width_offset) * 500;
+			short gameobject_offset_y = (height + 1 + i) * chunkSize;
+			short gameobject_offset_x = (width + chunk_width_offset) * chunkSize;
 			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
 				player_and_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], dt, gameobject_offset_x, gameobject_offset_y);
@@ -951,8 +951,8 @@ bool Game::nineBlockCollisionDetectionGeneral(const short width, const short hei
 			//detect collisions between them and the player object
 			//the height offset needed for each chunk is equal to the (y coordinate + 1) of the location multiplied by 500
 			//the width offset needed for each chunk is equal to the x coordinate of the location multiplied by 500
-			short gameobject_offset_y = (height + 1 + i) * 500;
-			short gameobject_offset_x = (width + chunk_width_offset) * 500;
+			short gameobject_offset_y = (height + 1 + i) * chunkSize;
+			short gameobject_offset_x = (width + chunk_width_offset) * chunkSize;
 			for(int j{}; j < board[index_x][index_y][index_chunk + index_chunk_2].objects.size(); ++j){
 				//loop through all of the blocks in the chunk
 				if(game_classic_two_object_collisions(board[index_x][index_y][index_chunk + index_chunk_2].objects[j], object, gameobject_offset_x, gameobject_offset_y))
@@ -996,7 +996,7 @@ void Game::player_projectile_collision_detection(){
 		}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
-			if(abs(player_projectiles[i].position[0]) > 7500 || abs(player_projectiles[i].position[1]) > 7500){
+			if(abs(player_projectiles[i].position[0]) > edgeDistace || abs(player_projectiles[i].position[1]) > edgeDistace){
 				player_projectiles.erase(player_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1032,7 +1032,6 @@ void Game::enemy_projectile_collision_detection(){
 			continue;
 		else
 			if(game_classic_two_object_collisions(glm::vec2(cam.Position[0]-player.bowl->size[0]/2, cam.Position[1]+player.bowl->size[1]/2), player.bowl->size, (GameObject *)&(enemy_projectiles[i]))){
-				std::cout << "hit player\n";
 				player.dealDamage(enemy_projectiles[i].damage);
 				player.addEffects(enemy_projectiles[i]);
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
@@ -1041,8 +1040,7 @@ void Game::enemy_projectile_collision_detection(){
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
-			if(abs(enemy_projectiles[i].position[0]) > 7500 || abs(enemy_projectiles[i].position[1]) > 7500){
-				std::cout << "hit edge\n";
+			if(abs(enemy_projectiles[i].position[0]) > edgeDistace || abs(enemy_projectiles[i].position[1]) > edgeDistace){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1052,7 +1050,6 @@ void Game::enemy_projectile_collision_detection(){
 		if(!deletionTracker){
 			findLocationCoordinates(width, height, enemy_projectiles[i].position[0], enemy_projectiles[i].position[1]);
 			if(nineBlockCollisionDetectionGeneral(width, height, (GameObject *)&(enemy_projectiles[i]))){
-				std::cout << "hit blocks\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1061,7 +1058,6 @@ void Game::enemy_projectile_collision_detection(){
 		//checking range for the projectile
 		if(!deletionTracker){
 			if(enemy_projectiles[i].rangeCheck()){
-				std::cout << "hit range\n";
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
@@ -1197,41 +1193,44 @@ void Game::processPlayerMovement(const float dt){
 		//need to add code in the collision detector that will change falling to false
 		if(upCounter < 0.5){
 			upCounter += dt;
-			player.velocity.y = 30 + maxSpeed + player.speed/4;
+			player.velocity.y = 30 + maxSpeed/2 + player.speed/4;
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
-		if(!player.switchingPlants){
-			player.switchPlant(true);
-			player.switchingPlants = true;
-		}
+		player.velocity.y -= (player.speed + acceleration) * dt;
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
 		player.facing = false;
-		player.velocity.x -= (player.speed + acceleration) * dt;
+		if(player.velocity.x > 0)
+			player.velocity.x -= (player.speed + acceleration) * 2 * dt;
+		else
+			player.velocity.x -= (player.speed + acceleration) * dt;
 		if(player.velocity.x < 0)
 			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-maxSpeed) - (player.speed/4)));
 	}
 	//move right, with correct acceleration
 	if(Keys[GLFW_KEY_D]){
 		player.facing = true;
-		player.velocity.x += (player.speed + acceleration) * dt;
+		if(player.velocity.x < 0)
+			player.velocity.x += (player.speed + acceleration) * 2 * dt;
+		else
+			player.velocity.x += (player.speed + acceleration) * dt;
 		if(player.velocity.x > 0)
 			player.velocity.x = std::min(player.velocity.x, static_cast<float>(maxSpeed + (player.speed/4)));
 	}
 	//slowing down, correct acceleration
 	if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
 		if(player.velocity.x < 0){
-			if(player.velocity.x > (-(player.speed + acceleration) - 0.2) * dt)
+			if(player.velocity.x > (-(player.speed + acceleration + 50) - 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x += ((player.speed + acceleration) + 0.2) * dt;
+				player.velocity.x += ((player.speed + acceleration + 50) + 0.2) * dt;
 		}else{
-			if(player.velocity.x < (player.speed + acceleration + 0.2) * dt)
+			if(player.velocity.x < (player.speed + acceleration + 50 + 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x -= (player.speed + acceleration + 0.2) * dt;
+				player.velocity.x -= (player.speed + acceleration + 50 + 0.2) * dt;
 		}
 	}
 	//always subtract 0.6 from the y velocity to simulate falling
@@ -1355,7 +1354,7 @@ void Game::renderGameBackground(glm::mat4 &view){
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
 	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, -(50 - player.bowl->size[1])), glm::vec2(50.0f, 50.0f));
+		glm::vec2(0.0f, -(blockSize - player.bowl->size[1])), glm::vec2((float)blockSize, (float)blockSize));
 }
 
 void Game::renderPlants(glm::mat4 &view){
@@ -1400,12 +1399,12 @@ void Game::renderUI(glm::mat4 &view){
 	UIRenderer->setViewMatrix("view", view);
 	if(player.bowl->numOfPlants == 3){
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 
-			glm::vec2(cam.Position[0] - 400, cam.Position[1] - 300),
-			glm::vec2(800, 600));
+			glm::vec2(cam.Position[0] - Width/2, cam.Position[1] - Height/2),
+			glm::vec2(Width, Height));
 	}else{
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_four_plant"), 
-			glm::vec2(cam.Position[0] - 400, cam.Position[1] - 300),
-			glm::vec2(800, 600));
+			glm::vec2(cam.Position[0] - Width/2, cam.Position[1] - Height/2),
+			glm::vec2(Width, Height));
 	}
 
 	IconRenderer->setViewMatrix("view", view);
@@ -1421,10 +1420,28 @@ void Game::renderUI(glm::mat4 &view){
 		IconRenderer->setViewMatrix("view", view);
 		IconRenderer->setOffset(&levelIconOffsets[0], player.numPlants);
 		IconRenderer->setTextureCoords(&levelIconTexCoords[0], player.numPlants);
-		IconRenderer->DrawSprites(player.numPlants, ResourceManager::GetTexture("levels"), 28, glm::vec2(cam.Position[0], cam.Position[1] - 28));
+		IconRenderer->DrawSprites(player.numPlants, ResourceManager::GetTexture("levels"), maxLevelIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxLevelIconSize));
+	}
+
+	if(player.effects.size() > 0){
+		IconRenderer->setViewMatrix("view", view);
+		IconRenderer->setOffset(&effectIconOffsets[0], player.effects.size());
+		IconRenderer->setTextureCoords(&effectIconTexCoords[0], player.effects.size());
+		IconRenderer->DrawSprites(player.effects.size(), ResourceManager::GetTexture("effectIcons"), maxEffectIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxEffectIconSize));
 	}
 }
 
+/*
+
+
+
+
+CALCULATING RENDER VALUES
+
+
+
+
+*/
 void Game::calculateNewRenderValues(){
 	//clear already existing offset data
 	blockOffsets.clear();
@@ -1454,17 +1471,17 @@ void Game::calculateBlockOffsets(const short i, const short j){
 		//setting offset initially for chunks themselves
 		switch(i % 3){
 			case 0 :
-				temp[0] = -7500;
+				temp[0] = -edgeDistace;
 				break;
 			case 1 :
-				temp[0] = -2500;
+				temp[0] = -innerRegionEdgeDistance;
 				break;
 			case 2 :
-				temp[0] = 2500;
+				temp[0] = innerRegionEdgeDistance;
 				break;
 		}
 		//then add for each little box in a chunk
-		temp[0] += (j % 10) * 500;
+		temp[0] += (j % 10) * chunkSize;
 		//then add per block offset
 		temp[0] += board[i/3][i%3][j].objects[k]->position[0];
 
@@ -1472,22 +1489,22 @@ void Game::calculateBlockOffsets(const short i, const short j){
 		//set offset initially for chunks themselves
 		switch(i / 3){
 			case 0 :
-				temp[1] = 7500;
+				temp[1] = edgeDistace;
 				break;
 			case 1 :
-				temp[1] = 2500;
+				temp[1] = innerRegionEdgeDistance;
 				break;
 			case 2 :
-				temp[1] = -2500;
+				temp[1] = -innerRegionEdgeDistance;
 				break;
 		}
 		//subtracting for each little box in a chunk
-		temp[1] -= (j / 10) * 500;
+		temp[1] -= (j / 10) * chunkSize;
 		//adding position per block which is already negative
 		temp[1] += board[i/3][i%3][j].objects[k]->position[1];
 
-		temp[0] /= 50;
-		temp[1] /= 50;
+		temp[0] /= blockSize;
+		temp[1] /= blockSize;
 
 		blockOffsets.push_back(temp);
 
@@ -1502,17 +1519,17 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		//setting offset initially for chunks themselves
 		switch(i % 3){
 			case 0 :
-				temp[0] = -7500;
+				temp[0] = -edgeDistace;
 				break;
 			case 1 :
-				temp[0] = -2500;
+				temp[0] = -innerRegionEdgeDistance;
 				break;
 			case 2 :
-				temp[0] = 2500;
+				temp[0] = innerRegionEdgeDistance;
 				break;
 		}
 		//then add for each little box in a chunk
-		temp[0] += (j % 10) * 500;
+		temp[0] += (j % 10) * chunkSize;
 		//then add the plants position
 		temp[0] += board[i/3][i%3][j].plants[k].position[0];
 
@@ -1520,17 +1537,17 @@ void Game::calculatePlantOffsets(const short i, const short j){
 		//set offset initially for chunks themselves
 		switch(i / 3){
 			case 0 :
-				temp[1] = 7500;
+				temp[1] = edgeDistace;
 				break;
 			case 1 :
-				temp[1] = 2500;
+				temp[1] = innerRegionEdgeDistance;
 				break;
 			case 2 :
-				temp[1] = -2500;
+				temp[1] = -innerRegionEdgeDistance;
 				break;
 		}
 		//subtracting for each little box in a chunk
-		temp[1] -= (j / 10) * 500;
+		temp[1] -= (j / 10) * chunkSize;
 		temp[1] += board[i/3][i%3][j].plants[k].position[1];
 
 		temp[0] /= maxPlantSize;
@@ -1580,6 +1597,8 @@ void Game::calculateIconRenderValues(){
 	effectsIconTexCoords.clear();
 	plantIconOffsets.clear();
 	plantIconTexCoords.clear();
+	effectIconOffsets.clear();
+	effectIconTexCoords.clear();
 	numEffectIcon = player.effects.size();
 	for(int i{}; i < player.effects.size(); ++i){
 
@@ -1588,10 +1607,17 @@ void Game::calculateIconRenderValues(){
 	//the first square for 3 plant ui goes from
 	//445 to 480
 	//top side is at 750
-	short starting_offset = player.bowl->numOfPlants == 3 ? 253 : 203;
+	short starting_offset = player.bowl->numOfPlants == 3 ? threePlantFirstBoxX : fourPlantFirstBoxX;
 	for(int i{}; i < player.numPlants; ++i){
-		plantIconOffsets.push_back(glm::vec2((starting_offset + (50 * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (-258 - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
+		//no idea where the 45 came from but it works so i'm keeping it lol
+		plantIconOffsets.push_back(glm::vec2((starting_offset + ((plantBoxSize + plantBoxSpacing) * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (plantFirstBoxY - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
 		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
+	}
+
+	starting_offset = 50;
+	for(int i{}; i < player.effects.size(); ++i){
+		effectIconOffsets.push_back(glm::vec2((starting_offset + (maxEffectIconSize + effectIconSpacing) * i)/maxEffectIconSize, plantFirstBoxY - (maxEffectIconSize + effectIconSpacing)*(i/8)));
+		effectIconTexCoords.push_back(ResourceManager::getDepth(player.effects[i].name));
 	}
 }
 
@@ -1607,12 +1633,12 @@ void Game::moveBackground(float dt){
 void Game::findHighlightPosition(){
 	if(player.numPlants >= 1){
 		if(player.bowl->numOfPlants == 3){
-			highlightPosition = glm::vec2(253 + (50 * player.currentPlant), -258);
+			highlightPosition = glm::vec2(threePlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.currentPlant), plantFirstBoxY);
 		}else{
-			highlightPosition = glm::vec2(203 + (50 * player.currentPlant), -258);
+			highlightPosition = glm::vec2(fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.currentPlant), plantFirstBoxY);
 		}
 		highlightPosition[0] += cam.Position[0];
-		highlightPosition[1] += cam.Position[1] - 35;
+		highlightPosition[1] += cam.Position[1] - plantBoxSize;
 	}
 }
 
@@ -1622,9 +1648,9 @@ void Game::findLevelIconPosition(){
 	for(int i{}; i < player.numPlants; ++i){
 		levelIconTexCoords.push_back(player.plants[i].level - 1);
 		if(player.bowl->numOfPlants == 3)
-			levelIconOffsets.push_back(glm::vec2((253 + (50 * i) + 3)/28.0, (-258 - 3)/28.0));
+			levelIconOffsets.push_back(glm::vec2((threePlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * i) + levelBarSpacing)/maxLevelIconSize, (plantFirstBoxY - levelBarSpacing)/maxLevelIconSize));
 		else
-			levelIconOffsets.push_back(glm::vec2((203 + (50 * i) + 3)/28.0, (-258 - 3)/28.0));
+			levelIconOffsets.push_back(glm::vec2((fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * i) + levelBarSpacing)/maxLevelIconSize, (plantFirstBoxY - levelBarSpacing)/maxLevelIconSize));
 	}
 }
 /*
@@ -1659,8 +1685,8 @@ void Game::initShaders(){
 
 void Game::initRenderers(){
 	//configure shaders
-	glm::mat4 projection = glm::ortho(-400.0f, 400.0f,
-		-300.0f , 300.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(-Width/2, Width/2,
+		-Height/2, Height/2, -1.0f, 1.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	initRenderer(view, projection);
 	initBlockRenderer(view, projection);

@@ -464,7 +464,7 @@ void ResourceManager::LoadEffect(const char *file){
         time = std::stof(line);
         std::getline(fstream2, line);
         frameTimeCounter = std::stof(line);
-        Effects[name] = Effect(dehealth, dedefense, deattack, despeed, derecovery, time, frameTimeCounter);
+        Effects[name] = Effect(name, dehealth, dedefense, deattack, despeed, derecovery, time, frameTimeCounter);
         fstream2.close();
     }
 }
