@@ -1,10 +1,10 @@
 plants
-bin/textures/plants.txt
+bin/textures/textureDirectories/plants.txt
 projectiles
-bin/textures/projectiles.txt
+bin/textures/textureDirectories/projectiles.txt
 enemies
-bin/textures/enemies.txt
+bin/textures/textureDirectories/enemies.txt
 enemyProjectiles
-bin/textures/enemyProjectiles.txt
+bin/textures/textureDirectories/enemyProjectiles.txt
 levels
-bin/textures/levels.txt
+bin/textures/textureDirectories/levels.txt

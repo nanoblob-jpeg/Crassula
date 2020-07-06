@@ -30,7 +30,7 @@ class Game
 public:
 	//CONSTANTS
 	//max texture sizes
-	short maxPlantSize{20};
+	short maxPlantSize{50};
 	short maxProjectileSize{20};
 	short maxEnemyProjectileSize{30};
 	short maxEnemySize{40};

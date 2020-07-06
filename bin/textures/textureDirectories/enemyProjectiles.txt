@@ -1,0 +1,7 @@
+30
+30
+2
+meleeEnemyProjectile
+bin/textures/projectiles/meleeEnemyProjectile.png
+meleeEnemyProjectilereverse
+bin/textures/projectiles/meleeEnemyProjectilereverse.png
