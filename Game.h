@@ -28,7 +28,8 @@
 class Game
 {
 public:
-	//constants
+	//CONSTANTS
+	//max texture sizes
 	short maxPlantSize{20};
 	short maxProjectileSize{20};
 	short maxEnemyProjectileSize{30};
@@ -39,6 +40,7 @@ public:
 	short effectIconSpacing{5};
 	float backgroundSize{2500};
 
+	//texture offset constants
 	short plantBoxSize{35};
 	short plantBoxSpacing{15};
 	short threePlantFirstBoxX{253};
@@ -46,9 +48,11 @@ public:
 	short plantFirstBoxY{-258};
 	short levelBarSpacing{3};
 
+	//movement constants
 	float maxSpeed = 150.0;
 	float acceleration = 130.0;
 
+	//game board size constants
 	short distanceFromCenterForGeneration{4500};
 	short regionSize{5000};
 	short chunkSize{500};
@@ -56,10 +60,12 @@ public:
 	short edgeDistace{7500};
 	short innerRegionEdgeDistance{2500};
 
+	//num game object constants
 	unsigned short numOfChunks{40};
 	unsigned short numOfPlants{4};
 	unsigned short numOfEnemies{1};
 
+	//screen size constants
 	float Width, Height;
 
 	//gamestates
@@ -75,6 +81,7 @@ public:
 		HOME_MAIN
 	};
 
+	//misc game drivers
 	GameState m_state;
 	bool Keys[1024]{};
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
@@ -83,8 +90,10 @@ public:
 
 	//Player object
 	Player player;
+
 	//movement variables:
 	float upCounter{};
+
 	//game storage system
 	std::deque<std::deque<std::vector<Chunk>>> board{};
 	std::vector<Enemy*> board_enemies{};
@@ -92,22 +101,27 @@ public:
 	std::vector<Projectile> player_projectiles{};
 	float points{};
 
-	//render logic stuff
+	//RENDER LOGIC VARIABLES
 	bool generatedChunks{false};
 
+	//block vars
 	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
 	
+	//plant vars
 	std::vector<glm::vec2> plantOffsets{};
 	std::vector<float> plantTexCoords{};
 	int numPlants{};
 
+	//enemy projectile vars
 	std::vector<glm::vec2> enemyProjectileOffsets{};
 	std::vector<float> enemyProjectileTexCoords{};
 
+	//player projectile vars
 	std::vector<glm::vec2> playerProjectileOffsets{};
 	std::vector<float> playerProjectileTexCoords{};
 
+	//enemy vars
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<float> enemyTexCoords{};
 
@@ -120,20 +134,25 @@ public:
 	//text render stuff
 	std::vector<GameObject *> text{};
 
-	//icon render stuff
+	//ICON RENDER VARS
+	//effect icon vars
 	std::vector<glm::vec2> effectsIconOffsets{};
 	std::vector<float> effectsIconTexCoords{};
 	int numEffectIcon{};
 
+	//plant icon vars
 	std::vector<glm::vec2> plantIconOffsets{};
 	std::vector<float> plantIconTexCoords{};
 	int numPlantIcon{};
 
+	//highlight var
 	glm::vec2 highlightPosition{};
 
+	//level icon vars
 	std::vector<glm::vec2> levelIconOffsets{};
 	std::vector<float> levelIconTexCoords{};
 
+	//effect icon vars
 	std::vector<glm::vec2> effectIconOffsets{};
 	std::vector<float> effectIconTexCoords{};
 
