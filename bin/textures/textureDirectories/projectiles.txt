@@ -1,6 +1,6 @@
 30
 30
-3
+9
 basic
 bin/textures/projectiles/basic.png
 cactus1

@@ -403,6 +403,7 @@ void ResourceManager::LoadPlant(const char *file){
             temp.projectileName.push_back(pname2);
             temp.projectileName.push_back(pname3);
             temp.projectileName.push_back(pname4);
+
             Plants[name] = temp;
             fstream2.close();
         }else{

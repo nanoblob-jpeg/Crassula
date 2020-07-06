@@ -1,6 +1,6 @@
-bin/projectiles/blossom1.txt
-bin/projectiles/french1.txt
-bin/projectiles/lamp1.txt
-bin/projectiles/rose1.txt
+bin/projectiles/cactus1.txt
+bin/projectiles/cactus2.txt
+bin/projectiles/cactus3.txt
+bin/projectiles/cactus4.txt
 bin/projectiles/basic.txt
 bin/projectiles/meleeEnemyProjectile.txt

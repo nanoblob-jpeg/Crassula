@@ -1,4 +1,1 @@
-bin/plants/blossom.txt
-bin/plants/french.txt
-bin/plants/lamp.txt
-bin/plants/rose.txt
+bin/plants/cactus.txt

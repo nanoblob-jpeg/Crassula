@@ -31,7 +31,7 @@ public:
 	//CONSTANTS
 	//max texture sizes
 	short maxPlantSize{50};
-	short maxProjectileSize{20};
+	short maxProjectileSize{30};
 	short maxEnemyProjectileSize{30};
 	short maxEnemySize{40};
 	short maxPlantIconSize{20};
@@ -62,7 +62,7 @@ public:
 
 	//num game object constants
 	unsigned short numOfChunks{40};
-	unsigned short numOfPlants{4};
+	unsigned short numOfPlants{1};
 	unsigned short numOfEnemies{1};
 
 	//screen size constants

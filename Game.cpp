@@ -1136,7 +1136,7 @@ void Game::spawnPlayerProjectile(){
 		it->setDirection(startPosition, direction);
 		it->right = true;
 	}else{
-		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level]));
+		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level-1]));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 		short direction = player.facing ? 1 : -1;
