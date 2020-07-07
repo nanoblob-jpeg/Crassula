@@ -173,6 +173,13 @@ void Game::Update(float dt){
 	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
 		player.canAttack(dt);
 
+	//following line reduces the hit indicator for player
+	if(player.isHit < 0){
+		player.isHit = 0;
+	}else if(player.isHit){
+		player.isHit -= dt;
+	}
+
 	//adding to the attack timers of the enemies
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i]->attacking){
@@ -1037,6 +1044,7 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
+				player.isHit = 0.100;
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
@@ -1136,12 +1144,28 @@ void Game::spawnPlayerProjectile(){
 		it->setDirection(startPosition, direction);
 		it->right = true;
 	}else{
-		player_projectiles.push_back(ResourceManager::GetProjectile(player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level-1]));
-		auto it = player_projectiles.rbegin();
-		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
-		short direction = player.facing ? 1 : -1;
-		it->setDirection(startPosition, direction);
-		it->right = player.facing;
+		std::string projectileName = player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level-1];
+		if(projectileName.compare("cactus4") == 0){
+			player_projectiles.push_back(ResourceManager::GetProjectile("cactus4"));
+			auto it = player_projectiles.rbegin();
+			glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
+			startPosition[1] += 20;
+			short direction = player.facing ? 1 : -1;
+			it->setDirection(startPosition, direction);
+			it->right = player.facing;
+			player_projectiles.push_back(ResourceManager::GetProjectile("cactus4"));
+			it = player_projectiles.rbegin();
+			startPosition[1] -= 30;
+			it->setDirection(startPosition, direction);
+			it->right = player.facing;
+		}else{
+			player_projectiles.push_back(ResourceManager::GetProjectile(projectileName));
+			auto it = player_projectiles.rbegin();
+			glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
+			short direction = player.facing ? 1 : -1;
+			it->setDirection(startPosition, direction);
+			it->right = player.facing;
+		}
 	}
 }
 
@@ -1197,7 +1221,10 @@ void Game::processPlayerMovement(const float dt){
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
-		player.velocity.y -= (player.speed + acceleration) * dt;
+		if(player.velocity.y > 0){
+			player.velocity.y -= (player.speed + acceleration) * 2 * dt;
+		}else
+			player.velocity.y -= (player.speed + acceleration) * dt;
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
@@ -1385,9 +1412,15 @@ void Game::renderEnemies(glm::mat4 &view){
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-		glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-		player.bowl->size);
+	if(!player.isHit){
+		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
+			player.bowl->size);
+	}else{
+		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
+			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
+			player.bowl->size, 0.0f, glm::vec3(0.5f, 0.0f, 0.0f));
+	}
 }
 
 void Game::renderText(glm::mat4 &view){

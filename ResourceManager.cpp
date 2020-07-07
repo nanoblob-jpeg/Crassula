@@ -498,6 +498,7 @@ void ResourceManager::LoadProjectiles(const char *file){
     damage
     range
     piercing
+    speed
     width
     height
     effect num
@@ -510,6 +511,7 @@ void ResourceManager::LoadProjectiles(const char *file){
         std::string name;
         int damage, range, num;
         bool piercing;
+        float speed;
         glm::vec2 size;
         std::getline(fstream2, line);
         name = line;
@@ -520,10 +522,12 @@ void ResourceManager::LoadProjectiles(const char *file){
         std::getline(fstream2, line);
         piercing = static_cast<bool>(std::stoi(line));
         std::getline(fstream2, line);
+        speed = std::stof(line);
+        std::getline(fstream2, line);
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, damage, range, name, piercing);
+        Projectile temp = Projectile(size, damage, range, name, speed, piercing);
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){

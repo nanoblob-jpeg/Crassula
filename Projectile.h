@@ -15,18 +15,28 @@ public:
 	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
+	float projectileSpeed;
 	bool right{};
 	Projectile(){};
-	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, bool ppiercing = false)
-		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}{
+	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, float pprojectileSpeed = 200, bool ppiercing = false)
+		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}, projectileSpeed{pprojectileSpeed}{
 			size = psize;
 		};
 
-	void setDirection(const glm::vec2 &startPosition, const short direction, float speed = 200){
+	void setDirection(const glm::vec2 &startPosition, const short direction, float speed){
 		if(direction < 0){
 			velocity[0] = -speed;
 		}else{
 			velocity[0] = speed;
+		}
+		position = startPosition;
+	}
+
+	void setDirection(const glm::vec2 &startPosition, const short direction){
+		if(direction < 0){
+			velocity[0] = -projectileSpeed;
+		}else{
+			velocity[0] = projectileSpeed;
 		}
 		position = startPosition;
 	}

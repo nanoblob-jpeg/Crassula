@@ -21,6 +21,7 @@ public:
 	std::string backgroundName = "";
 	//false for left, true for right
 	bool facing;
+	float isHit{};
 
 	//stats
 	int health = 0;
