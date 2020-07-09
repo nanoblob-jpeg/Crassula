@@ -3,9 +3,11 @@
 #include <vector>
 #include "Texture.h"
 #include <glm/glm.hpp>
+#include <string>
 
 class Bowl{
 public:
+	std::string name;
 	//animation Textures
 	//Texture 0 will be the normal walking/idle photo
 	std::vector<Texture> attackAnimation;
@@ -27,8 +29,8 @@ public:
 
 	glm::vec2 size;
 	Bowl(){};
-	Bowl(int h, int d, int a, float as, float s, float r, float l, int nop, int nolf, glm::vec2 psize):
-	health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, numOfPlants{nop}, numOfLevelFour{nolf}, size(psize){};
+	Bowl(std::string &n, int h, int d, int a, float as, float s, float r, float l, int nop, int nolf, glm::vec2 psize):
+	name{n}, health{h}, defense{d}, attack{a}, attackSpeed{as}, speed{s}, recovery{r}, luck{l}, numOfPlants{nop}, numOfLevelFour{nolf}, size(psize){};
 
 	void startAnimationCounter(){
 		frameCounter = 0;

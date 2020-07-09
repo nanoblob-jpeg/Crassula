@@ -5,6 +5,7 @@ SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
 SpriteRenderer *textRenderer;
 SpriteRenderer *UIRenderer;
+SpriteRenderer *staticImageRenderer;
 //background renderer
 BackgroundRenderer *BackGround_l1;
 BackgroundRenderer *BackGround_l2;
@@ -18,7 +19,7 @@ TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
 
 Game::Game(unsigned int width, unsigned int height){
-	m_state = HOME_MAIN;
+	m_state = START_SCREEN;
 	Width = width;
 	Height = height;
 }
@@ -33,6 +34,15 @@ Game::~Game(){
 	delete PlantRenderer;
 	delete ProjectileRenderer;
 	delete EnemyRenderer;
+
+	std::ofstream file;
+	file.open("bin/player.txt");
+	file << player.name << '\n';
+	file << std::to_string(player.level) << '\n';
+	file << backgroundTextures->name << '\n';
+	file << std::to_string(player.experience) << '\n';
+	file << player.bowl->name;
+	file.close();
 }
 
 void Game::Init(){
@@ -132,6 +142,7 @@ void Game::ProcessInput(float dt){
 					if(player.interact->type.compare("plant") == 0){
 						processPlantInteraction();
 					}
+					enemyMultiplier += 0.2;
 					points += 5;
 					player.experience += 2;
 				}
@@ -154,7 +165,13 @@ void Game::ProcessInput(float dt){
 		}
 	}else if(m_state == START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
-			m_state = HOME_MAIN;
+			m_state = GAME_ACTIVE_CLASSIC;
+			initializeGame();
+			player.setStatBoosts();
+			player.setFinalStats();
+			cam.Position[0] = 0;
+			cam.Position[1] = 0;
+			points = 0;
 		}
 	}
 };
@@ -197,6 +214,7 @@ void Game::Update(float dt){
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
 			points += dt/2;
+			enemyMultiplier += 0.001 * dt;
 			player.experience += dt/20;
 		}
 		//moving the projectiles
@@ -276,6 +294,8 @@ void Game::Render(){
 		renderHomeMain();
 	}else if(m_state == GAME_ACTIVE_CLASSIC){
 		renderGame();
+	}else if(m_state == START_SCREEN){
+		renderStartScreen();
 	}
 }
 /*
@@ -312,6 +332,8 @@ void Game::initializeGame(){
 							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
 							spawnEnemy(i, j, generationCodes2[k], generationCode[k]);
+							auto it = board_enemies.rbegin();
+							(*it)->applyMultiplier(1.0);
 						}
 					}
 				}
@@ -391,6 +413,8 @@ void Game::gameEndProtocol(){
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
 
+	enemyMultiplier = 1.0;
+
 	std::cout << "player died?\n";
 }
 /*
@@ -466,6 +490,8 @@ void Game::generateChunks(const short direction){
 							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
 							spawnEnemy(i, j, k, direction);
+							auto it = board_enemies.rbegin();
+							(*it)->applyMultiplier(enemyMultiplier);
 						}
 					}
 				}
@@ -1186,6 +1212,7 @@ void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i]->health <= 0){
 			points += 2;
+			enemyMultiplier += 0.1;
 			player.experience += 5;
 			delete board_enemies[i];
 			board_enemies.erase(board_enemies.begin() + i);
@@ -1324,6 +1351,10 @@ RENDERING
 
 
 */
+void Game::renderStartScreen(){
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("titlePage"), glm::vec2(-400, -300), glm::vec2(800, 600));
+}
+
 void Game::renderHomeMain(){
 	glm::mat4 view = cam.GetViewMatrix();
 	Renderer->setViewMatrix("view", view);
@@ -1714,6 +1745,7 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "UI");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "icon");
+	ResourceManager::LoadShader("shaders/static_vshader.txt", "shaders/fragShader.txt", nullptr, "staticImage");
 }
 
 void Game::initRenderers(){
@@ -1731,6 +1763,7 @@ void Game::initRenderers(){
 	initUIRenderer(view, projection);
 	initIconRenderer(view, projection);
 	initEnemyProjectileRenderer(view, projection);
+	initStaticImageRenderer(projection);
 }
 
 void Game::initRenderer(glm::mat4 &view, glm::mat4 &projection){
@@ -1841,4 +1874,13 @@ void Game::initEnemyProjectileRenderer(glm::mat4 &view, glm::mat4 &projection){
 	sProgram.setMat4("projection", projection);
 	sProgram.setMat4("view", view);
 	EnemyProjectileRenderer = new TexSampRenderer(ResourceManager::GetShader("enemyProjectiles"));
+}
+
+void Game::initStaticImageRenderer(glm::mat4 &projection){
+	Shader sProgram;
+	sProgram = ResourceManager::GetShader("staticImage");
+	sProgram.use();
+	sProgram.setInt("image", 0);
+	sProgram.setMat4("projection", projection);
+	staticImageRenderer = new SpriteRenderer(ResourceManager::GetShader("staticImage"));
 }

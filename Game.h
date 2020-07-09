@@ -100,6 +100,7 @@ public:
 	std::vector<Projectile> enemy_projectiles{};
 	std::vector<Projectile> player_projectiles{};
 	float points{};
+	float enemyMultiplier{1.0};
 
 	//RENDER LOGIC VARIABLES
 	bool generatedChunks{false};
@@ -213,6 +214,7 @@ public:
 	void enemyAttackLogic();
 
 	//rendering
+	void renderStartScreen();
 	void renderHomeMain();
 	void renderGame();
 	void renderGameBackground(glm::mat4 &view);
@@ -249,5 +251,6 @@ public:
 	void initUIRenderer(glm::mat4 &view, glm::mat4 &projection);
 	void initIconRenderer(glm::mat4 &view, glm::mat4 &projection);
 	void initEnemyProjectileRenderer(glm::mat4 &view, glm::mat4 &projection);
+	void initStaticImageRenderer(glm::mat4 &projection);
 };
 #endif

@@ -88,7 +88,9 @@ int main()
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
             std::cout << glGetError() << std::endl;
-            std::cout << Crassula.player.health << "\n\n\n";
+            std::cout << Crassula.player.health << "\n";
+            std::cout << Crassula.points << '\n';
+            std::cout << Crassula.enemyMultiplier << "\n\n\n";
             timeTracker = 0;
             frameCounter = 0;
     	}
@@ -100,7 +102,7 @@ int main()
 
         Crassula.Update(deltaTime);
 
-        glClearColor(50.0f, 50.0f, 50.0f, 1.0f);
+        glClearColor(164.0f, 175.0f, 164.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 		Crassula.Render();
         //std::cout << gamePointer->cam.Position[0] << "," << gamePointer->cam.Position[1] <<','<< gamePointer->player.velocity[0] << ',' << gamePointer->player.velocity[1]<<'\n';

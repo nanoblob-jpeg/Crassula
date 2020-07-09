@@ -325,7 +325,7 @@ void ResourceManager::LoadBowl(const char *file){
         numOfLevelFour = std::stoi(line);
         std::getline(fstream2, line);
         num = std::stoi(line);
-        Bowl temp = Bowl(health, damage, attack, attackSpeed, speed, recovery, luck, numOfPlants, numOfLevelFour, size);
+        Bowl temp = Bowl(name, health, damage, attack, attackSpeed, speed, recovery, luck, numOfPlants, numOfLevelFour, size);
         for(int j{}; j < num; ++j){
             std::getline(fstream2, line);
             temp.attackAnimation.push_back(Textures[line]);
@@ -571,7 +571,7 @@ void ResourceManager::LoadBackgrounds(const char *file){
         std::getline(fstream2, name1);
         std::getline(fstream2, name2);
         std::getline(fstream2, name3);
-        Backgrounds[name] = Background(name1, name2, name3);
+        Backgrounds[name] = Background(name, name1, name2, name3);
         fstream2.close();
     }
 }

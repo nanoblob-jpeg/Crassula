@@ -22,3 +22,6 @@ ui_four_plant
 bin/textures/ui/highlight.png
 1
 highlight
+bin/textures/backgrounds/titlePage.png
+1
+titlePage

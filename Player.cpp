@@ -108,7 +108,7 @@ bool Player::canAttack(float dt){
 void Player::calculateLevel(){
 	while(experience >= (level+1) * (level+1)){
 		level += 1;
-		experience -= (level+1) * (level+1);
+		experience -= (level) * (level);
 	}
 }
 
