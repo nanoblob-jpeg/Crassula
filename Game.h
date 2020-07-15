@@ -65,6 +65,10 @@ public:
 	unsigned short numOfPlants{1};
 	unsigned short numOfEnemies{1};
 
+	//armory vars
+	float armoryStartingOffset{0};
+	float armoryAreaSizes{200};
+
 	//screen size constants
 	float Width, Height;
 
@@ -80,6 +84,10 @@ public:
 		HOME_CLOCK,
 		HOME_MAIN
 	};
+
+	//unlock stuff logic
+	std::vector<bool> bowls{};
+	std::vector<std::string> bowlNames{};
 
 	//misc game drivers
 	GameState m_state;
@@ -133,7 +141,9 @@ public:
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 
 	//text render stuff
-	std::vector<GameObject *> text{};
+	std::vector<std::pair<std::string, glm::vec2>> text{};
+	std::vector<glm::vec2> textOffsets{};
+	std::vector<float> textTexCoords{};
 
 	//ICON RENDER VARS
 	//effect icon vars
@@ -174,6 +184,7 @@ public:
 	void prepBoard();
 	void reserveArraySpace();
 	void gameEndProtocol();
+	void setUnlockedBowls();
 
 	//Chunk Generation
 	void prepBoardForChunkCreation(const short direction);
@@ -237,6 +248,8 @@ public:
 	void moveBackground(float dt);
 	void findHighlightPosition();
 	void findLevelIconPosition();
+	void calculateTextRenderValues();
+	void Game::setNeededText();
 
 	//Shader && Renderer loading
 	void initShaders();

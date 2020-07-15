@@ -3,7 +3,6 @@
 
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
-SpriteRenderer *textRenderer;
 SpriteRenderer *UIRenderer;
 SpriteRenderer *staticImageRenderer;
 //background renderer
@@ -17,6 +16,7 @@ TexSampRenderer *ProjectileRenderer;
 TexSampRenderer *EnemyProjectileRenderer;
 TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
+TexSampRenderer *textRenderer;
 
 Game::Game(unsigned int width, unsigned int height){
 	m_state = START_SCREEN;
@@ -48,6 +48,7 @@ Game::~Game(){
 void Game::Init(){
 	initShaders();
 	initRenderers();
+	setUnlockedBowls();
 	//load textures
 	ResourceManager::LoadTexture2("textureDirectory.txt");
 	ResourceManager::LoadArrayTextures("arrayTextureDirectory.txt");
@@ -161,6 +162,15 @@ void Game::ProcessInput(float dt){
 			}
 			if(player.switchingPlants && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
 				player.switchingPlants = false;
+			}
+		}else if(m_state == HOME_ARMORY){
+			if(Keys[GLFW_KEY_I]){
+				if(bowls[(cam.Position[0] - armoryStartingOffset)/armoryAreaSizes]){
+					player.bowl = &ResourceManager::GetBowl(bowlNames[(cam.Position[0] - armoryStartingOffset)/armoryAreaSizes]);
+				}
+			}
+			if(Keys[GLFW_KEY_Q]){
+				m_state = HOME_MAIN;
 			}
 		}
 	}else if(m_state == START_SCREEN){
@@ -416,6 +426,20 @@ void Game::gameEndProtocol(){
 	enemyMultiplier = 1.0;
 
 	std::cout << "player died?\n";
+}
+
+void Game::setUnlockedBowls(){
+	std::string line;
+	std::ifstream fstream("bin/bowlUnlockFile.txt");
+	if(fstream){
+		while(std::getline(fstream, line)){
+			bowls.push_back(line == "1" ? true : false);
+			std::getline(fstream, line);
+			bowlNames.push_back(line);
+		}
+	}else{
+		std::cout << "unlock bowl file not fount\n";
+	}
 }
 /*
 
@@ -1380,6 +1404,8 @@ void Game::renderGame(){
 
 	calculateIconRenderValues();
 
+	calculateTextRenderValues();
+
 	if(player.currentPlant != -1){
 		findHighlightPosition();
 		findLevelIconPosition();
@@ -1456,7 +1482,10 @@ void Game::renderPlayer(glm::mat4 &view){
 
 void Game::renderText(glm::mat4 &view){
 	textRenderer->setViewMatrix("view", view);
-
+	textRenderer->setOffset(&textOffsets[0], textOffsets.size());
+	textRenderer->setTextureCoords(&textTexCoords[0], textTexCoords.size());
+	//change this render command
+	textRenderer->DrawSprites(textOffsets.size(), ResourceManager::GetTexture("alphabet"), maxTextHeight, glm::vec2(cam.Position[0], cam.Position[1] - maxTextHeight));
 }
 
 void Game::renderUI(glm::mat4 &view){
@@ -1717,6 +1746,29 @@ void Game::findLevelIconPosition(){
 			levelIconOffsets.push_back(glm::vec2((fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * i) + levelBarSpacing)/maxLevelIconSize, (plantFirstBoxY - levelBarSpacing)/maxLevelIconSize));
 	}
 }
+
+void Game::calculateTextRenderValues(){
+	setNeededText();
+	for(int i{}; i < text.size(); ++i){
+		int newLine = 0;
+		for(int j{}; j < text[i].first.length(); ++j){
+			if(text[i].first[j] == '\n'){
+				newLine++;
+				continue;
+			}
+			textTexCoords.push_back(ResourceManager::getDepth(text[i].first[j]));
+			textOffsets.push_back(glm::vec2((text[i].second[0] + maxTextWidth * j)/maxTextWidth, (text[i].second[1] + (maxTextHeight * newLine))));
+		}
+	}
+}
+
+void Game::setNeededText(){
+	text.clear();
+	if(m_state == GAME_ACTIVE_CLASSIC){
+		text.push_back(std::pair<std::string, glm::vec2>(std::to_string(player.health), glm::vec2(562 - 300, 90 - 400)));
+		text.push_back(std::pair<std::string, glm::vec2>(std::to_string(points), glm::vec2(562 - 300, 136 - 400)));
+	}
+}
 /*
 
 
@@ -1843,7 +1895,7 @@ void Game::initTextRenderer(glm::mat4 &view, glm::mat4 &projection){
 	sProgram.use();
 	sProgram.setInt("image", 0);
 	sProgram.setMat4("projection", projection);
-	textRenderer = new SpriteRenderer(ResourceManager::GetShader("text"));
+	textRenderer = new TexSampRenderer(ResourceManager::GetShader("text"));
 }
 
 void Game::initUIRenderer(glm::mat4 &view, glm::mat4 &projection){
