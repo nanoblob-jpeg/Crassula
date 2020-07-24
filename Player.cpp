@@ -32,7 +32,7 @@ void Player::loadPlayer(const char *file){
 		experience = std::stof(line);
 		calculateStats();
 		std::getline(fstream, line);
-		bowl = &ResourceManager::GetBowl(line);
+		bowl = &(ResourceManager::GetBowl(line).first);
 	}else{
 		std::cout << "Player file could not be opened";
 	}

@@ -37,6 +37,8 @@ public:
 	short maxPlantIconSize{20};
 	float maxLevelIconSize{28.0};
 	float maxEffectIconSize{20.0};
+	float maxTextWidth{30};
+	float maxTextHeight{40};
 	short effectIconSpacing{5};
 	float backgroundSize{2500};
 
@@ -66,8 +68,8 @@ public:
 	unsigned short numOfEnemies{1};
 
 	//armory vars
-	float armoryStartingOffset{0};
-	float armoryAreaSizes{200};
+	int bowlCounter;
+	bool armoryButtonPress = false;
 
 	//screen size constants
 	float Width, Height;
@@ -76,12 +78,10 @@ public:
 	enum GameState{
 		START_SCREEN,
 		GAME_ACTIVE_CLASSIC,
-		GAME_ACTIVE_BOSS,
 		DEATH_SCREEN,
 		HOME_ARMORY,
-		HOME_NURSERY,
+		HOME_ACHIEVEMENTS,
 		HOME_GREENHOUSE,
-		HOME_CLOCK,
 		HOME_MAIN
 	};
 
@@ -227,6 +227,7 @@ public:
 	//rendering
 	void renderStartScreen();
 	void renderHomeMain();
+	void renderArmoryScreen();
 	void renderGame();
 	void renderGameBackground(glm::mat4 &view);
 	void renderBlocks(glm::mat4 &view);
@@ -249,7 +250,7 @@ public:
 	void findHighlightPosition();
 	void findLevelIconPosition();
 	void calculateTextRenderValues();
-	void Game::setNeededText();
+	void setNeededText();
 
 	//Shader && Renderer loading
 	void initShaders();

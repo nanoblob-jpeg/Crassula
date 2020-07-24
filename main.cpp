@@ -102,7 +102,11 @@ int main()
 
         Crassula.Update(deltaTime);
 
-        glClearColor(164.0f, 175.0f, 164.0f, 1.0f);
+        if(Crassula.m_state == Game::HOME_ARMORY){
+            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        }else{
+            glClearColor(0.1640f, 0.1750f, 0.1640f, 1.0f);
+        }
         glClear(GL_COLOR_BUFFER_BIT);
 		Crassula.Render();
         //std::cout << gamePointer->cam.Position[0] << "," << gamePointer->cam.Position[1] <<','<< gamePointer->player.velocity[0] << ',' << gamePointer->player.velocity[1]<<'\n';

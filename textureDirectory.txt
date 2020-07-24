@@ -25,3 +25,6 @@ highlight
 bin/textures/backgrounds/titlePage.png
 1
 titlePage
+bin/textures/backgrounds/homePage.png
+1
+homePage

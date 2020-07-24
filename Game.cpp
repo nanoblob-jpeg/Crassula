@@ -76,6 +76,7 @@ void Game::Init(){
 	//create board
 	prepBoard();
 	reserveArraySpace();
+	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
 }
 
 void Game::ProcessInput(float dt){
@@ -88,46 +89,9 @@ void Game::ProcessInput(float dt){
 		}
 		std::cout << std::endl;
 	}
-	if(m_state != START_SCREEN && m_state != DEATH_SCREEN){
+	if(m_state != START_SCREEN && m_state != DEATH_SCREEN && m_state != HOME_ARMORY && m_state != HOME_MAIN){
 		processPlayerMovement(dt);
-		if(m_state == HOME_MAIN){
-			if(Keys[GLFW_KEY_I]){
-				// if(player.interact){
-				// 	if(player.interact->sprite.ID == ResourceManager::GetTexture("gate").ID){
-				// 		m_state = GAME_ACTIVE_CLASSIC;
-				// 		initializeGame();
-				// 		cam.Position[0] = 0;
-				// 		cam.Position[1] = 0;
-				// 		points = 0;
-				// 		//should make a portal class
-				// 		//need to have some function in there that can be called for
-				// 		//all interactables
-				// 		//like interact with or something
-				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("bossgate").ID){
-				// 		m_state = GAME_ACTIVE_BOSS;
-				// 		//add in code here to prep for that
-				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("armory").ID){
-				// 		m_state = HOME_ARMORY;
-				// 		//add in code later
-				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("nursery").ID){
-				// 		m_state = HOME_NURSERY;
-				// 		//add in code later
-				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("greenhouse").ID){
-				// 		m_state = HOME_GREENHOUSE;
-				// 		//add code later
-				// 	}else if(player.interact->sprite.ID == ResourceManager::GetTexture("clock").ID){
-				// 		m_state = HOME_CLOCK;
-				// 	}
-				// }
-				m_state = GAME_ACTIVE_CLASSIC;
-				initializeGame();
-				player.setStatBoosts();
-				player.setFinalStats();
-				cam.Position[0] = 0;
-				cam.Position[1] = 0;
-				points = 0;
-			}
-		}else if(m_state == GAME_ACTIVE_CLASSIC){
+		if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
 				if(player.canAttack(dt)){
 					spawnPlayerProjectile();
@@ -163,18 +127,47 @@ void Game::ProcessInput(float dt){
 			if(player.switchingPlants && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
 				player.switchingPlants = false;
 			}
-		}else if(m_state == HOME_ARMORY){
-			if(Keys[GLFW_KEY_I]){
-				if(bowls[(cam.Position[0] - armoryStartingOffset)/armoryAreaSizes]){
-					player.bowl = &ResourceManager::GetBowl(bowlNames[(cam.Position[0] - armoryStartingOffset)/armoryAreaSizes]);
-				}
-			}
-			if(Keys[GLFW_KEY_Q]){
-				m_state = HOME_MAIN;
-			}
 		}
 	}else if(m_state == START_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
+			m_state = HOME_MAIN;
+		}
+	}else if(m_state == HOME_ARMORY){
+		if(Keys[GLFW_KEY_A] && !armoryButtonPress){
+			if(bowlCounter == 0){
+				bowlCounter = ResourceManager::Bowls.size() - 1;
+			}else{
+				--bowlCounter;
+			}
+			armoryButtonPress = true;
+		}
+		if(Keys[GLFW_KEY_D]){
+			if(bowlCounter == ResourceManager::Bowls.size() - 1){
+				bowlCounter = 0;
+			}else{
+				++bowlCounter;
+			}
+			armoryButtonPress = true;
+		}
+		if(!Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
+			armoryButtonPress = false;
+		}
+		if(Keys[GLFW_KEY_I]){
+			if(bowls[bowlCounter]){
+				auto it = ResourceManager::Bowls.begin();
+				while(bowlCounter){
+					++it;
+				}
+				player.bowl = &(*it).second.first;
+				bowlCounter = (*it).second.second;
+			}
+		}
+		if(Keys[GLFW_KEY_Q]){
+			m_state = HOME_MAIN;
+			bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
+		}	
+	}else if(m_state == HOME_MAIN){
+		if(Keys[GLFW_KEY_I]){
 			m_state = GAME_ACTIVE_CLASSIC;
 			initializeGame();
 			player.setStatBoosts();
@@ -182,6 +175,18 @@ void Game::ProcessInput(float dt){
 			cam.Position[0] = 0;
 			cam.Position[1] = 0;
 			points = 0;
+		}
+		if(Keys[GLFW_KEY_U]){
+			m_state = HOME_ARMORY;
+		}
+		if(Keys[GLFW_KEY_O]){
+			m_state = HOME_GREENHOUSE;
+		}
+		if(Keys[GLFW_KEY_J]){
+			m_state = HOME_ACHIEVEMENTS;
+		}
+		if(Keys[GLFW_KEY_L]){
+			m_state = START_SCREEN;
 		}
 	}
 };
@@ -214,14 +219,7 @@ void Game::Update(float dt){
 		}
 	}
 
-	if(m_state == HOME_MAIN){
-		//don't know what I'm doing here, need to set it to the chunk that is displayed
-		Chunk *home_main = &ResourceManager::GetChunk("home_main");
-
-		for(int i{}; i < home_main->objects.size(); ++i){
-			player_and_object_collisions(home_main->objects[i], dt);
-		}
-	}else if(m_state == GAME_ACTIVE_CLASSIC){
+	if(m_state == GAME_ACTIVE_CLASSIC){
 		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
 			points += dt/2;
 			enemyMultiplier += 0.001 * dt;
@@ -306,6 +304,8 @@ void Game::Render(){
 		renderGame();
 	}else if(m_state == START_SCREEN){
 		renderStartScreen();
+	}else if(m_state == HOME_ARMORY){
+		renderArmoryScreen();
 	}
 }
 /*
@@ -1376,19 +1376,20 @@ RENDERING
 
 */
 void Game::renderStartScreen(){
-	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("titlePage"), glm::vec2(-400, -300), glm::vec2(800, 600));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("titlePage"), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
 }
 
 void Game::renderHomeMain(){
-	glm::mat4 view = cam.GetViewMatrix();
-	Renderer->setViewMatrix("view", view);
-	Chunk *home_main = &ResourceManager::GetChunk("home_main");
-	for(int i{}; i < home_main->objects.size(); ++i){
-		float tempSize = std::max(home_main->objects[i]->size[0], home_main->objects[i]->size[1]);
-		Renderer->DrawSprite(home_main->objects[i]->sprite, 
-			home_main->objects[i]->position,
-			glm::vec2(tempSize, tempSize));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("homePage"), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
+}
+
+void Game::renderArmoryScreen(){
+	auto it = ResourceManager::Bowls.begin();
+	while(bowlCounter--){
+		++it;
 	}
+	bowlCounter = (*it).second.second;
+	staticImageRenderer->DrawSprite((*it).second.first.attackAnimation[0],glm::vec2(0-(*it).second.first.size[0]/2, 0-(*it).second.first.size[1]/2),(*it).second.first.size);
 }
 
 void Game::renderGame(){
@@ -1756,7 +1757,7 @@ void Game::calculateTextRenderValues(){
 				newLine++;
 				continue;
 			}
-			textTexCoords.push_back(ResourceManager::getDepth(text[i].first[j]));
+			textTexCoords.push_back(ResourceManager::getDepth(std::string(1, text[i].first[j])));
 			textOffsets.push_back(glm::vec2((text[i].second[0] + maxTextWidth * j)/maxTextWidth, (text[i].second[1] + (maxTextHeight * newLine))));
 		}
 	}

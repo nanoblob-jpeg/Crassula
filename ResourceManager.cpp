@@ -9,7 +9,7 @@ std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
 std::map<std::string, Chunk> ResourceManager::Chunks;
 std::map<std::string, GameObject> ResourceManager::Objects;
-std::map<std::string, Bowl> ResourceManager::Bowls;
+std::map<std::string, std::pair<Bowl, int>> ResourceManager::Bowls;
 std::map<std::string, Plant> ResourceManager::Plants;
 std::map<std::string, Effect> ResourceManager::Effects;
 std::map<std::string, Enemy> ResourceManager::Enemies;
@@ -291,7 +291,7 @@ void ResourceManager::LoadBowl(const char *file){
     number of attack animation frames
     texture names of attack animations
     */
-
+    int counter = 0;
     for(int i{}; i < bowl_list.size(); ++i){
         std::ifstream fstream2(bowl_list[i]);
         std::string name;
@@ -330,12 +330,13 @@ void ResourceManager::LoadBowl(const char *file){
             std::getline(fstream2, line);
             temp.attackAnimation.push_back(Textures[line]);
         }
-        Bowls[name] = temp;
+        Bowls[name] = std::pair<Bowl, int>{temp, counter};
         fstream2.close();
+        ++counter;
     }
 }
 
-Bowl& ResourceManager::GetBowl(std::string name){
+std::pair<Bowl, int>& ResourceManager::GetBowl(std::string name){
     return Bowls[name];
 }
 

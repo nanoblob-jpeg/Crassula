@@ -28,7 +28,7 @@ public:
     static std::map<std::string, Texture> Textures;
     static std::map<std::string, Chunk> Chunks;
     static std::map<std::string, GameObject> Objects;
-    static std::map<std::string, Bowl> Bowls;
+    static std::map<std::string, std::pair<Bowl, int>> Bowls;
     static std::map<std::string, Plant> Plants;
     static std::map<std::string, Effect> Effects;
     static std::map<std::string, Enemy> Enemies;
@@ -55,7 +55,7 @@ public:
     //loads the bowls
     static void LoadBowl(const char *file);
     //returns a bowl
-    static Bowl& GetBowl(std::string name);
+    static std::pair<Bowl, int>& GetBowl(std::string name);
     //loads the plants
     static void LoadPlant(const char *file);
     //returns a plant
