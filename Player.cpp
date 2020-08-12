@@ -89,8 +89,24 @@ bool Player::isDead(){
 }
 
 void Player::addEffects(Projectile &p){
+	bool newEffect = true;
+	int oldEffectPlace{};
 	for(int i{}; i < p.effects.size(); ++i){
-		this->effects.push_back(p.effects[i]);
+		for(int j{}; j < effects.size(); ++j){
+			if(effects[j].name.compare(p.effects[i].name) == 0){
+				newEffect = false;
+				oldEffectPlace = j;
+				break;
+			}
+		}
+		if(newEffect){
+			this->effects.push_back(p.effects[i]);
+		}
+		else{
+			this->effects.erase(effects.begin() + oldEffectPlace);
+			this->effects.push_back(p.effects[i]);
+			newEffect = true;
+		}
 	}
 }
 

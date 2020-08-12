@@ -96,8 +96,18 @@ public:
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
 
+	//achievement system
+	std::vector<bool> completedAchievements{};
+	//add in method to transfer this stuff in the end game stuff
+	std::vector<int> achievementsCompletedDuringGame{};
+	int achievementSelector{};
+	bool achievementMoved = false;
+	bool viewingAchievement = false;
+
+
 	//Player object
 	Player player;
+	int playerHealth;
 
 	//movement variables:
 	float upCounter{};

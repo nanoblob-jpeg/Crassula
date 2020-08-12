@@ -45,6 +45,7 @@ public:
 		}
 		size = glm::vec2(40, 40);
 		name = "Melee";
+		attackEffects.push_back(ResourceManager::GetEffect("bleed1"));
 	}
 	bool attackFunc(glm::vec3 &playerPosition){
 		if(!attacking){
@@ -75,6 +76,9 @@ public:
 			output[0] = position[0] - p.size[0];
 		}
 		output[1] = position[1] - (size[1] - p.size[1])/2;
+		for(int i{}; i < attackEffects.size(); ++i){
+			p.effects.push_back(attackEffects[i]);
+		}
 		return output;
 	}
 };

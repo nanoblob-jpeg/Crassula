@@ -172,6 +172,7 @@ void Game::ProcessInput(float dt){
 			initializeGame();
 			player.setStatBoosts();
 			player.setFinalStats();
+			playerHealth = player.health;
 			cam.Position[0] = 0;
 			cam.Position[1] = 0;
 			points = 0;
@@ -184,9 +185,49 @@ void Game::ProcessInput(float dt){
 		}
 		if(Keys[GLFW_KEY_J]){
 			m_state = HOME_ACHIEVEMENTS;
+			achievementSelector = 0;
 		}
 		if(Keys[GLFW_KEY_L]){
 			m_state = START_SCREEN;
+		}
+	}else if(m_state == HOME_ACHIEVEMENTS){
+		if(Keys[GLFW_KEY_W] && !achievementMoved){
+			if(achievementSelector <= 14){
+				achievementSelector += 120;
+			}else{
+				achievementSelector -= 14;
+			}
+			achievementMoved = true;
+		}
+		if(Keys[GLFW_KEY_A] && !achievementMoved){
+			if(achievementSelector%14 == 0){
+				achievementSelector += 13;
+			}else{
+				achievementSelector -= 1;
+			}
+			achievementMoved = true;
+		}
+		if(Keys[GLFW_KEY_D] && !achievementMoved){
+			if((achievementSelector-13)%14 == 0){
+				achievementSelector -= 13;
+			}else{
+				achievementSelector += 1;
+			}
+			achievementMoved = true;
+		}
+		if(Keys[GLFW_KEY_S] && !achievementMoved){
+			if(achievementSelector >= 126){
+				achievementSelector -= 126;
+			}else{
+				achievementSelector += 14;
+			}
+			achievementMoved = true;
+		}
+		if(!Keys[GLFW_KEY_W] && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_S] && !Keys[GLFW_KEY_D]){
+			achievementMoved = false;
+		}
+		if(Keys[GLFW_KEY_I]){
+			viewingAchievement = true;
 		}
 	}
 };
@@ -1094,7 +1135,6 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
-				player.isHit = 0.100;
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
@@ -1389,7 +1429,10 @@ void Game::renderArmoryScreen(){
 		++it;
 	}
 	bowlCounter = (*it).second.second;
-	staticImageRenderer->DrawSprite((*it).second.first.attackAnimation[0],glm::vec2(0-(*it).second.first.size[0]/2, 0-(*it).second.first.size[1]/2),(*it).second.first.size);
+	if(bowls[bowlCounter])
+		staticImageRenderer->DrawSprite((*it).second.first.attackAnimation[0],glm::vec2(0-(*it).second.first.size[0]/2, 0-(*it).second.first.size[1]/2),(*it).second.first.size);
+	else
+		staticImageRenderer->DrawSprite((*it).second.first.attackAnimation[0], glm::vec2(0-(*it).second.first.size[0]/2, 0-(*it).second.first.size[1]/2), (*it).second.first.size, 0.0, glm::vec3(0, 0, 0));
 }
 
 void Game::renderGame(){
@@ -1469,15 +1512,19 @@ void Game::renderEnemies(glm::mat4 &view){
 }
 
 void Game::renderPlayer(glm::mat4 &view){
+	std::cout << player.health << '\n' << playerHealth << std::endl;
 	Renderer->setViewMatrix("view", view);
-	if(!player.isHit){
+	if(player.health == playerHealth && !player.isHit){
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
 			player.bowl->size);
 	}else{
+		if(player.isHit == 0)
+			player.isHit = 0.100;
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
 			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
 			player.bowl->size, 0.0f, glm::vec3(0.5f, 0.0f, 0.0f));
+		playerHealth = player.health;
 	}
 }
 
