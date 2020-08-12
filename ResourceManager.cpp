@@ -199,8 +199,7 @@ void ResourceManager::LoadGameObject(const char *file){
         std::string textureName;
         glm::vec3 color;
         if(fstream2){
-            std::getline(fstream2, line2);
-            vname = line2;
+            std::getline(fstream2, vname);
             std::getline(fstream2, line2);
             pos[1] = std::stof(line2);
             std::getline(fstream2, line2);
@@ -299,8 +298,7 @@ void ResourceManager::LoadBowl(const char *file){
         int health, damage, attack, num, numOfPlants, numOfLevelFour;
         float attackSpeed, speed, recovery, luck;
         glm::vec2 size;
-        std::getline(fstream2, line);
-        name = line;
+        std::getline(fstream2, name);
         std::getline(fstream2, line);
         health = std::stoi(line);
         std::getline(fstream2, line);
@@ -377,18 +375,12 @@ void ResourceManager::LoadPlant(const char *file){
         glm::vec2 size;
         glm::vec3 color;
         if(fstream2){
-            std::getline(fstream2, line);
-            name = line;
-            std::getline(fstream2, line);
-            tname = line;
-            std::getline(fstream2, line);
-            pname = line;
-            std::getline(fstream2, line);
-            pname2 = line;
-            std::getline(fstream2, line);
-            pname3 = line;
-            std::getline(fstream2, line);
-            pname4 = line;
+            std::getline(fstream2, name);
+            std::getline(fstream2, tname);
+            std::getline(fstream2, pname);
+            std::getline(fstream2, pname2);
+            std::getline(fstream2, pname3);
+            std::getline(fstream2, pname4);
             std::getline(fstream2, line);
             size[0] = std::stof(line);
             std::getline(fstream2, line);
@@ -450,8 +442,7 @@ void ResourceManager::LoadEffect(const char *file){
         std::string name;
         int dehealth, dedefense, deattack;
         float despeed, derecovery, time, frameTimeCounter;
-        std::getline(fstream2, line);
-        name = line;
+        std::getline(fstream2, name);
         std::getline(fstream2, line);
         dehealth = std::stoi(line);
         std::getline(fstream2, line);
@@ -514,8 +505,7 @@ void ResourceManager::LoadProjectiles(const char *file){
         bool piercing;
         float speed;
         glm::vec2 size;
-        std::getline(fstream2, line);
-        name = line;
+        std::getline(fstream2, name);
         std::getline(fstream2, line);
         damage = std::stoi(line);
         std::getline(fstream2, line);
