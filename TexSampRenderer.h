@@ -25,6 +25,7 @@ public:
 		float size,
 		glm::vec2 position = glm::vec2(0.0f, 0.0f)
 	);
+	void DrawSprites(int num, Texture &texture,glm::vec2 size, glm::vec2 position = glm::vec2(0.0f, 0.0f));
 
 	void setOffset(glm::vec2 *data, int numOfOffsets);
 	void setTextureCoords(float *data, int numOfCoords);

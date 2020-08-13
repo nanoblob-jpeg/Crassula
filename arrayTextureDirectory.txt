@@ -8,3 +8,7 @@ enemyProjectiles
 bin/textures/textureDirectories/enemyProjectiles.txt
 levels
 bin/textures/textureDirectories/levels.txt
+achievements
+bin/textures/textureDirectories/achievements.txt
+numbers
+bin/textures/textureDirectories/numbers.txt

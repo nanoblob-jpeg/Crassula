@@ -28,3 +28,6 @@ titlePage
 bin/textures/backgrounds/homePage.png
 1
 homePage
+bin/textures/backgrounds/deathPage.png
+1
+deathPage

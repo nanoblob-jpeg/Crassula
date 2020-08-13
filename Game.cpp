@@ -43,6 +43,42 @@ Game::~Game(){
 	file << std::to_string(player.experience) << '\n';
 	file << player.bowl->name;
 	file.close();
+
+	file.open("bin/gameData.txt");
+	file << std::to_string(chunksTravelledThrough);
+	file.close();
+
+	file.open("bin/achievementUnlockFile.txt");
+	for(int i{}; i < completedAchievements.size(); ++i){
+		if(i != completedAchievements.size() - 1){
+			if(completedAchievements[i])
+				file << "1\n" << achievementNames[i] << '\n';
+			else
+				file << "0\n" << achievementNames[i] << '\n';
+		}else{
+			if(completedAchievements[i])
+				file << "1\n" << achievementNames[i];
+			else
+				file << "0\n" << achievementNames[i];
+		}
+	}
+	file.close();
+
+	file.open("bin/bowlUnlockFile.txt");
+	for(int i{}; i < bowls.size(); ++i){
+		if(i != bowls.size() - 1){
+			if(bowls[i])
+				file << "1\n" << bowlNames[i] << '\n';
+			else
+				file << "0\n" << bowlNames[i] << '\n';
+		}else{
+			if(bowls[i])
+				file << "1\n" << bowlNames[i];
+			else
+				file << "0\n" << bowlNames[i];
+		}
+	}
+	file.close();
 }
 
 void Game::Init(){
@@ -54,8 +90,6 @@ void Game::Init(){
 	ResourceManager::LoadArrayTextures("arrayTextureDirectory.txt");
 	//load gameobject
 	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
-	//load chunk
-	ResourceManager::LoadChunk("home_main.txt", false);
 	//loading chunks for the 10x10 squares
 	ResourceManager::LoadChunk("chunk_list.txt", true);
 	//load effects
@@ -77,6 +111,8 @@ void Game::Init(){
 	prepBoard();
 	reserveArraySpace();
 	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
+	prepAchievementScreen();
+	loadGameData();
 }
 
 void Game::ProcessInput(float dt){
@@ -89,7 +125,7 @@ void Game::ProcessInput(float dt){
 		}
 		std::cout << std::endl;
 	}
-	if(m_state != START_SCREEN && m_state != DEATH_SCREEN && m_state != HOME_ARMORY && m_state != HOME_MAIN){
+	if(m_state == GAME_ACTIVE_CLASSIC){
 		processPlayerMovement(dt);
 		if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
@@ -229,6 +265,13 @@ void Game::ProcessInput(float dt){
 		if(Keys[GLFW_KEY_I]){
 			viewingAchievement = true;
 		}
+		if(Keys[GLFW_KEY_Q]){
+			m_state = HOME_MAIN;
+		}
+	}else if(m_state == DEATH_SCREEN){
+		if(Keys[GLFW_KEY_SPACE]){
+			m_state = HOME_MAIN;
+		}
 	}
 };
 
@@ -242,6 +285,40 @@ void Game::Update(float dt){
 	if(player.bowl->inAnimation){
 		player.bowl->addFrameTimer(dt);
 	}
+	
+	//add to achievement data
+	if(!outOfFirstChunk){
+		if(abs(cam.Position[0]) > 250){
+			outOfFirstChunk = true;
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+				chunksTravelledThrough++;
+			distanceTravelled.x = cam.Position[0];
+		}else if(abs(cam.Position[1]) > 250){
+			outOfFirstChunk = true;
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+				chunksTravelledThrough++;
+			if(cam.Position[1] < 0)
+				if(!(chunksFallenThrough == std::numeric_limits<int>::max()))
+					chunksFallenThrough++;
+			distanceTravelled.y = cam.Position[1];
+		}
+	}else{
+		if(abs(distanceTravelled.x - cam.Position[0]) > 500){
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+				chunksTravelledThrough++;
+			distanceTravelled.x = cam.Position[0];
+		}
+		if(abs(distanceTravelled.y - cam.Position[1]) > 500){
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+				chunksTravelledThrough++;
+			if(cam.Position[1] < distanceTravelled.y)
+				if(!(chunksFallenThrough == std::numeric_limits<int>::max()))
+					chunksFallenThrough++;
+			distanceTravelled.y = cam.Position[1];
+		}
+	}
+
+
 	//following line just makes sure that the attack timer is always added to
 	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
 		player.canAttack(dt);
@@ -339,14 +416,25 @@ void Game::Render(){
 	thus we can specify coordinates using this and have them translated for us
 	*/
 
-	if(m_state == HOME_MAIN){
-		renderHomeMain();
-	}else if(m_state == GAME_ACTIVE_CLASSIC){
-		renderGame();
-	}else if(m_state == START_SCREEN){
-		renderStartScreen();
-	}else if(m_state == HOME_ARMORY){
-		renderArmoryScreen();
+	switch(m_state){
+		case HOME_MAIN:
+			renderHomeMain();
+			break;
+		case GAME_ACTIVE_CLASSIC:
+			renderGame();
+			break;
+		case START_SCREEN:
+			renderStartScreen();
+			break;
+		case HOME_ARMORY:
+			renderArmoryScreen();
+			break;
+		case HOME_ACHIEVEMENTS:
+			renderAchievements();
+			break;
+		case DEATH_SCREEN:
+			renderDeathScreen();
+			break;
 	}
 }
 /*
@@ -445,7 +533,8 @@ void Game::reserveArraySpace(){
 
 void Game::gameEndProtocol(){
 	clearAndResetGameBoard();
-			
+	checkAchievements();
+
 	player.calculateLevel();
 	player.calculateStats();
 	player.interact = nullptr;
@@ -466,7 +555,36 @@ void Game::gameEndProtocol(){
 
 	enemyMultiplier = 1.0;
 
-	std::cout << "player died?\n";
+	chunksFallenThrough = 0;
+}
+
+void Game::checkAchievements(){
+	if(chunksTravelledThrough >= 119450)
+		setAchievementsToTrue(0, 6);
+	else if(chunksTravelledThrough >= 24901)
+		setAchievementsToTrue(0, 5);
+	else if(chunksTravelledThrough >= 15426)
+		setAchievementsToTrue(0, 4);
+	else if(chunksTravelledThrough >= 2000)
+		setAchievementsToTrue(0, 3);
+	else if(chunksTravelledThrough >= 500)
+		setAchievementsToTrue(0, 2);
+	else if(chunksTravelledThrough >= 100)
+		setAchievementsToTrue(0, 1);
+	else if(chunksTravelledThrough >= 5)
+		setAchievementsToTrue(0, 0);
+
+	if(chunksFallenThrough >= 24)
+		setAchievementsToTrue(7, 7);
+
+
+}
+
+void Game::setAchievementsToTrue(int start, int stop){
+	for(int i = start; i < stop + 1; ++i){
+		if(!completedAchievements[i])
+			completedAchievements[i] = true;
+	}
 }
 
 void Game::setUnlockedBowls(){
@@ -480,6 +598,43 @@ void Game::setUnlockedBowls(){
 		}
 	}else{
 		std::cout << "unlock bowl file not fount\n";
+	}
+}
+
+void Game::prepAchievementScreen(){
+	for(int i{}; i < 140; ++i){
+		glm::vec2 temp{(i%14) * 55.0 / 45.0, -((i/14) * 55.0 / 45.0)};
+		achievementOffsets.push_back(temp);
+
+		/*temp code
+		*/
+		achievementTexCoords.push_back(1);
+		/*
+		*/
+
+		//achievementTexCoords.push_back(i);
+	}
+	std::string line;
+	std::ifstream fstream("bin/achievementUnlockFile.txt");
+	if(fstream){
+		while(std::getline(fstream, line)){
+			completedAchievements.push_back(line.compare("1") == 0 ? true : false);
+			std::getline(fstream, line);
+			achievementNames.push_back(line);
+		}
+	}else{
+		std::cout << "unlock achievement file not found\n";
+	}
+}
+
+void Game::loadGameData(){
+	std::string line;
+	std::ifstream fstream("bin/gameData.txt");
+	if(fstream){
+		std::getline(fstream, line);
+		chunksTravelledThrough = std::stof(line);
+	}else{
+		std::cout << "game data file not found\n";
 	}
 }
 /*
@@ -1435,6 +1590,26 @@ void Game::renderArmoryScreen(){
 		staticImageRenderer->DrawSprite((*it).second.first.attackAnimation[0], glm::vec2(0-(*it).second.first.size[0]/2, 0-(*it).second.first.size[1]/2), (*it).second.first.size, 0.0, glm::vec3(0, 0, 0));
 }
 
+void Game::renderAchievements(){
+	if(viewingAchievement){
+		staticImageRenderer->DrawSprite(ResourceManager::GetTexture(achievementNames[achievementSelector]), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
+	}else{
+		glm::mat4 view = cam.GetViewMatrix();
+		ProjectileRenderer->setViewMatrix("view", view);
+		ProjectileRenderer->setOffset(&achievementOffsets[0], numAchievements);
+		ProjectileRenderer->setTextureCoords(&achievementTexCoords[0], numAchievements);
+		ProjectileRenderer->DrawSprites(numAchievements, ResourceManager::GetTexture("achievements"), maxAchievementSize, glm::vec2(-380.0, 220.0));
+	}
+
+	glm::mat4 view = cam.GetViewMatrix();
+	renderText(view);
+}
+
+void Game::renderDeathScreen(){
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("deathPage"), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
+	//add in a thing to display the number of points that they earned
+}
+
 void Game::renderGame(){
 	glm::mat4 view = cam.GetViewMatrix();
 	renderGameBackground(view);
@@ -1462,7 +1637,7 @@ void Game::renderGame(){
 	renderEnemies(view);
 	renderPlayer(view);
 	renderUI(view);
-	//renderText(view);
+	renderText(view);
 }
 
 void Game::renderGameBackground(glm::mat4 &view){
@@ -1512,7 +1687,6 @@ void Game::renderEnemies(glm::mat4 &view){
 }
 
 void Game::renderPlayer(glm::mat4 &view){
-	std::cout << player.health << '\n' << playerHealth << std::endl;
 	Renderer->setViewMatrix("view", view);
 	if(player.health == playerHealth && !player.isHit){
 		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
@@ -1530,10 +1704,9 @@ void Game::renderPlayer(glm::mat4 &view){
 
 void Game::renderText(glm::mat4 &view){
 	textRenderer->setViewMatrix("view", view);
-	textRenderer->setOffset(&textOffsets[0], textOffsets.size());
+	textRenderer->setOffset(&textOffsets[0], textTexCoords.size());
 	textRenderer->setTextureCoords(&textTexCoords[0], textTexCoords.size());
-	//change this render command
-	textRenderer->DrawSprites(textOffsets.size(), ResourceManager::GetTexture("alphabet"), maxTextHeight, glm::vec2(cam.Position[0], cam.Position[1] - maxTextHeight));
+	textRenderer->DrawSprites(textTexCoords.size(), ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(0,0));
 }
 
 void Game::renderUI(glm::mat4 &view){
@@ -1796,26 +1969,21 @@ void Game::findLevelIconPosition(){
 }
 
 void Game::calculateTextRenderValues(){
-	setNeededText();
-	for(int i{}; i < text.size(); ++i){
-		int newLine = 0;
-		for(int j{}; j < text[i].first.length(); ++j){
-			if(text[i].first[j] == '\n'){
-				newLine++;
-				continue;
-			}
-			textTexCoords.push_back(ResourceManager::getDepth(std::string(1, text[i].first[j])));
-			textOffsets.push_back(glm::vec2((text[i].second[0] + maxTextWidth * j)/maxTextWidth, (text[i].second[1] + (maxTextHeight * newLine))));
-		}
+	textTexCoords.clear();
+	textOffsets.clear();
+	int healthNumber = player.health;
+	std::vector<short> tempNums{};
+	while(healthNumber > 0){
+		tempNums.push_back(healthNumber % 10);
+		healthNumber /= 10;
 	}
-}
+	auto it = tempNums.rbegin();
+	for(int i{}; i < tempNums.size(); ++i){
+		textTexCoords.push_back(*(it + i));
+		textOffsets.push_back(glm::vec2((22 * i)/20.0, 0));
+	}
 
-void Game::setNeededText(){
-	text.clear();
-	if(m_state == GAME_ACTIVE_CLASSIC){
-		text.push_back(std::pair<std::string, glm::vec2>(std::to_string(player.health), glm::vec2(562 - 300, 90 - 400)));
-		text.push_back(std::pair<std::string, glm::vec2>(std::to_string(points), glm::vec2(562 - 300, 136 - 400)));
-	}
+	//int points = static_cast<int>(points);
 }
 /*
 

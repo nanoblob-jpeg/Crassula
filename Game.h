@@ -20,6 +20,7 @@
 #include <deque>
 #include <random>
 #include <ctime>
+#include <limits>
 
 
 #ifndef GAME_H
@@ -35,9 +36,10 @@ public:
 	short maxEnemyProjectileSize{30};
 	short maxEnemySize{40};
 	short maxPlantIconSize{20};
+	short maxAchievementSize{45};
 	float maxLevelIconSize{28.0};
 	float maxEffectIconSize{20.0};
-	float maxTextWidth{30};
+	float maxTextWidth{20};
 	float maxTextHeight{40};
 	short effectIconSpacing{5};
 	float backgroundSize{2500};
@@ -66,6 +68,7 @@ public:
 	unsigned short numOfChunks{40};
 	unsigned short numOfPlants{1};
 	unsigned short numOfEnemies{1};
+	int numAchievements{140};
 
 	//armory vars
 	int bowlCounter;
@@ -98,11 +101,19 @@ public:
 
 	//achievement system
 	std::vector<bool> completedAchievements{};
-	//add in method to transfer this stuff in the end game stuff
-	std::vector<int> achievementsCompletedDuringGame{};
+	//distance achievements
+	float chunksTravelledThrough;
+	float chunksFallenThrough{};
+	glm::vec2 distanceTravelled{};
+	bool outOfFirstChunk = false;
+
+	//achievement room logic
 	int achievementSelector{};
 	bool achievementMoved = false;
 	bool viewingAchievement = false;
+	std::vector<std::string> achievementNames{};
+	std::vector<glm::vec2> achievementOffsets{};
+	std::vector<float> achievementTexCoords{};
 
 
 	//Player object
@@ -151,7 +162,6 @@ public:
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 
 	//text render stuff
-	std::vector<std::pair<std::string, glm::vec2>> text{};
 	std::vector<glm::vec2> textOffsets{};
 	std::vector<float> textTexCoords{};
 
@@ -194,7 +204,11 @@ public:
 	void prepBoard();
 	void reserveArraySpace();
 	void gameEndProtocol();
+	void checkAchievements();
+	void setAchievementsToTrue(int start, int stop);
 	void setUnlockedBowls();
+	void prepAchievementScreen();
+	void loadGameData();
 
 	//Chunk Generation
 	void prepBoardForChunkCreation(const short direction);
@@ -238,6 +252,8 @@ public:
 	void renderStartScreen();
 	void renderHomeMain();
 	void renderArmoryScreen();
+	void renderAchievements();
+	void renderDeathScreen();
 	void renderGame();
 	void renderGameBackground(glm::mat4 &view);
 	void renderBlocks(glm::mat4 &view);
@@ -260,7 +276,6 @@ public:
 	void findHighlightPosition();
 	void findLevelIconPosition();
 	void calculateTextRenderValues();
-	void setNeededText();
 
 	//Shader && Renderer loading
 	void initShaders();

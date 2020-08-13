@@ -83,3 +83,21 @@ void TexSampRenderer::DrawSprites(int num, Texture &texture,float size, glm::vec
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, num);
 	glBindVertexArray(0);
 }
+
+void TexSampRenderer::DrawSprites(int num, Texture &texture,glm::vec2 size, glm::vec2 position){
+	this->m_shader.use();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(position, 0.0f));
+	model = glm::scale(model, glm::vec3(size.x, size.y, 1.0f));
+
+	glm::vec3 color = glm::vec3(1.0);
+	this->m_shader.setMat4("model", model);
+	this->m_shader.setVec3("spriteColor", color);
+
+	glActiveTexture(GL_TEXTURE0);
+	texture.BindArray();
+
+	glBindVertexArray(this->quadVAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, num);
+	glBindVertexArray(0);
+}

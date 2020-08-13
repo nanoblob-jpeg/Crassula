@@ -1,0 +1,5 @@
+45
+45
+1
+test
+bin/textures/achievements/test.png

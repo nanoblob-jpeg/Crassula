@@ -90,9 +90,10 @@ int main()
             std::cout << glGetError() << std::endl;
             std::cout << Crassula.player.health << "\n";
             std::cout << Crassula.points << '\n';
-            std::cout << Crassula.enemyMultiplier << "\n\n\n";
+            std::cout << Crassula.enemyMultiplier << "\n";
             timeTracker = 0;
             frameCounter = 0;
+            std::cout << Crassula.chunksFallenThrough << "\n\n\n";
     	}
     	glfwPollEvents();
 
