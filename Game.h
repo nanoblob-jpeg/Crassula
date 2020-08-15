@@ -31,44 +31,44 @@ class Game
 public:
 	//CONSTANTS
 	//max texture sizes
-	short maxPlantSize{50};
-	short maxProjectileSize{30};
-	short maxEnemyProjectileSize{30};
-	short maxEnemySize{40};
-	short maxPlantIconSize{20};
-	short maxAchievementSize{45};
-	float maxLevelIconSize{28.0};
-	float maxEffectIconSize{20.0};
-	float maxTextWidth{20};
-	float maxTextHeight{40};
-	short effectIconSpacing{5};
-	float backgroundSize{2500};
+	const short maxPlantSize{50};
+	const short maxProjectileSize{30};
+	const short maxEnemyProjectileSize{30};
+	const short maxEnemySize{40};
+	const short maxPlantIconSize{20};
+	const short maxAchievementSize{45};
+	const float maxLevelIconSize{28.0};
+	const float maxEffectIconSize{20.0};
+	const float maxTextWidth{20};
+	const float maxTextHeight{40};
+	const short effectIconSpacing{5};
+	const float backgroundSize{2500};
 
 	//texture offset constants
-	short plantBoxSize{35};
-	short plantBoxSpacing{15};
-	short threePlantFirstBoxX{253};
-	short fourPlantFirstBoxX{203};
-	short plantFirstBoxY{-258};
-	short levelBarSpacing{3};
+	const short plantBoxSize{35};
+	const short plantBoxSpacing{15};
+	const short threePlantFirstBoxX{253};
+	const short fourPlantFirstBoxX{203};
+	const short plantFirstBoxY{-258};
+	const short levelBarSpacing{3};
 
 	//movement constants
-	float maxSpeed = 150.0;
-	float acceleration = 130.0;
+	const float maxSpeed = 150.0;
+	const float acceleration = 130.0;
 
 	//game board size constants
-	short distanceFromCenterForGeneration{4500};
-	short regionSize{5000};
-	short chunkSize{500};
-	short blockSize{50};
-	short edgeDistace{7500};
-	short innerRegionEdgeDistance{2500};
+	const short distanceFromCenterForGeneration{4500};
+	const short regionSize{5000};
+	const short chunkSize{500};
+	const short blockSize{50};
+	const short edgeDistace{7500};
+	const short innerRegionEdgeDistance{2500};
 
 	//num game object constants
-	unsigned short numOfChunks{40};
-	unsigned short numOfPlants{1};
-	unsigned short numOfEnemies{1};
-	int numAchievements{140};
+	const unsigned short numOfChunks{40};
+	const unsigned short numOfPlants{1};
+	const unsigned short numOfEnemies{1};
+	const int numAchievements{140};
 
 	//armory vars
 	int bowlCounter;
@@ -115,6 +115,21 @@ public:
 	std::vector<glm::vec2> achievementOffsets{};
 	std::vector<float> achievementTexCoords{};
 
+	//greenhouse room logic
+	//these icons are 55x55
+	std::vector<bool> unlockedPlants{};
+	int plantSelector{};
+	bool greenhouseMoved = false;
+	bool selectPressed = false;
+	std::vector<glm::vec2> selectedPlantOffset{};
+	std::vector<float> selectedPlantTexCoords{};
+	std::vector<std::string> plantNames{};
+	std::vector<std::string> boostNames{};
+	std::vector<glm::vec2> greenhouseOffsets{};
+	std::vector<float> greenhouseTexCoords{};
+	std::vector<float> greenhouseLevels{};
+	std::vector<float> greenhouseExperience{};
+	std::vector<glm::vec2> greenhouseLevelOffset{};
 
 	//Player object
 	Player player;
@@ -164,6 +179,9 @@ public:
 	//text render stuff
 	std::vector<glm::vec2> textOffsets{};
 	std::vector<float> textTexCoords{};
+	std::vector<glm::vec2> pointOffsets{};
+	std::vector<float> pointTexCoords{};
+	glm::vec2 deathScreenCoords{};
 
 	//ICON RENDER VARS
 	//effect icon vars
@@ -209,6 +227,8 @@ public:
 	void setUnlockedBowls();
 	void prepAchievementScreen();
 	void loadGameData();
+	void prepGreenhouse();
+	void greenhouseSelectorHelper(int avoid);
 
 	//Chunk Generation
 	void prepBoardForChunkCreation(const short direction);
@@ -254,6 +274,7 @@ public:
 	void renderArmoryScreen();
 	void renderAchievements();
 	void renderDeathScreen();
+	void renderGreenhouse();
 	void renderGame();
 	void renderGameBackground(glm::mat4 &view);
 	void renderBlocks(glm::mat4 &view);

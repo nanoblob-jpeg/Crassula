@@ -12,3 +12,5 @@ achievements
 bin/textures/textureDirectories/achievements.txt
 numbers
 bin/textures/textureDirectories/numbers.txt
+greenhouse
+bin/textures/textureDirectories/greenhouse.txt

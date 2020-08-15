@@ -45,7 +45,13 @@ Game::~Game(){
 	file.close();
 
 	file.open("bin/gameData.txt");
-	file << std::to_string(chunksTravelledThrough);
+	file << std::to_string(chunksTravelledThrough) << '\n';
+	for(int i{}; i < greenhouseLevels.size(); ++i){
+		file << std::to_string(greenhouseLevels[i]) << '\n';
+	}
+	for(int i{}; i < greenhouseExperience.size(); ++i){
+		file << std::to_string(greenhouseExperience[i]);
+	}
 	file.close();
 
 	file.open("bin/achievementUnlockFile.txt");
@@ -113,6 +119,7 @@ void Game::Init(){
 	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
 	prepAchievementScreen();
 	loadGameData();
+	prepGreenhouse();
 }
 
 void Game::ProcessInput(float dt){
@@ -270,6 +277,63 @@ void Game::ProcessInput(float dt){
 		}
 	}else if(m_state == DEATH_SCREEN){
 		if(Keys[GLFW_KEY_SPACE]){
+			m_state = HOME_MAIN;
+		}
+	}else if(m_state == HOME_GREENHOUSE){
+		if(Keys[GLFW_KEY_W] && !greenhouseMoved){
+			if(plantSelector <= 10){
+				plantSelector += 40;
+			}else{
+				plantSelector -= 10;
+			}
+			greenhouseMoved = true;
+		}
+		if(Keys[GLFW_KEY_A] && !greenhouseMoved){
+			if(plantSelector%10 == 0){
+				plantSelector += 9;
+			}else{
+				plantSelector -= 1;
+			}
+			greenhouseMoved = true;
+		}
+		if(Keys[GLFW_KEY_D] && !greenhouseMoved){
+			if((plantSelector-9)%10 == 0){
+				plantSelector -= 9;
+			}else{
+				plantSelector += 1;
+			}
+			greenhouseMoved = true;
+		}
+		if(Keys[GLFW_KEY_S] && !greenhouseMoved){
+			if(plantSelector >= 40){
+				plantSelector -= 40;
+			}else{
+				plantSelector += 10;
+			}
+			greenhouseMoved = true;
+		}
+		if(!Keys[GLFW_KEY_W] && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_S] && !Keys[GLFW_KEY_D]){
+			greenhouseMoved = false;
+		}
+		if(Keys[GLFW_KEY_1]){
+			greenhouseSelectorHelper(0);
+		}
+		if(Keys[GLFW_KEY_2]){
+			greenhouseSelectorHelper(1);
+		}
+		if(Keys[GLFW_KEY_3]){
+			greenhouseSelectorHelper(2);
+		}
+		if(Keys[GLFW_KEY_4]){
+			greenhouseSelectorHelper(3);
+		}
+		if(Keys[GLFW_KEY_5]){
+			greenhouseSelectorHelper(4);
+		}
+		if(Keys[GLFW_KEY_6]){
+			greenhouseSelectorHelper(5);
+		}
+		if(Keys[GLFW_KEY_Q]){
 			m_state = HOME_MAIN;
 		}
 	}
@@ -435,6 +499,9 @@ void Game::Render(){
 		case DEATH_SCREEN:
 			renderDeathScreen();
 			break;
+		case HOME_GREENHOUSE:
+			renderGreenhouse();
+			break;
 	}
 }
 /*
@@ -550,6 +617,8 @@ void Game::gameEndProtocol(){
 
 	m_state = DEATH_SCREEN;
 
+	deathScreenCoords[0] = cam.Position[0];
+	deathScreenCoords[1] = cam.Position[1];
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
 
@@ -608,7 +677,7 @@ void Game::prepAchievementScreen(){
 
 		/*temp code
 		*/
-		achievementTexCoords.push_back(1);
+		achievementTexCoords.push_back(0);
 		/*
 		*/
 
@@ -633,8 +702,57 @@ void Game::loadGameData(){
 	if(fstream){
 		std::getline(fstream, line);
 		chunksTravelledThrough = std::stof(line);
+		//add in greenhouse level data
+		//temp code
+		std::getline(fstream, line);
+		greenhouseLevels.push_back(std::stoi(line));
+		std::getline(fstream, line);
+		greenhouseExperience.push_back(std::stof(line));
+		for(int i{}; i < 6; ++i){
+			selectedPlantTexCoords.push_back(1);
+		}
 	}else{
 		std::cout << "game data file not found\n";
+	}
+}
+
+void Game::prepGreenhouse(){
+	for(int i{}; i < 50; ++i){
+		greenhouseOffsets.push_back(glm::vec2((i%10) * 60.0 / 55.0, -((i/10) * 60.0 / 55.0)));
+		//temp code
+		if(i == 0)
+			greenhouseTexCoords.push_back(0);
+		else
+			greenhouseTexCoords.push_back(1);
+	}
+	for(int i{}; i < 6; ++i){
+		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
+	}
+
+	greenhouseLevelOffset.push_back(glm::vec2(0.0f,0.0f));
+	std::string line;
+	std::ifstream fstream("bin/greenhouseUnlockFile.txt");
+	if(fstream){
+		while(std::getline(fstream, line)){
+			unlockedPlants.push_back(line.compare("1") == 0 ? true : false);
+			std::getline(fstream, line);
+			plantNames.push_back(line);
+			std::getline(fstream, line);
+			boostNames.push_back(line);
+		}
+	}else{
+		std::cout << "unlock greenhouse file not found\n";
+	}
+}
+
+void Game::greenhouseSelectorHelper(int avoid){
+	bool canSelect = true;
+	for(int i{0}; i < 6; ++i){
+		if(i != avoid && static_cast<int>(selectedPlantTexCoords[i]) == plantSelector)
+			canSelect = false;
+	}
+	if(canSelect){
+		selectedPlantTexCoords[avoid] = plantSelector;
 	}
 }
 /*
@@ -1579,6 +1697,7 @@ void Game::renderHomeMain(){
 }
 
 void Game::renderArmoryScreen(){
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("exitSign"), glm::vec2(-Width/2, Height/2 - 40), glm::vec2(100, 40));
 	auto it = ResourceManager::Bowls.begin();
 	while(bowlCounter--){
 		++it;
@@ -1591,6 +1710,7 @@ void Game::renderArmoryScreen(){
 }
 
 void Game::renderAchievements(){
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("exitSign"), glm::vec2(-Width/2, Height/2 - 40), glm::vec2(100, 40));
 	if(viewingAchievement){
 		staticImageRenderer->DrawSprite(ResourceManager::GetTexture(achievementNames[achievementSelector]), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
 	}else{
@@ -1599,15 +1719,43 @@ void Game::renderAchievements(){
 		ProjectileRenderer->setOffset(&achievementOffsets[0], numAchievements);
 		ProjectileRenderer->setTextureCoords(&achievementTexCoords[0], numAchievements);
 		ProjectileRenderer->DrawSprites(numAchievements, ResourceManager::GetTexture("achievements"), maxAchievementSize, glm::vec2(-380.0, 220.0));
-	}
 
-	glm::mat4 view = cam.GetViewMatrix();
-	renderText(view);
+		staticImageRenderer->DrawSprite(ResourceManager::GetTexture("hightlight2"), glm::vec2(-380 + (achievementSelector%14) * 55, 220 - (achievementSelector/14) * 55), glm::vec2(45,45));
+	}
 }
 
 void Game::renderDeathScreen(){
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("deathPage"), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
-	//add in a thing to display the number of points that they earned
+	glm::mat4 view = cam.GetViewMatrix();
+	textRenderer->setViewMatrix("view", view);
+	textRenderer->setOffset(&pointOffsets[0], pointTexCoords.size());
+	textRenderer->setTextureCoords(&pointTexCoords[0], pointTexCoords.size());
+	textRenderer->DrawSprites(pointTexCoords.size(), ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(deathScreenCoords[0] + 100.0,deathScreenCoords[1] - 100.0));
+}
+
+void Game::renderGreenhouse(){
+	//675
+	//693
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(plantNames[plantSelector]), glm::vec2(-395, 45), glm::vec2(220, 220));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(boostNames[plantSelector]), glm::vec2(-170, 85), glm::vec2(220, 180));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("emptyProgressBar"), glm::vec2(-150, 55), glm::vec2(200, 20));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("progressBar"), glm::vec2(-150, 55), glm::vec2(200.0 * (greenhouseExperience[plantSelector] / ((greenhouseLevels[plantSelector] + 1) * 100.0f)), 20));
+
+	glm::mat4 view = cam.GetViewMatrix();
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&selectedPlantOffset[0], 6);
+	ProjectileRenderer->setTextureCoords(&selectedPlantTexCoords[0], 6);
+	ProjectileRenderer->DrawSprites(6, ResourceManager::GetTexture("greenhouse"), 55.0, glm::vec2(137.5, 165));
+
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&greenhouseOffsets[0], 50);
+	ProjectileRenderer->setTextureCoords(&greenhouseTexCoords[0], 50);
+	ProjectileRenderer->DrawSprites(50, ResourceManager::GetTexture("greenhouse"), 55.0, glm::vec2(-297.5, -20));
+
+	textRenderer->setViewMatrix("view", view);
+	textRenderer->setOffset(&greenhouseLevelOffset[0], 1);
+	textRenderer->setTextureCoords(&greenhouseLevels[plantSelector], 1);
+	textRenderer->DrawSprites(1, ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(-170, 45));
 }
 
 void Game::renderGame(){
@@ -1706,7 +1854,12 @@ void Game::renderText(glm::mat4 &view){
 	textRenderer->setViewMatrix("view", view);
 	textRenderer->setOffset(&textOffsets[0], textTexCoords.size());
 	textRenderer->setTextureCoords(&textTexCoords[0], textTexCoords.size());
-	textRenderer->DrawSprites(textTexCoords.size(), ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(0,0));
+	textRenderer->DrawSprites(textTexCoords.size(), ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(cam.Position[0] - 300, cam.Position[1] - 295));
+
+	textRenderer->setViewMatrix("view", view);
+	textRenderer->setOffset(&pointOffsets[0], pointTexCoords.size());
+	textRenderer->setTextureCoords(&pointTexCoords[0], pointTexCoords.size());
+	textRenderer->DrawSprites(pointTexCoords.size(), ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(cam.Position[0] - 80, cam.Position[1] - 295));
 }
 
 void Game::renderUI(glm::mat4 &view){
@@ -1971,6 +2124,8 @@ void Game::findLevelIconPosition(){
 void Game::calculateTextRenderValues(){
 	textTexCoords.clear();
 	textOffsets.clear();
+	pointOffsets.clear();
+	pointTexCoords.clear();
 	int healthNumber = player.health;
 	std::vector<short> tempNums{};
 	while(healthNumber > 0){
@@ -1983,7 +2138,22 @@ void Game::calculateTextRenderValues(){
 		textOffsets.push_back(glm::vec2((22 * i)/20.0, 0));
 	}
 
-	//int points = static_cast<int>(points);
+	int tempPoints = static_cast<int>(points);
+	tempNums.clear();
+	if(tempPoints == 0){
+		tempNums.push_back(0);
+	}else{
+		while(tempPoints > 0){
+			tempNums.push_back(tempPoints%10);
+			tempPoints/=10;
+		}
+	}
+
+	it = tempNums.rbegin();
+	for(int i{}; i < tempNums.size(); ++i){
+		pointTexCoords.push_back(*(it + i));
+		pointOffsets.push_back(glm::vec2((22 * i)/20.0, 0));
+	}
 }
 /*
 
@@ -2010,7 +2180,7 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
 	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
-	ResourceManager::LoadShader("shaders/text_vshader.txt", "shaders/fragShader.txt", nullptr, "text");
+	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "text");
 	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "UI");
 	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "icon");
 	ResourceManager::LoadShader("shaders/static_vshader.txt", "shaders/fragShader.txt", nullptr, "staticImage");
@@ -2111,6 +2281,7 @@ void Game::initTextRenderer(glm::mat4 &view, glm::mat4 &projection){
 	sProgram.use();
 	sProgram.setInt("image", 0);
 	sProgram.setMat4("projection", projection);
+	sProgram.setMat4("view", view);
 	textRenderer = new TexSampRenderer(ResourceManager::GetShader("text"));
 }
 
