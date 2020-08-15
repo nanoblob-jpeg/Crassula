@@ -122,6 +122,7 @@ public:
 	bool greenhouseMoved = false;
 	bool selectPressed = false;
 	std::vector<glm::vec2> selectedPlantOffset{};
+	//this also keeps track of what plants are selected
 	std::vector<float> selectedPlantTexCoords{};
 	std::vector<std::string> plantNames{};
 	std::vector<std::string> boostNames{};
@@ -134,6 +135,10 @@ public:
 	//Player object
 	Player player;
 	int playerHealth;
+	//uses points for recoveryTimer, this var is jsut to keep track of what the last
+	//value was
+	float recoveryTimer{};
+	int maxHealth;
 
 	//movement variables:
 	float upCounter{};

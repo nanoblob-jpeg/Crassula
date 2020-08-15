@@ -216,9 +216,11 @@ void Game::ProcessInput(float dt){
 			player.setStatBoosts();
 			player.setFinalStats();
 			playerHealth = player.health;
+			maxHealth = player.health;
 			cam.Position[0] = 0;
 			cam.Position[1] = 0;
 			points = 0;
+			recoveryTimer = 0;
 		}
 		if(Keys[GLFW_KEY_U]){
 			m_state = HOME_ARMORY;
@@ -276,7 +278,7 @@ void Game::ProcessInput(float dt){
 			m_state = HOME_MAIN;
 		}
 	}else if(m_state == DEATH_SCREEN){
-		if(Keys[GLFW_KEY_SPACE]){
+		if(Keys[GLFW_KEY_Q]){
 			m_state = HOME_MAIN;
 		}
 	}else if(m_state == HOME_GREENHOUSE){
@@ -409,6 +411,12 @@ void Game::Update(float dt){
 		}
 		//moving the projectiles
 		moveAllProjectiles(dt);
+
+		if(points >= recoveryTimer + 100){
+			player.health += player.recovery;
+			player.health = std::min(player.health, maxHealth);
+			playerHealth = player.health;
+		}
 
 		//testing if it is time to generate new chunks
 		//0 up
@@ -625,6 +633,18 @@ void Game::gameEndProtocol(){
 	enemyMultiplier = 1.0;
 
 	chunksFallenThrough = 0;
+
+	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+		if(i != 1){
+			greenhouseExperience[(int)i] += points;
+		}
+	}
+	for(int i{}; i < greenhouseLevels.size(); ++i){
+		while(greenhouseExperience[i] >= greenhouseLevels[i] * 1000){
+			greenhouseExperience[i] -= greenhouseLevels[i] * 1000;
+			greenhouseLevels[i]++;
+		}
+	}
 }
 
 void Game::checkAchievements(){
@@ -1720,7 +1740,7 @@ void Game::renderAchievements(){
 		ProjectileRenderer->setTextureCoords(&achievementTexCoords[0], numAchievements);
 		ProjectileRenderer->DrawSprites(numAchievements, ResourceManager::GetTexture("achievements"), maxAchievementSize, glm::vec2(-380.0, 220.0));
 
-		staticImageRenderer->DrawSprite(ResourceManager::GetTexture("hightlight2"), glm::vec2(-380 + (achievementSelector%14) * 55, 220 - (achievementSelector/14) * 55), glm::vec2(45,45));
+		staticImageRenderer->DrawSprite(ResourceManager::GetTexture("highlight2"), glm::vec2(-380 + (achievementSelector%14) * 55, 220 - (achievementSelector/14) * 55), glm::vec2(45,45));
 	}
 }
 
@@ -1739,7 +1759,8 @@ void Game::renderGreenhouse(){
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(plantNames[plantSelector]), glm::vec2(-395, 45), glm::vec2(220, 220));
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(boostNames[plantSelector]), glm::vec2(-170, 85), glm::vec2(220, 180));
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("emptyProgressBar"), glm::vec2(-150, 55), glm::vec2(200, 20));
-	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("progressBar"), glm::vec2(-150, 55), glm::vec2(200.0 * (greenhouseExperience[plantSelector] / ((greenhouseLevels[plantSelector] + 1) * 100.0f)), 20));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("progressBar"), glm::vec2(-150, 55), glm::vec2(200.0 * (greenhouseExperience[plantSelector] / ((greenhouseLevels[plantSelector] + 1) * 1000.0f)), 20));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("highlight2"), glm::vec2(-297.5 + (plantSelector%10)*60.0, -20 - (plantSelector/10)*60.0), glm::vec2(55, 55));
 
 	glm::mat4 view = cam.GetViewMatrix();
 	ProjectileRenderer->setViewMatrix("view", view);
@@ -2171,19 +2192,19 @@ SHADER && RENDERER LOADING
 
 */
 void Game::initShaders(){
-	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "player");
-	ResourceManager::LoadShader("shaders/block_vshader.txt", "shaders/fragShader.txt", nullptr, "block");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "plant");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "projectiles");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "enemyProjectiles");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "enemy");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l1");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l2");
-	ResourceManager::LoadShader("shaders/background_vshader.txt", "shaders/fragShader.txt", nullptr, "background_l3");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "text");
-	ResourceManager::LoadShader("shaders/vertexShader.txt", "shaders/fragShader.txt", nullptr, "UI");
-	ResourceManager::LoadShader("shaders/texSamp_vshader.txt", "shaders/fragShader_array.txt", nullptr, "icon");
-	ResourceManager::LoadShader("shaders/static_vshader.txt", "shaders/fragShader.txt", nullptr, "staticImage");
+	ResourceManager::LoadShader("bin/shaders/vertexShader.txt", "bin/shaders/fragShader.txt", nullptr, "player");
+	ResourceManager::LoadShader("bin/shaders/block_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "block");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "plant");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "projectiles");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "enemyProjectiles");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "enemy");
+	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l1");
+	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l2");
+	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l3");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "text");
+	ResourceManager::LoadShader("bin/shaders/vertexShader.txt", "bin/shaders/fragShader.txt", nullptr, "UI");
+	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "icon");
+	ResourceManager::LoadShader("bin/shaders/static_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "staticImage");
 }
 
 void Game::initRenderers(){

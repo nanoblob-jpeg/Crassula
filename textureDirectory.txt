@@ -33,7 +33,7 @@ bin/textures/backgrounds/deathPage.png
 deathPage
 bin/textures/ui/highlight2.png
 1
-hightlight2
+highlight2
 bin/textures/ui/exitSign.png
 1
 exitSign
