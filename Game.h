@@ -69,6 +69,7 @@ public:
 	const unsigned short numOfPlants{1};
 	const unsigned short numOfEnemies{1};
 	const int numAchievements{140};
+	const int numGreenHouse{1};
 
 	//armory vars
 	int bowlCounter;

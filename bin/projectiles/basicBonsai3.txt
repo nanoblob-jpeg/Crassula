@@ -1,0 +1,10 @@
+basicBonsai3
+6
+1
+400
+1
+200
+
+
+1
+pierce1

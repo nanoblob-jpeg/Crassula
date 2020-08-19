@@ -1,0 +1,10 @@
+noddingWakerobin1
+3
+2
+300
+0
+200
+
+
+1
+bidirec

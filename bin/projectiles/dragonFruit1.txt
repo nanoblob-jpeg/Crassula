@@ -1,0 +1,10 @@
+dragonFruit1
+3
+1
+550
+0
+200
+
+
+1
+flame1

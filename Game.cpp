@@ -691,18 +691,6 @@ void Game::setUnlockedBowls(){
 }
 
 void Game::prepAchievementScreen(){
-	for(int i{}; i < 140; ++i){
-		glm::vec2 temp{(i%14) * 55.0 / 45.0, -((i/14) * 55.0 / 45.0)};
-		achievementOffsets.push_back(temp);
-
-		/*temp code
-		*/
-		achievementTexCoords.push_back(0);
-		/*
-		*/
-
-		//achievementTexCoords.push_back(i);
-	}
 	std::string line;
 	std::ifstream fstream("bin/achievementUnlockFile.txt");
 	if(fstream){
@@ -713,6 +701,15 @@ void Game::prepAchievementScreen(){
 		}
 	}else{
 		std::cout << "unlock achievement file not found\n";
+	}
+	for(int i{}; i < 140; ++i){
+		glm::vec2 temp{(i%14) * 55.0 / 45.0, -((i/14) * 55.0 / 45.0)};
+		achievementOffsets.push_back(temp);
+
+		if(completedAchievements[i])
+			achievementTexCoords.push_back(i);
+		else
+			achievementTexCoords.push_back(0);
 	}
 }
 
@@ -729,7 +726,7 @@ void Game::loadGameData(){
 		std::getline(fstream, line);
 		greenhouseExperience.push_back(std::stof(line));
 		for(int i{}; i < 6; ++i){
-			selectedPlantTexCoords.push_back(1);
+			selectedPlantTexCoords.push_back(numGreenHouse);
 		}
 	}else{
 		std::cout << "game data file not found\n";
@@ -743,7 +740,7 @@ void Game::prepGreenhouse(){
 		if(i == 0)
 			greenhouseTexCoords.push_back(0);
 		else
-			greenhouseTexCoords.push_back(1);
+			greenhouseTexCoords.push_back(numGreenHouse);
 	}
 	for(int i{}; i < 6; ++i){
 		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
@@ -1371,7 +1368,7 @@ void Game::player_projectile_collision_detection(){
 				if(game_classic_two_object_collisions((GameObject *)((board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
 					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing)
-						board_enemies[j]->health -= std::max(player_projectiles[i].damage - board_enemies[j]->defense, 1);
+						board_enemies[j]->health -= std::max(player_projectiles[i].damage + player.attack - board_enemies[j]->defense, 1);
 					//add effects
 					board_enemies[j]->addEffects(player_projectiles[i]);
 					if(!player_projectiles[i].piercing){

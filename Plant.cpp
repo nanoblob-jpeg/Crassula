@@ -11,6 +11,12 @@ Plant::Plant(std::string pname, std::string ptname, glm::vec2 psize, glm::vec3 p
 };
 
 int Plant::interact(Game *game){
+	//setting the greenhouse plant as unlocked
+	auto it = std::find(game->plantNames.begin(), game->plantNames.end(), this->name);
+	if(it != game->plantNames.end())
+		if(!game->unlockedPlants[std::distance(game->plantNames.begin(), it)]){
+			game->unlockedPlants[std::distance(game->plantNames.begin(), it)] = true;
+		}
 	//testing if the player already has a plant of the same type
 	for(int i{}; i < game->player.numPlants; ++i){
 		if(game->player.plants[i].name.compare(this->name) == 0){
