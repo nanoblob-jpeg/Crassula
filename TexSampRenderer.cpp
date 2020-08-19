@@ -101,3 +101,30 @@ void TexSampRenderer::DrawSprites(int num, Texture &texture,glm::vec2 size, glm:
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, num);
 	glBindVertexArray(0);
 }
+
+void TexSampRenderer::DrawEnemies(int num, Texture &texture, float size, glm::vec2 position, float *hitData, int numHitData){
+	glBindVertexArray(this->quadVAO);
+	glGenBuffers(1, &this->enemyHitDataVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, enemyHitDataVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numHitData, hitData, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
+	glVertexAttribDivisor(3, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	this->m_shader.use();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(position, 0.0f));
+	model = glm::scale(model, glm::vec3(size.x, size.y, 1.0f));
+
+	glm::vec3 color = glm::vec3(1.0);
+	this->m_shader.setMat4("model", model);
+	this->m_shader.setVec3("spriteColor", color);
+
+	glActiveTexture(GL_TEXTURE0);
+	texture.BindArray();
+
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, num);
+	glBindVertexArray(0);
+}

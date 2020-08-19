@@ -54,11 +54,11 @@ public:
 			timeCounter -= frameTimeCounter;
 			if(!(--time)){
 				if(once){
-					health -= 2 * dehealth;
-					defense -= 2 * dedefense;
-					attack -= 2 * deattack;
-					speed -= 2 * despeed;
-					recovery -= 2 * derecovery;
+					health -= dehealth;
+					defense -= dedefense;
+					attack -= deattack;
+					speed -= despeed;
+					recovery -= derecovery;
 				}
 				return true;
 			}

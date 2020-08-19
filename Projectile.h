@@ -15,11 +15,12 @@ public:
 	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
+	int numProjectile;
 	float projectileSpeed;
 	bool right{};
 	Projectile(){};
-	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, float pprojectileSpeed = 200, bool ppiercing = false)
-		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}, projectileSpeed{pprojectileSpeed}{
+	Projectile(glm::vec2 psize, int pdamage, int prange, std::string pname, int pnumBullet, float pprojectileSpeed = 200, bool ppiercing = false)
+		: damage{pdamage}, piercing{ppiercing}, range{prange}, name{pname}, projectileSpeed{pprojectileSpeed}, numBullet{pnumBullet}{
 			size = psize;
 		};
 

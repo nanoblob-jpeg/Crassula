@@ -487,6 +487,7 @@ void ResourceManager::LoadProjectiles(const char *file){
     format for projectile files:
     name
     damage
+    numBullet
     range
     piercing
     speed
@@ -500,13 +501,15 @@ void ResourceManager::LoadProjectiles(const char *file){
     for(int i{}; i < projectile_list.size(); ++i){
         std::ifstream fstream2(projectile_list[i]);
         std::string name;
-        int damage, range, num;
+        int damage, range, num, numBullet;
         bool piercing;
         float speed;
         glm::vec2 size;
         std::getline(fstream2, name);
         std::getline(fstream2, line);
         damage = std::stoi(line);
+        std::getline(fstream2, line);
+        numBullet = std::stoi(line);
         std::getline(fstream2, line);
         range = std::stoi(line);
         std::getline(fstream2, line);
@@ -517,7 +520,7 @@ void ResourceManager::LoadProjectiles(const char *file){
         size[0] = std::stof(line);
         std::getline(fstream2, line);
         size[1] = std::stof(line);
-        Projectile temp = Projectile(size, damage, range, name, speed, piercing);
+        Projectile temp = Projectile(size, damage, range, name, numBullet, speed, piercing);
         std::getline(fstream2, line);
         num = std::stoi(line);
         for(int i{}; i < num; ++i){

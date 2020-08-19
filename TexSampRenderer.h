@@ -15,6 +15,7 @@ private:
 	unsigned int quadVAO;
 	unsigned int instanceVBO;
 	unsigned int instanceTexturePosVBO;
+	unsigned int enemyHitDataVBO;
 public:
 	TexSampRenderer(Shader &shader);
 	~TexSampRenderer();
@@ -26,6 +27,7 @@ public:
 		glm::vec2 position = glm::vec2(0.0f, 0.0f)
 	);
 	void DrawSprites(int num, Texture &texture,glm::vec2 size, glm::vec2 position = glm::vec2(0.0f, 0.0f));
+	void DrawEnemies(int num, Texture &texture, float size, glm::vec2 position, float *hitData, int numHitData);
 
 	void setOffset(glm::vec2 *data, int numOfOffsets);
 	void setTextureCoords(float *data, int numOfCoords);
