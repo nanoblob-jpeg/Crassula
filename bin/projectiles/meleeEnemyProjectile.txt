@@ -1,5 +1,6 @@
 meleeEnemyProjectile
 1
+1
 200
 0
 0

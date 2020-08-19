@@ -15,7 +15,7 @@ public:
 	float distanceTravelled{};
 	std::vector<Effect> effects;
 	std::vector<glm::vec2> texturePosition;
-	int numProjectile;
+	int numBullet;
 	float projectileSpeed;
 	bool right{};
 	Projectile(){};

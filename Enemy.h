@@ -15,6 +15,7 @@ public:
 	float speed;
 	std::string name;
 	std::string projectileName;
+	float hitData{};
 
 	bool attacking{false};
 	float attackingTimer{};
@@ -55,10 +56,14 @@ public:
 	}
 	void applyEffects(float dt){
 		float temp = 0.0f;
+		int prehealth = health;
 		for(int i{}; i < effects.size(); ++i){
 			if(effects[i].applyEffect(health, defense, attack, speed, temp, dt)){
 				effects.erase(effects.begin() + i);
 				--i;
+			}
+			if(prehealth < health){
+				hitData = 0.2;
 			}
 		}
 	};
@@ -73,6 +78,10 @@ public:
 		for(int i{}; i < p.effects.size(); ++i){
 			this->effects.push_back(p.effects[i]);
 		}
+	}
+
+	void decreaseHitDataTime(float dt){
+		hitData = std::max(0.0f, hitData - dt);
 	}
 };
 #endif

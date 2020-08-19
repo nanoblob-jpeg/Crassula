@@ -27,6 +27,8 @@ Game::Game(unsigned int width, unsigned int height){
 Game::~Game(){
 	delete Renderer;
 	delete BlockRenderer;
+	delete UIRenderer;
+	delete staticImageRenderer;
 	delete textRenderer;
 	delete BackGround_l1;
 	delete BackGround_l2;
@@ -34,6 +36,8 @@ Game::~Game(){
 	delete PlantRenderer;
 	delete ProjectileRenderer;
 	delete EnemyRenderer;
+	delete EnemyProjectileRenderer;
+	delete IconRenderer;
 
 	std::ofstream file;
 	file.open("bin/player.txt");
@@ -69,7 +73,7 @@ Game::~Game(){
 		}
 	}
 	file.close();
-
+	
 	file.open("bin/bowlUnlockFile.txt");
 	for(int i{}; i < bowls.size(); ++i){
 		if(i != bowls.size() - 1){
@@ -115,7 +119,7 @@ void Game::Init(){
 	setBackground(player.backgroundName);
 	//create board
 	prepBoard();
-	reserveArraySpace();
+	//reserveArraySpace();
 	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
 	prepAchievementScreen();
 	loadGameData();
@@ -418,6 +422,11 @@ void Game::Update(float dt){
 			playerHealth = player.health;
 		}
 
+		//update enemy hitData
+		for(int i{}; i < board_enemies.size(); ++i){
+			board_enemies[i]->decreaseHitDataTime(dt);
+		}
+
 		//testing if it is time to generate new chunks
 		//0 up
 		//1 right
@@ -619,6 +628,7 @@ void Game::gameEndProtocol(){
 	player.velocity[1] = 0;
 
 	board_enemies.clear();
+	hitData.clear();
 	enemy_projectiles.clear();
 	player_projectiles.clear();
 	player.statBoosts.clear();
@@ -681,7 +691,7 @@ void Game::setUnlockedBowls(){
 	std::ifstream fstream("bin/bowlUnlockFile.txt");
 	if(fstream){
 		while(std::getline(fstream, line)){
-			bowls.push_back(line == "1" ? true : false);
+			bowls.push_back(line.compare("1") == 0);
 			std::getline(fstream, line);
 			bowlNames.push_back(line);
 		}
@@ -695,7 +705,7 @@ void Game::prepAchievementScreen(){
 	std::ifstream fstream("bin/achievementUnlockFile.txt");
 	if(fstream){
 		while(std::getline(fstream, line)){
-			completedAchievements.push_back(line.compare("1") == 0 ? true : false);
+			completedAchievements.push_back(line.compare("1") == 0);
 			std::getline(fstream, line);
 			achievementNames.push_back(line);
 		}
@@ -751,7 +761,7 @@ void Game::prepGreenhouse(){
 	std::ifstream fstream("bin/greenhouseUnlockFile.txt");
 	if(fstream){
 		while(std::getline(fstream, line)){
-			unlockedPlants.push_back(line.compare("1") == 0 ? true : false);
+			unlockedPlants.push_back(line.compare("1") == 0);
 			std::getline(fstream, line);
 			plantNames.push_back(line);
 			std::getline(fstream, line);
@@ -1371,6 +1381,7 @@ void Game::player_projectile_collision_detection(){
 						board_enemies[j]->health -= std::max(player_projectiles[i].damage + player.attack - board_enemies[j]->defense, 1);
 					//add effects
 					board_enemies[j]->addEffects(player_projectiles[i]);
+					board_enemies[j]->hitData = 0.2;
 					if(!player_projectiles[i].piercing){
 						player_projectiles.erase(player_projectiles.begin() + i);
 						--i;
@@ -1849,7 +1860,7 @@ void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
-	EnemyRenderer->DrawSprites(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, -(maxEnemySize - player.bowl->size[1])));
+	EnemyRenderer->DrawEnemies(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, -(maxEnemySize - player.bowl->size[1])), &hitData[0], board_enemies.size());
 }
 
 void Game::renderPlayer(glm::mat4 &view){
@@ -2071,9 +2082,11 @@ void Game::calculateProjectileRenderValues(){
 void Game::calculateEnemyRenderValues(){
 	enemyOffsets.clear();
 	enemyTexCoords.clear();
+	hitData.clear();
 	for(int i{}; i < board_enemies.size(); ++i){
 		enemyOffsets.push_back(glm::vec2(board_enemies[i]->position[0]/maxEnemySize, board_enemies[i]->position[1]/maxEnemySize));
 		enemyTexCoords.push_back(ResourceManager::getDepth(board_enemies[i]->name));
+		hitData.push_back(board_enemies[i]->hitData);
 	}
 }
 
@@ -2194,7 +2207,7 @@ void Game::initShaders(){
 	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "plant");
 	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "projectiles");
 	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "enemyProjectiles");
-	ResourceManager::LoadShader("bin/shaders/texSamp_vshader.txt", "bin/shaders/fragShader_array.txt", nullptr, "enemy");
+	ResourceManager::LoadShader("bin/shaders/enemy_vshader.txt", "bin/shaders/fragShader_enemy.txt", nullptr, "enemy");
 	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l1");
 	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l2");
 	ResourceManager::LoadShader("bin/shaders/background_vshader.txt", "bin/shaders/fragShader.txt", nullptr, "background_l3");

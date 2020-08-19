@@ -175,6 +175,7 @@ public:
 	//enemy vars
 	std::vector<glm::vec2> enemyOffsets{};
 	std::vector<float> enemyTexCoords{};
+	std::vector<float> hitData{};
 
 	//background render logic stuff
 	Background *backgroundTextures = nullptr;

@@ -66,7 +66,7 @@ public:
 		}
 	}
 	void move(){
-		position[0] += 0.01;
+		position[0] += 5;
 	}
 	glm::vec2 getProjectileStartPositionForEnemy(Projectile &p){
 		glm::vec2 output;

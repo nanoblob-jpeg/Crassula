@@ -85,9 +85,6 @@ void ResourceManager::Clear(){
     for(auto iter : Effects){
         delete &iter.second;
     }
-    for(auto iter : Enemies){
-        delete &iter.second;
-    }
     for(auto iter : Projectiles){
         delete &iter.second;
     }

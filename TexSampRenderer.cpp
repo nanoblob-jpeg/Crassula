@@ -116,7 +116,7 @@ void TexSampRenderer::DrawEnemies(int num, Texture &texture, float size, glm::ve
 	this->m_shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position, 0.0f));
-	model = glm::scale(model, glm::vec3(size.x, size.y, 1.0f));
+	model = glm::scale(model, glm::vec3(size, size, 1.0f));
 
 	glm::vec3 color = glm::vec3(1.0);
 	this->m_shader.setMat4("model", model);

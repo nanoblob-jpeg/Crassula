@@ -116,7 +116,6 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
     }
-
     ResourceManager::Clear();
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
