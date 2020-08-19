@@ -1,0 +1,10 @@
+coffee
+coffee1
+coffee2
+coffee3
+coffee4
+
+
+1.0
+1.0
+1.0

@@ -1,0 +1,10 @@
+bamboo
+bamboo1
+bamboo2
+bamboo3
+bamboo4
+
+
+1.0
+1.0
+1.0

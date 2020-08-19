@@ -1,0 +1,10 @@
+lithop
+lithop1
+lithop2
+lithop3
+lithop4
+
+
+1.0
+1.0
+1.0
