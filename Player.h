@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Effect.h"
 #include "Plant.h"
+#include "greenHousePlant.h"
 
 #ifndef PLAYER
 #define PLAYER
@@ -72,6 +73,7 @@ public:
 	bool canAttack(float dt);
 	void calculateLevel();
 	void setStatBoosts();
+	void setStatBoosts(gameHousePlant &p);
 	void setFinalStats();
 private:
 	int getDefenseBoost();

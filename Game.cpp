@@ -40,7 +40,7 @@ Game::~Game(){
 	delete IconRenderer;
 
 	std::ofstream file;
-	file.open("bin/player.txt");
+	file.open("bin/directories/player.txt");
 	file << player.name << '\n';
 	file << std::to_string(player.level) << '\n';
 	file << backgroundTextures->name << '\n';
@@ -48,17 +48,11 @@ Game::~Game(){
 	file << player.bowl->name;
 	file.close();
 
-	file.open("bin/gameData.txt");
+	file.open("bin/directories/gameData.txt");
 	file << std::to_string(chunksTravelledThrough) << '\n';
-	for(int i{}; i < greenhouseLevels.size(); ++i){
-		file << std::to_string(greenhouseLevels[i]) << '\n';
-	}
-	for(int i{}; i < greenhouseExperience.size(); ++i){
-		file << std::to_string(greenhouseExperience[i]);
-	}
 	file.close();
 
-	file.open("bin/achievementUnlockFile.txt");
+	file.open("bin/directories/achievementUnlockFile.txt");
 	for(int i{}; i < completedAchievements.size(); ++i){
 		if(i != completedAchievements.size() - 1){
 			if(completedAchievements[i])
@@ -73,8 +67,8 @@ Game::~Game(){
 		}
 	}
 	file.close();
-	
-	file.open("bin/bowlUnlockFile.txt");
+
+	file.open("bin/directories/bowlUnlockFile.txt");
 	for(int i{}; i < bowls.size(); ++i){
 		if(i != bowls.size() - 1){
 			if(bowls[i])
@@ -89,6 +83,8 @@ Game::~Game(){
 		}
 	}
 	file.close();
+
+
 }
 
 void Game::Init(){
@@ -96,24 +92,24 @@ void Game::Init(){
 	initRenderers();
 	setUnlockedBowls();
 	//load textures
-	ResourceManager::LoadTexture2("textureDirectory.txt");
-	ResourceManager::LoadArrayTextures("arrayTextureDirectory.txt");
+	ResourceManager::LoadTexture2("bin/directories/textureDirectory.txt");
+	ResourceManager::LoadArrayTextures("bin/directories/arrayTextureDirectory.txt");
 	//load gameobject
-	ResourceManager::LoadGameObject("gameObjectDirectory.txt");
+	ResourceManager::LoadGameObject("bin/directories/gameObjectDirectory.txt");
 	//loading chunks for the 10x10 squares
-	ResourceManager::LoadChunk("chunk_list.txt", true);
+	ResourceManager::LoadChunk("bin/directories/chunk_list.txt", true);
 	//load effects
-	ResourceManager::LoadEffect("effect_list.txt");
+	ResourceManager::LoadEffect("bin/directories/effect_list.txt");
 	//load bowls
-	ResourceManager::LoadBowl("bowl_list.txt");
+	ResourceManager::LoadBowl("bin/directories/bowl_list.txt");
 	//load plants
-	ResourceManager::LoadPlant("plant_list.txt");
+	ResourceManager::LoadPlant("bin/directories/plant_list.txt");
 	//loads backgrounds
-	ResourceManager::LoadBackgrounds("background_list.txt");
+	ResourceManager::LoadBackgrounds("bin/directories/background_list.txt");
 	//load player
-	player.loadPlayer("bin/player.txt");
+	player.loadPlayer("bin/directories/player.txt");
 	//load projectiles
-	ResourceManager::LoadProjectiles("projectileDirectory.txt");
+	ResourceManager::LoadProjectiles("bin/directories/projectileDirectory.txt");
 	//load enemies
 	loadEnemies();
 	setBackground(player.backgroundName);
@@ -129,12 +125,10 @@ void Game::Init(){
 void Game::ProcessInput(float dt){
 	//this b key section is just for debugging and displaying when I need to
 	if(Keys[GLFW_KEY_B]){
-		std::cout << cam.Position[0] << ',' << cam.Position[1] << std::endl;
-		for(int i{}; i < player_projectiles.size(); ++i){
-			std::cout << player_projectiles[i].position[0] << ',' << player_projectiles[i].position[1] << std::endl;
-			std::cout << player_projectiles[i].size[0] << ',' << player_projectiles[i].size[1] << std::endl;
+		for(int i{}; i < playedBowls.size(); ++i){
+			std::cout << playedBowls[i] << ' ';
 		}
-		std::cout << std::endl;
+		std::cout << '\n';
 	}
 	if(m_state == GAME_ACTIVE_CLASSIC){
 		processPlayerMovement(dt);
@@ -157,6 +151,7 @@ void Game::ProcessInput(float dt){
 					enemyMultiplier += 0.2;
 					points += 5;
 					player.experience += 2;
+					plantsCollected++;
 				}
 			}
 			if(Keys[GLFW_KEY_U]){
@@ -218,6 +213,9 @@ void Game::ProcessInput(float dt){
 			m_state = GAME_ACTIVE_CLASSIC;
 			initializeGame();
 			player.setStatBoosts();
+			for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+				player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]]);
+			}
 			player.setFinalStats();
 			playerHealth = player.health;
 			maxHealth = player.health;
@@ -225,6 +223,33 @@ void Game::ProcessInput(float dt){
 			cam.Position[1] = 0;
 			points = 0;
 			recoveryTimer = 0;
+			numEnemyKilled.clear();
+			for(int i{}; i < numOfEnemies; ++i){
+				numEnemyKilled.push_back(0);
+			}
+			gameChunksTravelledTrough = 0;
+			plantsCollected = 0;
+			if(!completedAchievements[38]){
+				if(player.bowl->name.compare("basic") == 0)
+					playedBowls[0] = true;
+				else if(player.bowl->name.compare("box") == 0)
+					playedBowls[1] = true;
+				else if(player.bowl->name.compare("iv_bag") == 0)
+					playedBowls[2] = true;
+				else if(player.bowl->name.compare("lightbulb") == 0)
+					playedBowls[3] = true;
+				else if(player.bowl->name.compare("thanos") == 0)
+					playedBowls[4] = true;
+				else 
+					std::cout << "could not find bowl for game data\n";
+			}
+
+			timeAlive = 0;
+			noHealthLost = true;
+			time_150_passed = false;
+			timeStill = 0;
+			previousPosition = glm::vec2(0.0);
+			time_60_still_passed = false;
 		}
 		if(Keys[GLFW_KEY_U]){
 			m_state = HOME_ARMORY;
@@ -239,36 +264,39 @@ void Game::ProcessInput(float dt){
 		if(Keys[GLFW_KEY_L]){
 			m_state = START_SCREEN;
 		}
+		if(Keys[GLFW_KEY_K]){
+			lookedAtCredits = true;
+		}
 	}else if(m_state == HOME_ACHIEVEMENTS){
 		if(Keys[GLFW_KEY_W] && !achievementMoved){
-			if(achievementSelector <= 14){
-				achievementSelector += 120;
+			if(achievementSelector < 7){
+				achievementSelector += 42;
 			}else{
-				achievementSelector -= 14;
+				achievementSelector -= 7;
 			}
 			achievementMoved = true;
 		}
 		if(Keys[GLFW_KEY_A] && !achievementMoved){
-			if(achievementSelector%14 == 0){
-				achievementSelector += 13;
+			if(achievementSelector%7 == 0){
+				achievementSelector += 6;
 			}else{
 				achievementSelector -= 1;
 			}
 			achievementMoved = true;
 		}
 		if(Keys[GLFW_KEY_D] && !achievementMoved){
-			if((achievementSelector-13)%14 == 0){
-				achievementSelector -= 13;
+			if((achievementSelector-6)%7 == 0){
+				achievementSelector -= 6;
 			}else{
 				achievementSelector += 1;
 			}
 			achievementMoved = true;
 		}
 		if(Keys[GLFW_KEY_S] && !achievementMoved){
-			if(achievementSelector >= 126){
-				achievementSelector -= 126;
+			if(achievementSelector >= 42){
+				achievementSelector -= 42;
 			}else{
-				achievementSelector += 14;
+				achievementSelector += 7;
 			}
 			achievementMoved = true;
 		}
@@ -276,7 +304,7 @@ void Game::ProcessInput(float dt){
 			achievementMoved = false;
 		}
 		if(Keys[GLFW_KEY_I]){
-			viewingAchievement = true;
+			viewingAchievement = !viewingAchievement;
 		}
 		if(Keys[GLFW_KEY_Q]){
 			m_state = HOME_MAIN;
@@ -287,7 +315,7 @@ void Game::ProcessInput(float dt){
 		}
 	}else if(m_state == HOME_GREENHOUSE){
 		if(Keys[GLFW_KEY_W] && !greenhouseMoved){
-			if(plantSelector <= 10){
+			if(plantSelector < 10){
 				plantSelector += 40;
 			}else{
 				plantSelector -= 10;
@@ -346,8 +374,14 @@ void Game::ProcessInput(float dt){
 };
 
 void Game::Update(float dt){
-	//todo once I add achievements, I need to add the checks here
-
+	timeAlive += dt;
+	if(glm::vec2(cam.Position.x, cam.Position.y) == previousPosition){
+		timeStill += dt;
+		if(timeStill >= 60)
+			time_60_still_passed = true;
+	}else{
+		previousPosition = glm::vec2(cam.Position.x, cam.Position.y);
+	}
 
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
@@ -360,30 +394,42 @@ void Game::Update(float dt){
 	if(!outOfFirstChunk){
 		if(abs(cam.Position[0]) > 250){
 			outOfFirstChunk = true;
-			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max())){
 				chunksTravelledThrough++;
+				gameChunksTravelledTrough++;
+			}
 			distanceTravelled.x = cam.Position[0];
 		}else if(abs(cam.Position[1]) > 250){
 			outOfFirstChunk = true;
-			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max())){
 				chunksTravelledThrough++;
+				gameChunksTravelledTrough++;
+			}
 			if(cam.Position[1] < 0)
-				if(!(chunksFallenThrough == std::numeric_limits<int>::max()))
+				if(!(chunksFallenThrough == std::numeric_limits<int>::max())){
 					chunksFallenThrough++;
+					gameChunksTravelledTrough++;
+				}
 			distanceTravelled.y = cam.Position[1];
 		}
 	}else{
 		if(abs(distanceTravelled.x - cam.Position[0]) > 500){
-			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max())){
 				chunksTravelledThrough++;
+				gameChunksTravelledTrough++;
+			}
 			distanceTravelled.x = cam.Position[0];
 		}
 		if(abs(distanceTravelled.y - cam.Position[1]) > 500){
-			if(!(chunksTravelledThrough == std::numeric_limits<float>::max()))
+			if(!(chunksTravelledThrough == std::numeric_limits<float>::max())){
+				gameChunksTravelledTrough++;
 				chunksTravelledThrough++;
+			}
 			if(cam.Position[1] < distanceTravelled.y)
-				if(!(chunksFallenThrough == std::numeric_limits<int>::max()))
+				if(!(chunksFallenThrough == std::numeric_limits<int>::max())){
 					chunksFallenThrough++;
+					gameChunksTravelledTrough++;
+				}
 			distanceTravelled.y = cam.Position[1];
 		}
 	}
@@ -416,10 +462,11 @@ void Game::Update(float dt){
 		//moving the projectiles
 		moveAllProjectiles(dt);
 
-		if(points >= recoveryTimer + 100){
+		if(points >= recoveryTimer + 70){
 			player.health += player.recovery;
 			player.health = std::min(player.health, maxHealth);
 			playerHealth = player.health;
+			recoveryTimer = points;
 		}
 
 		//update enemy hitData
@@ -466,12 +513,26 @@ void Game::Update(float dt){
 		enemy_projectile_collision_detection();
 		//looping to see if any enemies have died
 		clearDeadEnemies();
+		if(!completedAchievements[42])
+			if(player.bowl->name.compare("crown") == 0 && std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("dragonFruit") == 0 && p.level == 4;}) != player.plants.end())
+				knightsStory = true;
+		if(!completedAchievements[43])
+			if(std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("kale") == 0 && p.level == 4;}) != player.plants.end())
+				kaleIsBad = true;
+		if(!completedAchievements[44])
+			if(std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("kill") == 0 && p.level == 4;}) != player.plants.end())
+				chillBois = true;
+
+
+		moveEnemies(dt);
 		//check if the player has died
 		if(player.isDead()){
 			gameEndProtocol();
 		}
 		enemyAttackLogic();
 		moveBackground(dt);
+		if(timeAlive >= 150 && noHealthLost)
+			time_150_passed = true;
 	}
 
 	//test for the other states else if()
@@ -617,6 +678,8 @@ void Game::reserveArraySpace(){
 
 void Game::gameEndProtocol(){
 	clearAndResetGameBoard();
+	addExpToGreenhousePlants();
+	checkBowls();
 	checkAchievements();
 
 	player.calculateLevel();
@@ -643,52 +706,11 @@ void Game::gameEndProtocol(){
 	enemyMultiplier = 1.0;
 
 	chunksFallenThrough = 0;
-
-	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
-		if(i != 1){
-			greenhouseExperience[(int)i] += points;
-		}
-	}
-	for(int i{}; i < greenhouseLevels.size(); ++i){
-		while(greenhouseExperience[i] >= greenhouseLevels[i] * 1000){
-			greenhouseExperience[i] -= greenhouseLevels[i] * 1000;
-			greenhouseLevels[i]++;
-		}
-	}
-}
-
-void Game::checkAchievements(){
-	if(chunksTravelledThrough >= 119450)
-		setAchievementsToTrue(0, 6);
-	else if(chunksTravelledThrough >= 24901)
-		setAchievementsToTrue(0, 5);
-	else if(chunksTravelledThrough >= 15426)
-		setAchievementsToTrue(0, 4);
-	else if(chunksTravelledThrough >= 2000)
-		setAchievementsToTrue(0, 3);
-	else if(chunksTravelledThrough >= 500)
-		setAchievementsToTrue(0, 2);
-	else if(chunksTravelledThrough >= 100)
-		setAchievementsToTrue(0, 1);
-	else if(chunksTravelledThrough >= 5)
-		setAchievementsToTrue(0, 0);
-
-	if(chunksFallenThrough >= 24)
-		setAchievementsToTrue(7, 7);
-
-
-}
-
-void Game::setAchievementsToTrue(int start, int stop){
-	for(int i = start; i < stop + 1; ++i){
-		if(!completedAchievements[i])
-			completedAchievements[i] = true;
-	}
 }
 
 void Game::setUnlockedBowls(){
 	std::string line;
-	std::ifstream fstream("bin/bowlUnlockFile.txt");
+	std::ifstream fstream("bin/directories/bowlUnlockFile.txt");
 	if(fstream){
 		while(std::getline(fstream, line)){
 			bowls.push_back(line.compare("1") == 0);
@@ -702,7 +724,7 @@ void Game::setUnlockedBowls(){
 
 void Game::prepAchievementScreen(){
 	std::string line;
-	std::ifstream fstream("bin/achievementUnlockFile.txt");
+	std::ifstream fstream("bin/directories/achievementUnlockFile.txt");
 	if(fstream){
 		while(std::getline(fstream, line)){
 			completedAchievements.push_back(line.compare("1") == 0);
@@ -712,8 +734,8 @@ void Game::prepAchievementScreen(){
 	}else{
 		std::cout << "unlock achievement file not found\n";
 	}
-	for(int i{}; i < 140; ++i){
-		glm::vec2 temp{(i%14) * 55.0 / 45.0, -((i/14) * 55.0 / 45.0)};
+	for(int i{}; i < 49; ++i){
+		glm::vec2 temp{(i%7) * 55.0 / 45.0, -((i/7) * 55.0 / 45.0)};
 		achievementOffsets.push_back(temp);
 
 		if(completedAchievements[i])
@@ -725,18 +747,16 @@ void Game::prepAchievementScreen(){
 
 void Game::loadGameData(){
 	std::string line;
-	std::ifstream fstream("bin/gameData.txt");
+	std::ifstream fstream("bin/directories/gameData.txt");
 	if(fstream){
 		std::getline(fstream, line);
 		chunksTravelledThrough = std::stof(line);
-		//add in greenhouse level data
-		//temp code
-		std::getline(fstream, line);
-		greenhouseLevels.push_back(std::stoi(line));
-		std::getline(fstream, line);
-		greenhouseExperience.push_back(std::stof(line));
+		
 		for(int i{}; i < 6; ++i){
 			selectedPlantTexCoords.push_back(numGreenHouse);
+		}
+		for(int i{}; i < 5; ++i){
+			playedBowls.push_back(false);
 		}
 	}else{
 		std::cout << "game data file not found\n";
@@ -758,14 +778,25 @@ void Game::prepGreenhouse(){
 
 	greenhouseLevelOffset.push_back(glm::vec2(0.0f,0.0f));
 	std::string line;
-	std::ifstream fstream("bin/greenhouseUnlockFile.txt");
+	std::ifstream fstream("bin/directories/greenhouseUnlockFile.txt");
 	if(fstream){
+		std::string plantName, boostName;
+		std::vector<int> boosts{};
+		float level, experience;
 		while(std::getline(fstream, line)){
 			unlockedPlants.push_back(line.compare("1") == 0);
+			std::getline(fstream, plantName);
+			std::getline(fstream, boostName);
+			//all stats boost are between 0 and 9 inclusive
 			std::getline(fstream, line);
-			plantNames.push_back(line);
+			for(int i{}; i < line.length(); ++i){
+				boosts.push_back((line[i] - '0'));
+			}
 			std::getline(fstream, line);
-			boostNames.push_back(line);
+			level = std::stof(line);
+			std::getline(fstream, line);
+			experience = std::stof(line);
+			greenhouse.push_back(greenHousePlant(boosts, boostName, plantName, level, experience));
 		}
 	}else{
 		std::cout << "unlock greenhouse file not found\n";
@@ -784,6 +815,176 @@ void Game::greenhouseSelectorHelper(int avoid){
 }
 /*
 
+UNLOCK CHECKERS
+
+
+
+
+
+*/
+void Game::addExpToGreenhousePlants(){
+	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+		if(selectedPlantTexCoords[i] != numGreenHouse)
+			greenhouse[selectedPlantTexCoords[i]].addExperience(points);
+	}
+}
+void Game::checkBowls(){
+	if(time_150_passed && points >= 500)
+		bowls[2] = true;
+	
+	if(time_60_still_passed)
+		bowls[1] = true;
+
+	if(std::accumulate(numEnemyKilled.begin(), numEnemyKilled.end(), 0) >= 800)
+		bowls[3] = true;
+
+	if(lookedAtCredits)
+		bowls[4] = true;
+}
+
+void Game::checkAchievements(){
+	//distance achievements
+	if(chunksTravelledThrough >= 500000)
+		setAchievementsToTrue(0, 9);
+	else if(chunksTravelledThrough >= 119450)
+		setAchievementsToTrue(0, 8);
+	else if(chunksTravelledThrough >= 42165)
+		setAchievementsToTrue(0, 7);
+	else if(chunksTravelledThrough >= 24901)
+		setAchievementsToTrue(0, 6);
+	else if(chunksTravelledThrough >= 15426)
+		setAchievementsToTrue(0, 5);
+	else if(chunksTravelledThrough >= 10000)
+		setAchievementsToTrue(0, 4);
+	else if(chunksTravelledThrough >= 2000)
+		setAchievementsToTrue(0, 3);
+	else if(chunksTravelledThrough >= 500)
+		setAchievementsToTrue(0, 2);
+	else if(chunksTravelledThrough >= 100)
+		setAchievementsToTrue(0, 1);
+	else if(chunksTravelledThrough >= 5)
+		setAchievementsToTrue(0, 0);
+
+	if(chunksFallenThrough >= 100)
+		setAchievementsToTrue(11, 13);
+	else if(chunksFallenThrough >= 24)
+		setAchievementsToTrue(11, 12);
+	else if(chunksFallenThrough >= 5)
+		setAchievementsToTrue(11, 11);
+
+	if(gameChunksTravelledTrough >= 200)
+		setAchievementsToTrue(10, 10);
+
+	//enemykilled achievements
+	float sum = std::accumulate(numEnemyKilled.begin(), numEnemyKilled.end(), 0);
+	if(sum >= 100000)
+		setAchievementsToTrue(14, 22);
+	else if(sum >= 20000)
+		setAchievementsToTrue(14, 21);
+	else if(sum >= 5000)
+		setAchievementsToTrue(14, 20);
+	else if(sum >= 2000)
+		setAchievementsToTrue(14, 19);
+	else if(sum >= 400)
+		setAchievementsToTrue(14, 18);
+	else if(sum >= 150)
+		setAchievementsToTrue(14, 17);
+	else if(sum >= 50)
+		setAchievementsToTrue(14, 16);
+	else if(sum >= 10)
+		setAchievementsToTrue(14, 15);
+	else if(sum >= 1)
+		setAchievementsToTrue(14, 14);
+
+	if(std::all_of(numEnemyKilled.begin(), numEnemyKilled.end(), [](int i){return i> 5;}))
+		setAchievementsToTrue(23, 24);
+	else if(std::all_of(numEnemyKilled.begin(), numEnemyKilled.end(), [](int i){return i> 1;}))
+		setAchievementsToTrue(23, 23);
+
+	if(std::find_if(numEnemyKilled.begin(), numEnemyKilled.end(), [](int i){return i > 500;}) != numEnemyKilled.end())
+		setAchievementsToTrue(25, 27);
+	else if(std::find_if(numEnemyKilled.begin(), numEnemyKilled.end(), [](int i){return i > 200;}) != numEnemyKilled.end())
+		setAchievementsToTrue(25, 26);
+	else if(std::find_if(numEnemyKilled.begin(), numEnemyKilled.end(), [](int i){return i > 100;}) != numEnemyKilled.end())
+		setAchievementsToTrue(25, 25);
+
+	//collection achievements
+	int unlockedPlantsCount = std::count(unlockedPlants.begin(), unlockedPlants.end(), true);
+	if(unlockedPlantsCount == 50)
+		setAchievementsToTrue(28, 31);
+	else if(unlockedPlantsCount >= 25)
+		setAchievementsToTrue(28, 30);
+	else if(unlockedPlantsCount >= 10)
+		setAchievementsToTrue(28, 29);
+	else if(unlockedPlantsCount >= 5)
+		setAchievementsToTrue(28, 28);
+
+	int maxedLevelPlants = std::count_if(greenhouse.begin(), greenhouse.end(), [](greenHousePlant p){return p.level == 9;});
+	if(maxedLevelPlants == 50)
+		setAchievementsToTrue(32, 35);
+	else if(maxedLevelPlants >= 10)
+		setAchievementsToTrue(32, 34);
+	else if(maxedLevelPlants >= 5)
+		setAchievementsToTrue(32, 33);
+	else if(maxedLevelPlants >= 1)
+		setAchievementsToTrue(32, 32);
+
+	if(std::count(bowls.begin(), bowls.end(), true) == 5)
+		setAchievementsToTrue(36, 37);
+	else if(std::count(bowls.begin(), bowls.end(), true) >= 2)
+		setAchievementsToTrue(36, 36);
+
+	if(std::count(playedBowls.begin(), playedBowls.end(), true) == 5)
+		setAchievementsToTrue(38, 38);
+
+	if(completedAchievements[37] && completedAchievements[31])
+		setAchievementsToTrue(39, 39);
+
+	if(plantsCollected >= 50)
+		setAchievementsToTrue(40, 41);
+	else if(plantsCollected >= 10)
+		setAchievementsToTrue(40, 40);
+
+
+	//end game/random achievements
+	if(knightsStory)
+		setAchievementsToTrue(42, 42);
+	if(kaleIsBad)
+		setAchievementsToTrue(43, 43);
+	if(chillBois)
+		setAchievementsToTrue(44, 44);
+
+	if(points >= 100000)
+		setAchievementsToTrue(45, 47);
+	else if(points >= 10000)
+		setAchievementsToTrue(45, 46);
+	else if(points >= 1000)
+		setAchievementsToTrue(45, 45);
+
+	if(std::count(completedAchievements.begin(), completedAchievements.end() - 1, true) == 48)
+		setAchievementsToTrue(48, 48);
+
+	setAchievementTextureValues();
+}
+
+void Game::setAchievementsToTrue(int start, int stop){
+	for(int i = start; i < stop + 1; ++i){
+		if(!completedAchievements[i])
+			completedAchievements[i] = true;
+	}
+}
+
+void Game::setAchievementTextureValues(){
+	achievementTexCoords.clear();
+	for(int i{}; i < completedAchievements.size(); ++i){
+		if(completedAchievements[i]){
+			achievementTexCoords.push_back(i);
+		}else{
+			achievementTexCoords.push_back(numAchievements);
+		}
+	}
+}
+/*
 
 CHUNK GENERATION
 
@@ -1436,6 +1637,7 @@ void Game::enemy_projectile_collision_detection(){
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
 				--i;
 				deletionTracker = true;
+				noHealthLost = false;
 			}
 		//collision detection between the projectile and the edge
 		if(!deletionTracker){
@@ -1579,6 +1781,8 @@ void Game::clearDeadEnemies(){
 			points += 2;
 			enemyMultiplier += 0.1;
 			player.experience += 5;
+			if(board_enemies[i]->name.compare("Melee") == 0)
+				numEnemyKilled[0]++;
 			delete board_enemies[i];
 			board_enemies.erase(board_enemies.begin() + i);
 			--i;
@@ -1702,6 +1906,10 @@ void Game::enemyAttackLogic(){
 		}
 	}
 }
+
+void Game::moveEnemies(float dt){
+	return;
+}
 /*
 
 
@@ -1739,16 +1947,17 @@ void Game::renderArmoryScreen(){
 
 void Game::renderAchievements(){
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("exitSign"), glm::vec2(-Width/2, Height/2 - 40), glm::vec2(100, 40));
+	
+	glm::mat4 view = cam.GetViewMatrix();
+	ProjectileRenderer->setViewMatrix("view", view);
+	ProjectileRenderer->setOffset(&achievementOffsets[0], numAchievements);
+	ProjectileRenderer->setTextureCoords(&achievementTexCoords[0], numAchievements);
+	ProjectileRenderer->DrawSprites(numAchievements, ResourceManager::GetTexture("achievements"), maxAchievementSize, glm::vec2(-190.0, 110.0));
+
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("highlight2"), glm::vec2(-190 + (achievementSelector%7) * 55, 110 - (achievementSelector/7) * 55), glm::vec2(45,45));
+	
 	if(viewingAchievement){
 		staticImageRenderer->DrawSprite(ResourceManager::GetTexture(achievementNames[achievementSelector]), glm::vec2(-Width/2, -Height/2), glm::vec2(Width, Height));
-	}else{
-		glm::mat4 view = cam.GetViewMatrix();
-		ProjectileRenderer->setViewMatrix("view", view);
-		ProjectileRenderer->setOffset(&achievementOffsets[0], numAchievements);
-		ProjectileRenderer->setTextureCoords(&achievementTexCoords[0], numAchievements);
-		ProjectileRenderer->DrawSprites(numAchievements, ResourceManager::GetTexture("achievements"), maxAchievementSize, glm::vec2(-380.0, 220.0));
-
-		staticImageRenderer->DrawSprite(ResourceManager::GetTexture("highlight2"), glm::vec2(-380 + (achievementSelector%14) * 55, 220 - (achievementSelector/14) * 55), glm::vec2(45,45));
 	}
 }
 
@@ -1764,10 +1973,10 @@ void Game::renderDeathScreen(){
 void Game::renderGreenhouse(){
 	//675
 	//693
-	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(plantNames[plantSelector]), glm::vec2(-395, 45), glm::vec2(220, 220));
-	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(boostNames[plantSelector]), glm::vec2(-170, 85), glm::vec2(220, 180));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(greenhouse[plantSelector].plantName), glm::vec2(-395, 45), glm::vec2(220, 220));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture(greenhouse[plantSelector].boostName), glm::vec2(-170, 85), glm::vec2(220, 180));
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("emptyProgressBar"), glm::vec2(-150, 55), glm::vec2(200, 20));
-	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("progressBar"), glm::vec2(-150, 55), glm::vec2(200.0 * (greenhouseExperience[plantSelector] / ((greenhouseLevels[plantSelector] + 1) * 1000.0f)), 20));
+	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("progressBar"), glm::vec2(-150, 55), glm::vec2(200.0 * (greenhouse[plantSelector].experience / ((greenhouse[plantSelector].level + 1) * 1000.0f)), 20));
 	staticImageRenderer->DrawSprite(ResourceManager::GetTexture("highlight2"), glm::vec2(-297.5 + (plantSelector%10)*60.0, -20 - (plantSelector/10)*60.0), glm::vec2(55, 55));
 
 	glm::mat4 view = cam.GetViewMatrix();
@@ -1783,7 +1992,7 @@ void Game::renderGreenhouse(){
 
 	textRenderer->setViewMatrix("view", view);
 	textRenderer->setOffset(&greenhouseLevelOffset[0], 1);
-	textRenderer->setTextureCoords(&greenhouseLevels[plantSelector], 1);
+	textRenderer->setTextureCoords(&greenhouse[plantSelector].level, 1);
 	textRenderer->DrawSprites(1, ResourceManager::GetTexture("numbers"), glm::vec2(20, 40), glm::vec2(-170, 45));
 }
 

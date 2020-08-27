@@ -147,3 +147,13 @@ void Player::setFinalStats(){
 	recovery += statBoosts[5];
 	luck += statBoosts[6];
 }
+
+void Player::setStatBoosts(greenHousePlant &p){
+	health += p.boost[0];
+	defense += p.boost[1];
+	attack += p.boost[2];
+	attackSpeed += p.boost[3];
+	speed += p.boost[4];
+	recovery += p.boost[5];
+	luck += p.boost[6];
+}

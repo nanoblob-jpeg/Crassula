@@ -13,6 +13,7 @@
 #include "TexSampRenderer.h"
 #include "BackgroundRenderer.h"
 #include "Background.h"
+#include "greenHousePlant.h"
 
 
 #include <GLFW/glfw3.h>
@@ -21,6 +22,7 @@
 #include <random>
 #include <ctime>
 #include <limits>
+#include <numeric>
 
 
 #ifndef GAME_H
@@ -68,7 +70,7 @@ public:
 	const unsigned short numOfChunks{40};
 	const unsigned short numOfPlants{1};
 	const unsigned short numOfEnemies{1};
-	const int numAchievements{140};
+	const int numAchievements{49};
 	const int numGreenHouse{1};
 
 	//armory vars
@@ -105,8 +107,25 @@ public:
 	//distance achievements
 	float chunksTravelledThrough;
 	float chunksFallenThrough{};
+	float gameChunksTravelledTrough{};
 	glm::vec2 distanceTravelled{};
 	bool outOfFirstChunk = false;
+	//enemykilled achievements
+	std::vector<int> numEnemyKilled{};
+	//collection achievements
+	int plantsCollected{};
+	std::vector<bool> playedBowls{};
+	float timeAlive{};
+	bool noHealthLost = true;
+	bool time_150_passed = false;
+	glm::vec2 previousPosition{};
+	float timeStill{};
+	bool time_60_still_passed = false;
+	bool lookedAtCredits = false;
+	//random achievements
+	bool knightsStory = false;
+	bool kaleIsBad = false;
+	bool chillBois = false;
 
 	//achievement room logic
 	int achievementSelector{};
@@ -125,12 +144,9 @@ public:
 	std::vector<glm::vec2> selectedPlantOffset{};
 	//this also keeps track of what plants are selected
 	std::vector<float> selectedPlantTexCoords{};
-	std::vector<std::string> plantNames{};
-	std::vector<std::string> boostNames{};
 	std::vector<glm::vec2> greenhouseOffsets{};
 	std::vector<float> greenhouseTexCoords{};
-	std::vector<float> greenhouseLevels{};
-	std::vector<float> greenhouseExperience{};
+	std::vector<greenHousePlant> greenhouse{};
 	std::vector<glm::vec2> greenhouseLevelOffset{};
 
 	//Player object
@@ -229,13 +245,18 @@ public:
 	void prepBoard();
 	void reserveArraySpace();
 	void gameEndProtocol();
-	void checkAchievements();
-	void setAchievementsToTrue(int start, int stop);
 	void setUnlockedBowls();
 	void prepAchievementScreen();
 	void loadGameData();
 	void prepGreenhouse();
 	void greenhouseSelectorHelper(int avoid);
+
+	//unlock checkers
+	void addExpToGreenhousePlants();
+	void checkBowls();
+	void checkAchievements();
+	void setAchievementsToTrue(int start, int stop);
+	void setAchievementTextureValues();
 
 	//Chunk Generation
 	void prepBoardForChunkCreation(const short direction);
@@ -274,6 +295,7 @@ public:
 	void moveAllProjectiles(const float dt);
 	void processPlantInteraction();
 	void enemyAttackLogic();
+	void moveEnemies(float dt);
 
 	//rendering
 	void renderStartScreen();

@@ -38,7 +38,7 @@ public:
 		std::cout << "illegal action performed, enemy tried attacking, not an enemy";
 		return false;
 	};
-	virtual void move(){
+	virtual void move(float dt){
 		std::cout << "illegal action performed, enemy tried moving, not an enemy";
 	};
 	virtual glm::vec2 getProjectileStartPositionForEnemy(Projectile &p){

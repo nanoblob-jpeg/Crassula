@@ -36,6 +36,7 @@ void TexSampRenderer::initRenderData(){
 
 	glGenBuffers(1, &this->instanceVBO);
 	glGenBuffers(1, &this->instanceTexturePosVBO);
+	glGenBuffers(1, &this->enemyHitDataVBO);
 }
 
 void TexSampRenderer::setOffset(glm::vec2 *data, int numOfOffsets){
@@ -104,7 +105,6 @@ void TexSampRenderer::DrawSprites(int num, Texture &texture,glm::vec2 size, glm:
 
 void TexSampRenderer::DrawEnemies(int num, Texture &texture, float size, glm::vec2 position, float *hitData, int numHitData){
 	glBindVertexArray(this->quadVAO);
-	glGenBuffers(1, &this->enemyHitDataVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, enemyHitDataVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numHitData, hitData, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(3);

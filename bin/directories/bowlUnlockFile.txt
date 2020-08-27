@@ -1,0 +1,10 @@
+1
+basic
+0
+box
+0
+iv_bag
+0
+lightbulb
+0
+thanos

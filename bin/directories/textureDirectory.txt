@@ -49,3 +49,6 @@ emptyProgressBar
 bin/textures/greenhouse/progressBar.png
 1
 progressBar
+bin/textures/ui/credits.png
+1
+credits
