@@ -54,13 +54,13 @@ Master
 Grandmaster
 0
 Child
-0
+1
 Teenager
-0
+1
 Adult
-0
+1
 Farmer
-0
+1
 New Planter
 0
 Dirty Hands

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include "ResourceManager.h"
+#include <numeric>
 
 void Player::loadPlayer(const char *file){
 	/*
@@ -51,8 +52,7 @@ void Player::calculateStats(){
 	health = level * 2 + 5;
 	defense = level * 0.25 + 2;
 	attack = level * 0.5 + 1;
-	//attackSpeed = level * 0.02 + 0.5;
-	attackSpeed = 2.5;
+	attackSpeed = std::max(0.5, std::min(level * 0.02 + 0.5, 2.9));
 	speed = level * 0.2 + 1.0;
 	recovery = level * 0.1 + 0.1;
 	luck = level * 0.01 + 1;
@@ -139,21 +139,22 @@ void Player::setStatBoosts(){
 }
 
 void Player::setFinalStats(){
-	health += statBoosts[0];
+	health = 1 > health + statBoosts[0] ? 1 : health + statBoosts[0];
 	defense += statBoosts[1];
 	attack += statBoosts[2];
-	attackSpeed += statBoosts[3];
-	speed += statBoosts[4];
-	recovery += statBoosts[5];
-	luck += statBoosts[6];
+	attackSpeed = 0.5 > attackSpeed + statBoosts[3] ? 0.5 : attackSpeed + statBoosts[3];
+	speed = 1.0 > speed + statBoosts[4] ? 1.0 : speed + statBoosts[4];
+	recovery = 0.0 > recovery + statBoosts[5] ? 0.0 : recovery + statBoosts[5];
+	luck = 1.0 > luck + statBoosts[6] ? 1.0 : luck+statBoosts[6];
 }
 
-void Player::setStatBoosts(greenHousePlant &p){
-	health += p.boost[0];
-	defense += p.boost[1];
-	attack += p.boost[2];
-	attackSpeed += p.boost[3];
-	speed += p.boost[4];
-	recovery += p.boost[5];
-	luck += p.boost[6];
+void Player::setStatBoosts(std::vector<float> &p, float level){
+
+	statBoosts[0] += p[0] * level;
+	statBoosts[1] += p[1] * level;
+	statBoosts[2] += p[2] * level;
+	statBoosts[3] += p[3] * level;
+	statBoosts[4] += p[4] * level;
+	statBoosts[5] += p[5] * level;
+	statBoosts[6] += p[6] * level;
 }

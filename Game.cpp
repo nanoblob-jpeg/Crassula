@@ -84,7 +84,22 @@ Game::~Game(){
 	}
 	file.close();
 
-
+	file.open("bin/directories/greenhouseUnlockFile.txt");
+	for(int i{}; i < greenhouse.size(); ++i){
+		if(unlockedPlants[i])
+			file << "1\n";
+		else
+			file << "0\n";
+		file << greenhouse[i].plantName << '\n';
+		file << greenhouse[i].boostName << '\n';
+		for(int j{}; j < greenhouse[0].boost.size(); ++j){
+			file << greenhouse[i].boost[j] << '\n';
+		}
+		file << greenhouse[i].level << '\n';
+		file << greenhouse[i].experience;
+		if(i != greenhouse.size() - 1)
+			file << '\n';
+	}
 }
 
 void Game::Init(){
@@ -214,7 +229,8 @@ void Game::ProcessInput(float dt){
 			initializeGame();
 			player.setStatBoosts();
 			for(int i{}; i < selectedPlantTexCoords.size(); ++i){
-				player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]]);
+				if(selectedPlantTexCoords[i] != numGreenHouse)
+					player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]].boost, greenhouse[selectedPlantTexCoords[i]].level);
 			}
 			player.setFinalStats();
 			playerHealth = player.health;
@@ -770,7 +786,7 @@ void Game::prepGreenhouse(){
 		if(i == 0)
 			greenhouseTexCoords.push_back(0);
 		else
-			greenhouseTexCoords.push_back(numGreenHouse);
+			greenhouseTexCoords.push_back(0);
 	}
 	for(int i{}; i < 6; ++i){
 		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
@@ -781,16 +797,15 @@ void Game::prepGreenhouse(){
 	std::ifstream fstream("bin/directories/greenhouseUnlockFile.txt");
 	if(fstream){
 		std::string plantName, boostName;
-		std::vector<int> boosts{};
+		std::vector<float> boosts{};
 		float level, experience;
 		while(std::getline(fstream, line)){
 			unlockedPlants.push_back(line.compare("1") == 0);
 			std::getline(fstream, plantName);
 			std::getline(fstream, boostName);
-			//all stats boost are between 0 and 9 inclusive
-			std::getline(fstream, line);
-			for(int i{}; i < line.length(); ++i){
-				boosts.push_back((line[i] - '0'));
+			for(int i{}; i < 7; ++i){
+				std::getline(fstream, line);
+				boosts.push_back(std::stof(line));
 			}
 			std::getline(fstream, line);
 			level = std::stof(line);
