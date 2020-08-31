@@ -93,10 +93,10 @@ Game::~Game(){
 		file << greenhouse[i].plantName << '\n';
 		file << greenhouse[i].boostName << '\n';
 		for(int j{}; j < greenhouse[0].boost.size(); ++j){
-			file << greenhouse[i].boost[j] << '\n';
+			file << std::to_string(greenhouse[i].boost[j]) << '\n';
 		}
-		file << greenhouse[i].level << '\n';
-		file << greenhouse[i].experience;
+		file << std::to_string(greenhouse[i].level) << '\n';
+		file << std::to_string(greenhouse[i].experience);
 		if(i != greenhouse.size() - 1)
 			file << '\n';
 	}
@@ -163,7 +163,7 @@ void Game::ProcessInput(float dt){
 					if(player.interact->type.compare("plant") == 0){
 						processPlantInteraction();
 					}
-					enemyMultiplier += 0.2;
+					enemyMultiplier += 0.2 + player.level/80.0;
 					points += 5;
 					player.experience += 2;
 					plantsCollected++;
@@ -472,7 +472,7 @@ void Game::Update(float dt){
 	if(m_state == GAME_ACTIVE_CLASSIC){
 		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
 			points += dt/2;
-			enemyMultiplier += 0.001 * dt;
+			enemyMultiplier += 0.004 * dt;
 			player.experience += dt/20;
 		}
 		//moving the projectiles
@@ -719,7 +719,7 @@ void Game::gameEndProtocol(){
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
 
-	enemyMultiplier = 1.0;
+	enemyMultiplier = player.level/10.0;
 
 	chunksFallenThrough = 0;
 }
@@ -1593,8 +1593,9 @@ void Game::player_projectile_collision_detection(){
 			}else
 				if(game_classic_two_object_collisions((GameObject *)((board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
-					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing)
+					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing){
 						board_enemies[j]->health -= std::max(player_projectiles[i].damage + player.attack - board_enemies[j]->defense, 1);
+					}
 					//add effects
 					board_enemies[j]->addEffects(player_projectiles[i]);
 					board_enemies[j]->hitData = 0.2;
@@ -1794,7 +1795,7 @@ void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i]->health <= 0){
 			points += 2;
-			enemyMultiplier += 0.1;
+			enemyMultiplier += 0.1 + player.level/100.0;
 			player.experience += 5;
 			if(board_enemies[i]->name.compare("Melee") == 0)
 				numEnemyKilled[0]++;

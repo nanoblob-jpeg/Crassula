@@ -6,9 +6,9 @@
 class Melee : public Enemy{
 public:
 	Melee(){
-		health = 5;
+		health = 12;
 		defense = 4;
-		attack = 3;
+		attack = 5;
 		attackSpeed = 0.5;
 		speed = 0.5;
 		projectileSpeed = 180;
