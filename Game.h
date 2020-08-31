@@ -73,6 +73,10 @@ public:
 	const int numAchievements{49};
 	const int numGreenHouse{1};
 
+	//this is to make the fix enemy location function work as intended
+	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
+	const std::vector<short> generationCodes2{0, 1, 2, 1, 4, 1, 0, 1, 2};
+
 	//armory vars
 	int bowlCounter;
 	bool armoryButtonPress = false;
@@ -168,66 +172,63 @@ public:
 	float points{};
 	float enemyMultiplier{1.0};
 
-	//RENDER LOGIC VARIABLES
+	/*
+
+
+
+	RENDER LOGIC VARIABLES
+
+
+
+
+	*/
 	bool generatedChunks{false};
 
-	//block vars
-	std::vector<glm::vec2> blockOffsets{};
 	int numBlocks{};
-	
-	//plant vars
-	std::vector<glm::vec2> plantOffsets{};
-	std::vector<float> plantTexCoords{};
 	int numPlants{};
-
-	//enemy projectile vars
+	int numEffectIcon{};
+	int numPlantIcon{};
+	
+	std::vector<glm::vec2> blockOffsets{};
+	std::vector<glm::vec2> plantOffsets{};
 	std::vector<glm::vec2> enemyProjectileOffsets{};
-	std::vector<float> enemyProjectileTexCoords{};
-
-	//player projectile vars
 	std::vector<glm::vec2> playerProjectileOffsets{};
-	std::vector<float> playerProjectileTexCoords{};
-
-	//enemy vars
 	std::vector<glm::vec2> enemyOffsets{};
-	std::vector<float> enemyTexCoords{};
-	std::vector<float> hitData{};
+	std::vector<glm::vec2> textOffsets{};
+	std::vector<glm::vec2> pointOffsets{};
+	std::vector<glm::vec2> plantIconOffsets{};
+	std::vector<glm::vec2> levelIconOffsets{};
+	std::vector<glm::vec2> effectIconOffsets{};
 
-	//background render logic stuff
-	Background *backgroundTextures = nullptr;
+	glm::vec2 deathScreenCoords{}; //used for displaying points on death screen
+	glm::vec2 highlightPosition{}; //position for plant icon highlight
 	glm::vec2 backgroundLayerOneOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerTwoOffset{0.0f, 0.0f};
 	glm::vec2 backgroundLayerThreeOffset{0.0f, 0.0f};
 
-	//text render stuff
-	std::vector<glm::vec2> textOffsets{};
+	std::vector<float> plantTexCoords{};
+	std::vector<float> enemyProjectileTexCoords{};
+	std::vector<float> playerProjectileTexCoords{};
+	std::vector<float> enemyTexCoords{};
 	std::vector<float> textTexCoords{};
-	std::vector<glm::vec2> pointOffsets{};
 	std::vector<float> pointTexCoords{};
-	glm::vec2 deathScreenCoords{};
-
-	//ICON RENDER VARS
-	//effect icon vars
-	std::vector<glm::vec2> effectsIconOffsets{};
-	std::vector<float> effectsIconTexCoords{};
-	int numEffectIcon{};
-
-	//plant icon vars
-	std::vector<glm::vec2> plantIconOffsets{};
 	std::vector<float> plantIconTexCoords{};
-	int numPlantIcon{};
-
-	//highlight var
-	glm::vec2 highlightPosition{};
-
-	//level icon vars
-	std::vector<glm::vec2> levelIconOffsets{};
 	std::vector<float> levelIconTexCoords{};
-
-	//effect icon vars
-	std::vector<glm::vec2> effectIconOffsets{};
 	std::vector<float> effectIconTexCoords{};
 
+	std::vector<float> hitData{}; //used for highlighting hit enemies
+	Background *backgroundTextures = nullptr; //pointer to background textures
+
+
+	/*
+
+
+
+	FUNCTIONS
+
+
+
+	*/
 	Game(unsigned int width, unsigned int height);
 	~Game();
 	//loads all textures
@@ -245,6 +246,7 @@ public:
 	void prepBoard();
 	void reserveArraySpace();
 	void gameEndProtocol();
+	void gameStartProtocol();
 	void setUnlockedBowls();
 	void prepAchievementScreen();
 	void loadGameData();
@@ -257,6 +259,7 @@ public:
 	void checkAchievements();
 	void setAchievementsToTrue(int start, int stop);
 	void setAchievementTextureValues();
+	void setGreenhouseTextureValues();
 
 	//Chunk Generation
 	void prepBoardForChunkCreation(const short direction);

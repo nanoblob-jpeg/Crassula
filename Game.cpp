@@ -24,6 +24,11 @@ Game::Game(unsigned int width, unsigned int height){
 	Height = height;
 }
 
+/**
+Destructor for the Game class
+- deallocates memory used for the different renderers
+- writes game data onto corresponding directory files
+*/
 Game::~Game(){
 	delete Renderer;
 	delete BlockRenderer;
@@ -50,6 +55,9 @@ Game::~Game(){
 
 	file.open("bin/directories/gameData.txt");
 	file << std::to_string(chunksTravelledThrough) << '\n';
+	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+		file << selectedPlantTexCoords[i] << '\n';
+	}
 	file.close();
 
 	file.open("bin/directories/achievementUnlockFile.txt");
@@ -93,7 +101,7 @@ Game::~Game(){
 		file << greenhouse[i].plantName << '\n';
 		file << greenhouse[i].boostName << '\n';
 		for(int j{}; j < greenhouse[0].boost.size(); ++j){
-			file << std::to_string(greenhouse[i].boost[j]) << '\n';
+			file << greenhouse[i].boost[j] << '\n';
 		}
 		file << std::to_string(greenhouse[i].level) << '\n';
 		file << std::to_string(greenhouse[i].experience);
@@ -102,6 +110,10 @@ Game::~Game(){
 	}
 }
 
+/**
+loads the game object
+- parses all of the different game files to load object, players, enemies, rooms
+*/
 void Game::Init(){
 	initShaders();
 	initRenderers();
@@ -130,13 +142,16 @@ void Game::Init(){
 	setBackground(player.backgroundName);
 	//create board
 	prepBoard();
-	//reserveArraySpace();
 	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
 	prepAchievementScreen();
 	loadGameData();
 	prepGreenhouse();
 }
 
+/**
+handles all of the user input detection
+@param: time elapsed since last frame
+*/
 void Game::ProcessInput(float dt){
 	//this b key section is just for debugging and displaying when I need to
 	if(Keys[GLFW_KEY_B]){
@@ -225,47 +240,7 @@ void Game::ProcessInput(float dt){
 		}	
 	}else if(m_state == HOME_MAIN){
 		if(Keys[GLFW_KEY_I]){
-			m_state = GAME_ACTIVE_CLASSIC;
-			initializeGame();
-			player.setStatBoosts();
-			for(int i{}; i < selectedPlantTexCoords.size(); ++i){
-				if(selectedPlantTexCoords[i] != numGreenHouse)
-					player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]].boost, greenhouse[selectedPlantTexCoords[i]].level);
-			}
-			player.setFinalStats();
-			playerHealth = player.health;
-			maxHealth = player.health;
-			cam.Position[0] = 0;
-			cam.Position[1] = 0;
-			points = 0;
-			recoveryTimer = 0;
-			numEnemyKilled.clear();
-			for(int i{}; i < numOfEnemies; ++i){
-				numEnemyKilled.push_back(0);
-			}
-			gameChunksTravelledTrough = 0;
-			plantsCollected = 0;
-			if(!completedAchievements[38]){
-				if(player.bowl->name.compare("basic") == 0)
-					playedBowls[0] = true;
-				else if(player.bowl->name.compare("box") == 0)
-					playedBowls[1] = true;
-				else if(player.bowl->name.compare("iv_bag") == 0)
-					playedBowls[2] = true;
-				else if(player.bowl->name.compare("lightbulb") == 0)
-					playedBowls[3] = true;
-				else if(player.bowl->name.compare("thanos") == 0)
-					playedBowls[4] = true;
-				else 
-					std::cout << "could not find bowl for game data\n";
-			}
-
-			timeAlive = 0;
-			noHealthLost = true;
-			time_150_passed = false;
-			timeStill = 0;
-			previousPosition = glm::vec2(0.0);
-			time_60_still_passed = false;
+			gameStartProtocol();
 		}
 		if(Keys[GLFW_KEY_U]){
 			m_state = HOME_ARMORY;
@@ -389,6 +364,10 @@ void Game::ProcessInput(float dt){
 	}
 };
 
+/**
+handles all of the calls for game logic and flow of the game
+@param: time elapsed since last frame
+*/
 void Game::Update(float dt){
 	timeAlive += dt;
 	if(glm::vec2(cam.Position.x, cam.Position.y) == previousPosition){
@@ -554,6 +533,9 @@ void Game::Update(float dt){
 	//test for the other states else if()
 };
 
+/**
+calls correct rendering functions
+*/
 void Game::Render(){
 	/*
 	camera is already at center of the player for the collision detection part
@@ -609,9 +591,9 @@ GAME INITIALIZATION/DESTRUCTION
 
 
 */
-//this is to make the fix enemy location function work as intended
-const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
-const std::vector<short> generationCodes2{0, 1, 2, 1, 4, 1, 0, 1, 2};
+/**
+sets up the game to its initial state
+*/
 void Game::initializeGame(){
 	generatedChunks = true;
 	std::uniform_int_distribution chunkSelector{1,static_cast<int>(numOfChunks)};
@@ -642,7 +624,9 @@ void Game::initializeGame(){
 		board[k/3][k%3] = temp;
 	}
 }
-
+/**
+loads enemies from memory and adds them to the resourcemanager enemy map
+*/
 void Game::loadEnemies(){
 	//create the basic enemy here except don't have position set
 	//then save it to the map as a broad class enemy not
@@ -650,7 +634,9 @@ void Game::loadEnemies(){
 	//then they select it and set the position
 	ResourceManager::setDepth("Melee", 0);
 }
-
+/**
+clears the dequeues and vectors used to store the game environment
+*/
 void Game::clearAndResetGameBoard(){
 	for(int i{}; i < 2; ++i){
 		board.erase(board.begin());
@@ -664,11 +650,16 @@ void Game::clearAndResetGameBoard(){
 		board.push_back(temp);
 	}
 }
-
+/**
+sets the background pointer to the correct background
+@param: string background name
+*/
 void Game::setBackground(std::string &name){
 	backgroundTextures = &ResourceManager::GetBackground(name);
 }
-
+/**
+fills board storage device with empty arrays to make it easier to create the board
+*/
 void Game::prepBoard(){
 	for(int i{}; i < 3; ++i){
 		std::deque<std::vector<Chunk>> temp;
@@ -679,19 +670,11 @@ void Game::prepBoard(){
 		board.push_back(temp);
 	}
 }
-
-void Game::reserveArraySpace(){
-	blockOffsets.reserve(30000);
-	plantOffsets.reserve(30000);
-	plantTexCoords.reserve(30000);
-	enemyProjectileOffsets.reserve(100);
-	enemyProjectileTexCoords.reserve(600);
-	playerProjectileOffsets.reserve(100);
-	playerProjectileTexCoords.reserve(600);
-	enemyOffsets.reserve(30000);
-	enemyTexCoords.reserve(30000);
-}
-
+/**
+runs after player dies
+checks achievements and bowl unlocks
+resets all game instance related variables
+*/
 void Game::gameEndProtocol(){
 	clearAndResetGameBoard();
 	addExpToGreenhousePlants();
@@ -701,6 +684,7 @@ void Game::gameEndProtocol(){
 	player.calculateLevel();
 	player.calculateStats();
 	player.interact = nullptr;
+	player.statBoosts.clear();
 	player.plants.clear();
 	player.effects.clear();
 	player.velocity[0] = 0;
@@ -722,6 +706,53 @@ void Game::gameEndProtocol(){
 	enemyMultiplier = player.level/10.0;
 
 	chunksFallenThrough = 0;
+}
+/**
+starts the game
+sets needed variables for game instance
+*/
+void Game::gameStartProtocol(){
+	m_state = GAME_ACTIVE_CLASSIC;
+	initializeGame();
+	player.setStatBoosts();
+	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+		if(selectedPlantTexCoords[i] != numGreenHouse)
+			player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]].boost, greenhouse[selectedPlantTexCoords[i]].level);
+	}
+	player.setFinalStats();
+	playerHealth = player.health;
+	maxHealth = player.health;
+	cam.Position[0] = 0;
+	cam.Position[1] = 0;
+	points = 0;
+	recoveryTimer = 0;
+	numEnemyKilled.clear();
+	for(int i{}; i < numOfEnemies; ++i){
+		numEnemyKilled.push_back(0);
+	}
+	gameChunksTravelledTrough = 0;
+	plantsCollected = 0;
+	if(!completedAchievements[38]){
+		if(player.bowl->name.compare("basic") == 0)
+			playedBowls[0] = true;
+		else if(player.bowl->name.compare("box") == 0)
+			playedBowls[1] = true;
+		else if(player.bowl->name.compare("iv_bag") == 0)
+			playedBowls[2] = true;
+		else if(player.bowl->name.compare("lightbulb") == 0)
+			playedBowls[3] = true;
+		else if(player.bowl->name.compare("thanos") == 0)
+			playedBowls[4] = true;
+		else 
+			std::cout << "could not find bowl for game data\n";
+	}
+
+	timeAlive = 0;
+	noHealthLost = true;
+	time_150_passed = false;
+	timeStill = 0;
+	previousPosition = glm::vec2(0.0);
+	time_60_still_passed = false;
 }
 
 void Game::setUnlockedBowls(){
@@ -769,8 +800,10 @@ void Game::loadGameData(){
 		chunksTravelledThrough = std::stof(line);
 		
 		for(int i{}; i < 6; ++i){
-			selectedPlantTexCoords.push_back(numGreenHouse);
+			std::getline(fstream, line);
+			selectedPlantTexCoords.push_back(std::stof(line));
 		}
+		//tempcode
 		for(int i{}; i < 5; ++i){
 			playedBowls.push_back(false);
 		}
@@ -780,18 +813,6 @@ void Game::loadGameData(){
 }
 
 void Game::prepGreenhouse(){
-	for(int i{}; i < 50; ++i){
-		greenhouseOffsets.push_back(glm::vec2((i%10) * 60.0 / 55.0, -((i/10) * 60.0 / 55.0)));
-		//temp code
-		if(i == 0)
-			greenhouseTexCoords.push_back(0);
-		else
-			greenhouseTexCoords.push_back(0);
-	}
-	for(int i{}; i < 6; ++i){
-		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
-	}
-
 	greenhouseLevelOffset.push_back(glm::vec2(0.0f,0.0f));
 	std::string line;
 	std::ifstream fstream("bin/directories/greenhouseUnlockFile.txt");
@@ -812,9 +833,21 @@ void Game::prepGreenhouse(){
 			std::getline(fstream, line);
 			experience = std::stof(line);
 			greenhouse.push_back(greenHousePlant(boosts, boostName, plantName, level, experience));
+			boosts.clear();
 		}
 	}else{
 		std::cout << "unlock greenhouse file not found\n";
+	}
+
+	for(int i{}; i < 50; ++i){
+		greenhouseOffsets.push_back(glm::vec2((i%10) * 60.0 / 55.0, -((i/10) * 60.0 / 55.0)));
+		if(unlockedPlants[i])
+			greenhouseTexCoords.push_back(ResourceManager::GetDepth(greenhouse[i].boostName));
+		else
+			greenhouseTexCoords.push_back();
+	}
+	for(int i{}; i < 6; ++i){
+		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
 	}
 }
 
@@ -842,6 +875,7 @@ void Game::addExpToGreenhousePlants(){
 		if(selectedPlantTexCoords[i] != numGreenHouse)
 			greenhouse[selectedPlantTexCoords[i]].addExperience(points);
 	}
+	setGreenhouseTextureValues();
 }
 void Game::checkBowls(){
 	if(time_150_passed && points >= 500)
@@ -997,6 +1031,16 @@ void Game::setAchievementTextureValues(){
 		}else{
 			achievementTexCoords.push_back(numAchievements);
 		}
+	}
+}
+
+void Game::setGreenhouseTextureValues(){
+	greenhouseTexCoords.clear();
+	for(int i{}; i < unlockedPlants.size(); ++i){
+		if(unlockedPlants[i])
+			greenhouseTexCoords.push_back(i);
+		else
+			greenhouseTexCoords.push_back(numPlants);
 	}
 }
 /*
@@ -1999,12 +2043,12 @@ void Game::renderGreenhouse(){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&selectedPlantOffset[0], 6);
 	ProjectileRenderer->setTextureCoords(&selectedPlantTexCoords[0], 6);
-	ProjectileRenderer->DrawSprites(6, ResourceManager::GetTexture("greenhouse"), 55.0, glm::vec2(137.5, 165));
+	ProjectileRenderer->DrawSprites(6, ResourceManager::GetTexture("plants"), 55.0, glm::vec2(137.5, 165));
 
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&greenhouseOffsets[0], 50);
 	ProjectileRenderer->setTextureCoords(&greenhouseTexCoords[0], 50);
-	ProjectileRenderer->DrawSprites(50, ResourceManager::GetTexture("greenhouse"), 55.0, glm::vec2(-297.5, -20));
+	ProjectileRenderer->DrawSprites(50, ResourceManager::GetTexture("plants"), 55.0, glm::vec2(-297.5, -20));
 
 	textRenderer->setViewMatrix("view", view);
 	textRenderer->setOffset(&greenhouseLevelOffset[0], 1);
@@ -2316,8 +2360,6 @@ void Game::calculateEnemyRenderValues(){
 }
 
 void Game::calculateIconRenderValues(){
-	effectsIconOffsets.clear();
-	effectsIconTexCoords.clear();
 	plantIconOffsets.clear();
 	plantIconTexCoords.clear();
 	effectIconOffsets.clear();

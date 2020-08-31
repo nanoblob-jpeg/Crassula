@@ -2,6 +2,6 @@
 55
 2
 test
-bin/textures/greenhouse/testPlant.png
+bin/textures/greenhouse/textPlant.png
 blankGreenhouse
 bin/textures/greenhouse/blankGreenhouse.png
