@@ -13,7 +13,7 @@ To install this project, clone it then run the game by running Crassula.exe. If 
 You can recompile the program by using the following mingw commands or its equivalent in your terminal:
 ```
 gcc glad.c -c
-g++ -std=c++17 glad.o Background.cpp BackgroundRenderer.cpp Camera.cpp Chunks.cpp Game.cpp GameObject.cpp image.cpp main.cpp Plant.cpp Projectile.cpp ResourceManager.cpp Shader.cpp SpriteRenderer.cpp TexSampRenderer.cpp Texture.cpp -o Crassula.exe -lglfw3 -lirrklang -L./ -I./lib
+g++ -std=c++17 glad.o Background.cpp BackgroundRenderer.cpp Camera.cpp Chunks.cpp Game.cpp GameObject.cpp image.cpp main.cpp Plant.cpp Projectile.cpp Player.cpp ResourceManager.cpp Shader.cpp SpriteRenderer.cpp TexSampRenderer.cpp Texture.cpp -o Crassula.exe -lglfw3 -lirrklang -L./ -I./lib
 ```
 
 ## What I learned
