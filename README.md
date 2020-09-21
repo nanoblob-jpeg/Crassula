@@ -15,6 +15,7 @@ You can recompile the program by using the following mingw commands or its equiv
 gcc glad.c -c
 g++ -std=c++17 glad.o Background.cpp BackgroundRenderer.cpp Camera.cpp Chunks.cpp Game.cpp GameObject.cpp image.cpp main.cpp Plant.cpp Projectile.cpp Player.cpp ResourceManager.cpp Shader.cpp SpriteRenderer.cpp TexSampRenderer.cpp Texture.cpp -o Crassula.exe -lglfw3 -lirrklang -L./ -I./lib
 ```
-
+## What I'm Currently Doing
+I'm working on better encapsulating my classes because as of now, the "classes" are more like structs with functions inside of them.
 ## What I learned
 This was my first time working with OpenGL and it makes me appreciate all of the work that game engines do behind the scenes. Besides that, the hardest part of this game was honestly creating all of the stuff in the game. Just trying to think of 50 plants took a lot of time and after a bit, none of the plants were special or distinct from each other. Furthermore, there were so many features I wanted to add at the start of development that just did not make it into game. This was due to the fact that the architecture that I had made for the game was not able to accomadate those features. Through this, I've learned that planning is really important, especially when taking on a large-ish project or one where multiple different parts have to interact with each other.
