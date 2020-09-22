@@ -1,6 +1,8 @@
 # Crassula
 This 2D platformer takes you through an endless world while you collect plants to help you blast your way through enemies. With 49 plants and 5 bowls, there are many different ways to play
 
+# CURRENTLY UNFINISHED; I AM JUST WAITING FOR MY AMAZING ARTIST TO FINISH UP DRAWING UP SPRITES :)
+
 ## Prerequisites/Installing
 All of the prerequisites are included with this project so all you have to do is clone this project.
 They include the libraries:
