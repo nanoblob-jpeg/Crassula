@@ -8,20 +8,16 @@
 #ifndef PLAYER
 #define PLAYER
 class Player : public GameObject{
-	//insert all of the stuff that the GameObject does not keep track of
-public:
+private:
 	//input logic variables
 	bool falling{};
 	bool switchingPlants{};
 
 	//general information
+	std::string backgroundName = "";
+	std::string name = "";
 	int level = 0;
 	float experience= 0;
-	std::string name = "";
-	std::string backgroundName = "";
-	//false for left, true for right
-	bool facing;
-	float isHit{};
 
 	//stats
 	int health = 0;
@@ -41,6 +37,10 @@ public:
 	int currentPlant{-1}; // -1 represents the basic attack
 	int numCurrentLevelFourPlants = 0;
 	std::vector<Plant> plants = {};
+public:
+	//false for left, true for right
+	bool facing;
+	float isHit{};
 
 	//if the player is currently on an interactalbe GameObject, this will store it
 	//the interact key is currently "i"
@@ -74,6 +74,48 @@ public:
 	void setStatBoosts();
 	void setStatBoosts(std::vector<float> &p, float level);
 	void setFinalStats();
+
+	std::string& getBackgroundName();
+	void startAnimationCounter();
+	void addFrameTimer(float dt);
+	bool inAnimation();
+	void recoveryProc(int maxHealth);
+	void addExperience(float a);
+	void incrementAnimation(float dt);
+	void addToNumCurrentLevelFourPlants(int i);
+	void addPlant(std::string name, bool a);
+	void clearPlants();
+
+	void setBowl(Bowl *b);
+	void setFalling(bool b);
+	void setSwitchingPlants(bool b);
+	void setCurrentPlant(int a);
+	void addNumPlants(int i);
+
+	std::string getBowlName();
+	std::string getName();
+	float getSpeed();
+	int getAttack();
+	int getHealth();
+	float getLuck();
+	int getLevel();
+	float getExperience();
+	float getSizeX();
+	float getSizeY();
+	glm::vec2 getSize();
+	int getMaxNumPlants();
+	Texture& getTexture();
+	bool getFalling();
+	bool getSwitchingPlants();
+	int getNumPlants();
+	int getNumCurrentLevelFourPlants();
+	int getMaxNumOfLevelFour();
+	Plant* getPlant(int i);
+	Plant* getCurrentPlant();
+	int getCurrentPlantNum();
+	std::string getProjectileName();
+	std::vector<Plant>::iterator getPlantArrayBegin();
+	std::vector<Plant>::iterator getPlantArrayEnd();
 private:
 	int getDefenseBoost();
 	int getHealthBoost();

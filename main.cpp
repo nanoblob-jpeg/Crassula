@@ -88,12 +88,9 @@ int main()
     	}else if(timeTracker>=1){
     		std::cout << frameCounter << '\n';
             std::cout << glGetError() << std::endl;
-            std::cout << Crassula.player.health << "\n";
-            std::cout << Crassula.points << '\n';
-            std::cout << Crassula.enemyMultiplier << "\n";
+            Crassula.debugOutput();
             timeTracker = 0;
             frameCounter = 0;
-            std::cout << Crassula.chunksFallenThrough << "\n\n\n";
     	}
     	glfwPollEvents();
 

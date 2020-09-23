@@ -46,5 +46,33 @@ public:
 			frameCounter = 0;
 		}
 	}
+
+	float getSizeX(){
+		return size[0];
+	}
+
+	float getSizeY(){
+		return size[1];
+	}
+
+	int getNumPlants(){
+		return numOfPlants;
+	}
+
+	glm::vec2 getSize(){
+		return size;
+	}
+
+	bool getInAnimation(){
+		return inAnimation;
+	}
+
+	Texture& getTexture(){
+		return attackAnimation[frameCounter];
+	}
+
+	int getNumOfLevelFour(){
+		return numOfLevelFour;
+	}
 };
 #endif

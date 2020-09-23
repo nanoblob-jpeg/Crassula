@@ -23,12 +23,10 @@ void Player::loadPlayer(const char *file){
 	std::string line;
 	std::ifstream fstream(file);
 	if(fstream){
-		std::getline(fstream, line);
-		name = line;
+		std::getline(fstream, name);
 		std::getline(fstream, line);
 		level = std::stoi(line);
-		std::getline(fstream, line);
-		backgroundName = line;
+		std::getline(fstream, backgroundName);
 		std::getline(fstream, line);
 		experience = std::stof(line);
 		calculateStats();
@@ -157,4 +155,169 @@ void Player::setStatBoosts(std::vector<float> &p, float level){
 	statBoosts[4] += p[4] * level;
 	statBoosts[5] += p[5] * level;
 	statBoosts[6] += p[6] * level;
+}
+
+std::string& Player::getBackgroundName(){
+	return backgroundName;
+}
+
+void Player::startAnimationCounter(){
+	bowl->startAnimationCounter();
+}
+
+void Player::addFrameTimer(float dt){
+	bowl->addFrameTimer(dt);
+}
+
+bool Player::inAnimation(){
+	return bowl->inAnimation;
+}
+
+std::string Player::getBowlName(){
+	return bowl->name;
+}
+
+void Player::setBowl(Bowl *b){
+	bowl = b;
+}
+
+float Player::getSpeed(){
+	return speed;
+}
+
+int Player::getAttack(){
+	return attack;
+}
+
+void Player::recoveryProc(int maxHealth){
+	health += recovery;
+	health = std::min(health, maxHealth);
+}
+
+int Player::getHealth(){
+	return health;
+}
+
+float Player::getLuck(){
+	return luck;
+}
+
+int Player::getLevel(){
+	return level;
+}
+
+void Player::addExperience(float a){
+	experience += a;
+}
+
+float Player::getExperience(){
+	return experience;
+}
+
+std::string Player::getName(){
+	return name;
+}
+
+float Player::getSizeX(){
+	return bowl->getSizeX();
+}
+
+float Player::getSizeY(){
+	return bowl->getSizeY();
+}
+
+int Player::getMaxNumPlants(){
+	return bowl->getNumPlants();
+}
+
+glm::vec2 Player::getSize(){
+	return bowl->getSize();
+}
+
+void Player::incrementAnimation(float dt){
+	if(bowl->getInAnimation()){
+		bowl->addFrameTimer(dt);
+	}
+}
+
+Texture& Player::getTexture(){
+	return bowl->getTexture();
+}
+
+bool Player::getFalling(){
+	return falling;
+}
+
+void Player::setFalling(bool b){
+	falling = b;
+}
+
+bool Player::getSwitchingPlants(){
+	return switchingPlants;
+}
+
+void Player::setSwitchingPlants(bool b){
+	switchingPlants = b;
+}
+
+int Player::getNumPlants(){
+	return numPlants;
+}
+
+int Player::getNumCurrentLevelFourPlants(){
+	return numCurrentLevelFourPlants;
+}
+
+int Player::getMaxNumOfLevelFour(){
+	return bowl->getNumOfLevelFour();
+}
+
+void Player::addToNumCurrentLevelFourPlants(int i){
+	numCurrentLevelFourPlants += i;
+}
+
+Plant* Player::getPlant(int i){
+	return &plants[i];
+}
+
+void Player::addPlant(std::string name, bool code){
+	//code is true when plant is to be pushed back
+	//false when plant replaces current plant
+	if(code){
+		plants.push_back(ResourceManager::GetPlant(name));
+	}else{
+		plants[currentPlant] = ResourceManager::GetPlant(name);
+	}
+}
+
+void Player::setCurrentPlant(int a){
+	currentPlant = a;
+}
+
+void Player::addNumPlants(int i){
+	numPlants += i;
+}
+
+Plant* Player::getCurrentPlant(){
+	return getPlant(currentPlant);
+}
+
+std::string Player::getProjectileName(){
+	return plants[currentPlant].getProjectileName();
+}
+
+int Player::getCurrentPlantNum(){
+	return currentNum;
+}
+
+void Player::clearPlants(){
+	plants.clear();
+}
+
+std::vector<Plant>::iterator Player::getPlantArrayBegin(){
+	return plants.begin();
+}
+
+std::vector<Plant>::iterator Player::getPlantArrayEnd(){
+	return plants.end();
 }

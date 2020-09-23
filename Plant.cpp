@@ -18,37 +18,45 @@ int Plant::interact(Game *game){
 			game->unlockedPlants[std::distance(game->greenhouse.begin(), it)] = true;
 		}
 	//testing if the player already has a plant of the same type
-	for(int i{}; i < game->player.numPlants; ++i){
-		if(game->player.plants[i].name.compare(this->name) == 0){
-			if(game->player.plants[i].level == 4)
+	for(int i{}; i < game->player.getNumPlants(); ++i){
+		Plant* temp = game->player.getPlant(i);
+		if(temp->name.compare(this->name) == 0){
+			if(temp->level == 4)
 				return -1;
-			if(!(game->player.plants[i].level == 3 && game->player.numCurrentLevelFourPlants == game->player.bowl->numOfLevelFour)){
-				if(game->player.plants[i].level == 3){
-					game->player.plants[i].level += 1;
-					game->player.numCurrentLevelFourPlants += 1;
+			if(!(temp->level == 3 && game->player.getNumCurrentLevelFourPlants() == game->player.getMaxNumOfLevelFour())){
+				if(temp->level == 3){
+					temp->level += 1;
+					game->player.addToNumCurrentLevelFourPlants(1);
 					return 0;
 				}else{
-					game->player.plants[i].level += 1;
+					temp->level += 1;
 					return 0;
 				}
 			}
 		}
 	}
 	if(game->player.numPlants == 0){
-		game->player.plants.push_back(ResourceManager::GetPlant(this->name));
-		game->player.plants[0].level = 1;
-		game->player.currentPlant = 0;
-		game->player.numPlants = 1;
+		game->player.addPlant(this->name, true);
+		Plant* temp = game->player.getPlant(0);
+		temp->level = 1;
+		game->player.setCurrentPlant(0);
+		game->player.addNumPlants(1);
 		return 0;
 	}
-	if(game->player.numPlants == game->player.bowl->numOfPlants){
-		game->player.plants[game->player.currentPlant] = ResourceManager::GetPlant(this->name);
-		game->player.plants[game->player.currentPlant].level = 1;
+	if(game->player.getNumPlants() == game->player.getMaxNumPlants()){
+		game->player.addPlant(this->name, false);
+		Plant* temp = game->player.getCurrentPlant();
+		temp->level = 1;
 		return 0;
 	}else{
-		game->player.plants.push_back(ResourceManager::GetPlant(this->name));
-		game->player.plants[game->player.numPlants].level = 1;
-		game->player.numPlants += 1;
+		game->player.addPlant(this->name, true);
+		Plant* temp = game->player.getPlant(game->player.getNumPlants());
+		temp->level = 1;
+		game->player.addNumPlants(1);
 		return 0;
 	}
+}
+
+std::string Plant::getProjectileName(){
+	return projectileName[level - 1];
 }

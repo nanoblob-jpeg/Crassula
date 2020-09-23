@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GameObject.h"
+#include <irrklang/irrKlang.h>
 
 SpriteRenderer *Renderer;
 SpriteRenderer *BlockRenderer;
@@ -18,6 +19,12 @@ TexSampRenderer *EnemyRenderer;
 TexSampRenderer *IconRenderer;
 TexSampRenderer *textRenderer;
 
+irrklang::ISoundEngine *SoundEngine = irrklang::createIrrKlangDevice();
+irrklang::ISoundSource *soundtrack = SoundEngine->addSoundSourceFromFile("bin/audio/crassula.wav");
+irrklang::ISoundSource *cnote = SoundEngine->addSoundSourceFromFile("bin/audio/cnote.wav");
+irrklang::ISoundSource *enote = SoundEngine->addSoundSourceFromFile("bin/audio/enote.wav");
+irrklang::ISoundSource *gnote = SoundEngine->addSoundSourceFromFile("bin/audio/gnote.wav");
+irrklang::ISoundSource *bnote = SoundEngine->addSoundSourceFromFile("bin/audio/bnote.wav");
 Game::Game(unsigned int width, unsigned int height){
 	m_state = START_SCREEN;
 	Width = width;
@@ -30,84 +37,12 @@ Destructor for the Game class
 - writes game data onto corresponding directory files
 */
 Game::~Game(){
-	delete Renderer;
-	delete BlockRenderer;
-	delete UIRenderer;
-	delete staticImageRenderer;
-	delete textRenderer;
-	delete BackGround_l1;
-	delete BackGround_l2;
-	delete BackGround_l3;
-	delete PlantRenderer;
-	delete ProjectileRenderer;
-	delete EnemyRenderer;
-	delete EnemyProjectileRenderer;
-	delete IconRenderer;
-
-	std::ofstream file;
-	file.open("bin/directories/player.txt");
-	file << player.name << '\n';
-	file << std::to_string(player.level) << '\n';
-	file << backgroundTextures->name << '\n';
-	file << std::to_string(player.experience) << '\n';
-	file << player.bowl->name;
-	file.close();
-
-	file.open("bin/directories/gameData.txt");
-	file << std::to_string(chunksTravelledThrough) << '\n';
-	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
-		file << selectedPlantTexCoords[i] << '\n';
-	}
-	file.close();
-
-	file.open("bin/directories/achievementUnlockFile.txt");
-	for(int i{}; i < completedAchievements.size(); ++i){
-		if(i != completedAchievements.size() - 1){
-			if(completedAchievements[i])
-				file << "1\n" << achievementNames[i] << '\n';
-			else
-				file << "0\n" << achievementNames[i] << '\n';
-		}else{
-			if(completedAchievements[i])
-				file << "1\n" << achievementNames[i];
-			else
-				file << "0\n" << achievementNames[i];
-		}
-	}
-	file.close();
-
-	file.open("bin/directories/bowlUnlockFile.txt");
-	for(int i{}; i < bowls.size(); ++i){
-		if(i != bowls.size() - 1){
-			if(bowls[i])
-				file << "1\n" << bowlNames[i] << '\n';
-			else
-				file << "0\n" << bowlNames[i] << '\n';
-		}else{
-			if(bowls[i])
-				file << "1\n" << bowlNames[i];
-			else
-				file << "0\n" << bowlNames[i];
-		}
-	}
-	file.close();
-
-	file.open("bin/directories/greenhouseUnlockFile.txt");
-	for(int i{}; i < greenhouse.size(); ++i){
-		if(unlockedPlants[i])
-			file << "1\n";
-		else
-			file << "0\n";
-		file << greenhouse[i].plantName << '\n';
-		file << greenhouse[i].boostName << '\n';
-		for(int j{}; j < greenhouse[0].boost.size(); ++j){
-			file << greenhouse[i].boost[j] << '\n';
-		}
-		file << std::to_string(greenhouse[i].level) << '\n';
-		file << std::to_string(greenhouse[i].experience);
-		if(i != greenhouse.size() - 1)
-			file << '\n';
-	}
+	deleteRenderers();
+	serPlayerData();
+	serGameData();
+	serAchievementData();
+	serBowlData();
+	serGreenHouseData();	
 }
 
 /**
@@ -115,6 +50,13 @@ loads the game object
 - parses all of the different game files to load object, players, enemies, rooms
 */
 void Game::Init(){
+	soundtrack->setDefaultVolume(0.5f);
+	cnote->setDefaultVolume(0.6f);
+	enote->setDefaultVolume(0.6f);
+	gnote->setDefaultVolume(0.6f);
+	bnote->setDefaultVolume(0.6f);
+	SoundEngine->play2D(soundtrack);
+	
 	initShaders();
 	initRenderers();
 	setUnlockedBowls();
@@ -139,10 +81,10 @@ void Game::Init(){
 	ResourceManager::LoadProjectiles("bin/directories/projectileDirectory.txt");
 	//load enemies
 	loadEnemies();
-	setBackground(player.backgroundName);
+	setBackground(player.getBackgroundName());
 	//create board
 	prepBoard();
-	bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
+	bowlCounter = ResourceManager::GetBowl(player.getBowlName()).second;
 	prepAchievementScreen();
 	loadGameData();
 	prepGreenhouse();
@@ -165,11 +107,26 @@ void Game::ProcessInput(float dt){
 		if(m_state == GAME_ACTIVE_CLASSIC){
 			if(Keys[GLFW_KEY_SPACE]){
 				if(player.canAttack(dt)){
+					std::uniform_int_distribution random{1, 4};
+					short num = random(mersenne);
+					switch(num){
+						case 1:
+							SoundEngine->play2D(cnote);
+							break;
+						case 2:
+							SoundEngine->play2D(enote);
+							break;
+						case 3:
+							SoundEngine->play2D(gnote);
+							break;
+						default:
+							SoundEngine->play2D(bnote);
+					}
 					spawnPlayerProjectile();
-					player.bowl->startAnimationCounter();
-					player.bowl->addFrameTimer(dt);
-				}else if(player.bowl->inAnimation){
-					player.bowl->addFrameTimer(dt);
+					player.startAnimationCounter();
+					player.addFrameTimer(dt);
+				}else if(player.inAnimation()){
+					player.addFrameTimer(dt);
 				}
 			}
 			if(Keys[GLFW_KEY_I]){
@@ -178,26 +135,26 @@ void Game::ProcessInput(float dt){
 					if(player.interact->type.compare("plant") == 0){
 						processPlantInteraction();
 					}
-					enemyMultiplier += 0.2 + player.level/80.0;
+					enemyMultiplier += 0.2 + player.getLevel()/80.0;
 					points += 5;
-					player.experience += 2;
+					player.addExperience(2);
 					plantsCollected++;
 				}
 			}
 			if(Keys[GLFW_KEY_U]){
-				if(!player.switchingPlants){
+				if(!player.getSwitchingPlants()){
 					player.switchPlant(false);
-					player.switchingPlants = true;
+					player.setSwitchingPlants(true);
 				}
 			}
 			if(Keys[GLFW_KEY_O]){
-				if(!player.switchingPlants){
+				if(!player.getSwitchingPlants()){
 					player.switchPlant(true);
-					player.switchingPlants = true;
+					player.setSwitchingPlants(true);
 				}
 			}
-			if(player.switchingPlants && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
-				player.switchingPlants = false;
+			if(player.getSwitchingPlants() && !Keys[GLFW_KEY_U] && !Keys[GLFW_KEY_O]){
+				player.setSwitchingPlants(false);
 			}
 		}
 	}else if(m_state == START_SCREEN){
@@ -230,13 +187,13 @@ void Game::ProcessInput(float dt){
 				while(bowlCounter){
 					++it;
 				}
-				player.bowl = &(*it).second.first;
+				player.setBowl(&(*it).second.first);
 				bowlCounter = (*it).second.second;
 			}
 		}
 		if(Keys[GLFW_KEY_Q]){
 			m_state = HOME_MAIN;
-			bowlCounter = ResourceManager::GetBowl(player.bowl->name).second;
+			bowlCounter = ResourceManager::GetBowl(player.getBowlName()).second;
 		}	
 	}else if(m_state == HOME_MAIN){
 		if(Keys[GLFW_KEY_I]){
@@ -381,9 +338,7 @@ void Game::Update(float dt){
 	//move the player
 	cam.ProcessKeyboard(player.velocity, dt);
 	player.interact = nullptr;
-	if(player.bowl->inAnimation){
-		player.bowl->addFrameTimer(dt);
-	}
+	player.incrementAnimation(dt);
 	
 	//add to achievement data
 	if(!outOfFirstChunk){
@@ -452,15 +407,14 @@ void Game::Update(float dt){
 		if(abs(player.velocity.x) >= 0.01 || abs(player.velocity.y) >= 0.01){
 			points += dt/2;
 			enemyMultiplier += 0.004 * dt;
-			player.experience += dt/20;
+			player.addExperience(dt/20);
 		}
 		//moving the projectiles
 		moveAllProjectiles(dt);
 
 		if(points >= recoveryTimer + 70){
-			player.health += player.recovery;
-			player.health = std::min(player.health, maxHealth);
-			playerHealth = player.health;
+			player.recoveryProc(maxHealth);
+			playerHealth = player.getHealth();
 			recoveryTimer = points;
 		}
 
@@ -508,14 +462,16 @@ void Game::Update(float dt){
 		enemy_projectile_collision_detection();
 		//looping to see if any enemies have died
 		clearDeadEnemies();
+		auto it = player.getPlantArrayBegin();
+		auto it2 = player.getPlantArrayEnd();
 		if(!completedAchievements[42])
-			if(player.bowl->name.compare("crown") == 0 && std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("dragonFruit") == 0 && p.level == 4;}) != player.plants.end())
+			if(player.getBowlName().compare("crown") == 0 && std::find_if(it, it2, [](Plant p){return p.name.compare("dragonFruit") == 0 && p.level == 4;}) != it2)
 				knightsStory = true;
 		if(!completedAchievements[43])
-			if(std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("kale") == 0 && p.level == 4;}) != player.plants.end())
+			if(std::find_if(it, it2, [](Plant p){return p.name.compare("kale") == 0 && p.level == 4;}) != it2)
 				kaleIsBad = true;
 		if(!completedAchievements[44])
-			if(std::find_if(player.plants.begin(), player.plants.end(), [](Plant p){return p.name.compare("kill") == 0 && p.level == 4;}) != player.plants.end())
+			if(std::find_if(it, it2, [](Plant p){return p.name.compare("kill") == 0 && p.level == 4;}) != it2)
 				chillBois = true;
 
 
@@ -580,6 +536,12 @@ void Game::Render(){
 			break;
 	}
 }
+
+void Game::debugOutput(){
+	std::cout << player.getHealth() << "\n";
+    std::cout << points << '\n';
+    std::cout << enemyMultiplier << "\n";
+}
 /*
 
 
@@ -610,7 +572,7 @@ void Game::initializeGame(){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
-						if(rnum <= 5 + player.luck){
+						if(rnum <= 5 + player.getLuck()){
 							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
 							spawnEnemy(i, j, generationCodes2[k], generationCode[k]);
@@ -685,7 +647,7 @@ void Game::gameEndProtocol(){
 	player.calculateStats();
 	player.interact = nullptr;
 	player.statBoosts.clear();
-	player.plants.clear();
+	player.clearPlants();
 	player.effects.clear();
 	player.velocity[0] = 0;
 	player.velocity[1] = 0;
@@ -703,7 +665,7 @@ void Game::gameEndProtocol(){
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
 
-	enemyMultiplier = player.level/10.0;
+	enemyMultiplier = player.getLevel()/10.0;
 
 	chunksFallenThrough = 0;
 }
@@ -720,8 +682,8 @@ void Game::gameStartProtocol(){
 			player.setStatBoosts(greenhouse[selectedPlantTexCoords[i]].boost, greenhouse[selectedPlantTexCoords[i]].level);
 	}
 	player.setFinalStats();
-	playerHealth = player.health;
-	maxHealth = player.health;
+	playerHealth = player.getHealth();
+	maxHealth = player.getHealth();
 	cam.Position[0] = 0;
 	cam.Position[1] = 0;
 	points = 0;
@@ -733,15 +695,15 @@ void Game::gameStartProtocol(){
 	gameChunksTravelledTrough = 0;
 	plantsCollected = 0;
 	if(!completedAchievements[38]){
-		if(player.bowl->name.compare("basic") == 0)
+		if(player.getBowlName().compare("basic") == 0)
 			playedBowls[0] = true;
-		else if(player.bowl->name.compare("box") == 0)
+		else if(player.getBowlName().compare("box") == 0)
 			playedBowls[1] = true;
-		else if(player.bowl->name.compare("iv_bag") == 0)
+		else if(player.getBowlName().compare("iv_bag") == 0)
 			playedBowls[2] = true;
-		else if(player.bowl->name.compare("lightbulb") == 0)
+		else if(player.getBowlName().compare("lightbulb") == 0)
 			playedBowls[3] = true;
-		else if(player.bowl->name.compare("thanos") == 0)
+		else if(player.getBowlName().compare("thanos") == 0)
 			playedBowls[4] = true;
 		else 
 			std::cout << "could not find bowl for game data\n";
@@ -841,10 +803,11 @@ void Game::prepGreenhouse(){
 
 	for(int i{}; i < 50; ++i){
 		greenhouseOffsets.push_back(glm::vec2((i%10) * 60.0 / 55.0, -((i/10) * 60.0 / 55.0)));
-		if(unlockedPlants[i])
-			greenhouseTexCoords.push_back(ResourceManager::GetDepth(greenhouse[i].boostName));
+		//temp code
+		if(unlockedPlants[i] && false)
+			greenhouseTexCoords.push_back(ResourceManager::getDepth(greenhouse[i].plantName));
 		else
-			greenhouseTexCoords.push_back();
+			greenhouseTexCoords.push_back(numPlants);
 	}
 	for(int i{}; i < 6; ++i){
 		selectedPlantOffset.push_back(glm::vec2((i%3) * 60.0 / 55.0, -((i/3) * 60.0 / 55.0)));
@@ -861,6 +824,112 @@ void Game::greenhouseSelectorHelper(int avoid){
 		selectedPlantTexCoords[avoid] = plantSelector;
 	}
 }
+
+void Game::deleteRenderers(){
+	delete Renderer;
+	delete BlockRenderer;
+	delete UIRenderer;
+	delete staticImageRenderer;
+	delete textRenderer;
+	delete BackGround_l1;
+	delete BackGround_l2;
+	delete BackGround_l3;
+	delete PlantRenderer;
+	delete ProjectileRenderer;
+	delete EnemyRenderer;
+	delete EnemyProjectileRenderer;
+	delete IconRenderer;
+}
+/*
+SERIALIZATION
+
+
+
+
+
+
+
+*/
+void Game::serPlayerData(){
+	std::ofstream file;
+	file.open("bin/directories/player.txt");
+	file << player.getName() << '\n';
+	file << std::to_string(player.getLevel()) << '\n';
+	file << backgroundTextures->name << '\n';
+	file << std::to_string(player.getExperience()) << '\n';
+	file << player.getBowlName();
+	file.close();
+}
+
+void Game::serGameData(){
+	std::ofstream file;
+	file.open("bin/directories/gameData.txt");
+	file << std::to_string(chunksTravelledThrough) << '\n';
+	for(int i{}; i < selectedPlantTexCoords.size(); ++i){
+		file << selectedPlantTexCoords[i] << '\n';
+	}
+	file.close();
+}
+
+void Game::serAchievementData(){
+	std::ofstream file;
+	file.open("bin/directories/achievementUnlockFile.txt");
+	for(int i{}; i < completedAchievements.size(); ++i){
+		if(i != completedAchievements.size() - 1){
+			if(completedAchievements[i])
+				file << "1\n" << achievementNames[i] << '\n';
+			else
+				file << "0\n" << achievementNames[i] << '\n';
+		}else{
+			if(completedAchievements[i])
+				file << "1\n" << achievementNames[i];
+			else
+				file << "0\n" << achievementNames[i];
+		}
+	}
+	file.close();
+}
+
+void Game::serBowlData(){
+	std::ofstream file;
+	file.open("bin/directories/bowlUnlockFile.txt");
+	for(int i{}; i < bowls.size(); ++i){
+		if(i != bowls.size() - 1){
+			if(bowls[i])
+				file << "1\n" << bowlNames[i] << '\n';
+			else
+				file << "0\n" << bowlNames[i] << '\n';
+		}else{
+			if(bowls[i])
+				file << "1\n" << bowlNames[i];
+			else
+				file << "0\n" << bowlNames[i];
+		}
+	}
+	file.close();
+}
+
+void Game::serGreenHouseData(){
+	std::ofstream file;
+	file.open("bin/directories/greenhouseUnlockFile.txt");
+	for(int i{}; i < greenhouse.size(); ++i){
+		if(unlockedPlants[i])
+			file << "1\n";
+		else
+			file << "0\n";
+		file << greenhouse[i].plantName << '\n';
+		file << greenhouse[i].boostName << '\n';
+		for(int j{}; j < greenhouse[0].boost.size(); ++j){
+			file << greenhouse[i].boost[j] << '\n';
+		}
+		file << std::to_string(greenhouse[i].level) << '\n';
+		file << std::to_string(greenhouse[i].experience);
+		if(i != greenhouse.size() - 1)
+			file << '\n';
+	}
+	file.close();
+}
+
 /*
 
 UNLOCK CHECKERS
@@ -1111,7 +1180,7 @@ void Game::generateChunks(const short direction){
 				if(temp[i].locationOfObjects[j]){
 					if(!temp[i].locationOfObjects[j-10]){
 						short rnum = random(mersenne);
-						if(rnum <= 5 + player.luck){
+						if(rnum <= 5 + player.getLuck()){
 							spawnPlant(temp, i, j);
 						}else if(rnum <= 30){
 							spawnEnemy(i, j, k, direction);
@@ -1381,11 +1450,10 @@ COLLISION DETECTION
 
 */
 void Game::player_and_object_collisions(GameObject *object, const float dt, const short gameobject_offset_x, const short gameobject_offset_y){
-	
-	bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
-		&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-	bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
-		&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+	bool collisionX = cam.Position[0] + player.getSizeX()/2 >= object->position[0] + gameobject_offset_x
+		&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.getSizeX()/2;
+	bool collisionY = cam.Position[1] - player.getSizeY()/2 <= object->position[1] + gameobject_offset_y
+		&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.getSizeY()/2;
 
 	if(collisionX && collisionY){
 		//getting previous location
@@ -1395,20 +1463,20 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 		//to make it seem like they were stopped by the object
 		switch(direction){
 			case 0:
-				cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
+				cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.getSizeY()/2);
 				player.velocity[1] = 0.0f;
-				player.falling = false;
+				player.setFalling(false);
 				break;
 			case 1:
-				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+				cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.getSizeX()/2);
 				player.velocity[0] = 0.0f;
 				break;
 			case 2:
-				cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
+				cam.Position[1] -= (cam.Position[1] + player.getSizeY()/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
 				player.velocity[1] = 0.0f;
 				break;
 			case 3:
-				cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+				cam.Position[0] -= cam.Position[0] + player.getSizeX()/2 - (object->position[0] + gameobject_offset_x);
 				player.velocity[0] = 0.0f;
 				break;
 			default:
@@ -1420,20 +1488,20 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 
 void Game::player_and_object_collisions(GameObject *object, const float dt, const short index_x, const short index_y, const short index_chunk, const short gameobject_offset_x, const short gameobject_offset_y){
 	if(object->interactable){
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
-			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
-			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+		bool collisionX = cam.Position[0] + player.getSizeX()/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.getSizeX()/2;
+		bool collisionY = cam.Position[1] - player.getSizeY()/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.getSizeY()/2;
 		if(collisionX && collisionY){
 			//set the object as the interactable object
 			player.interact = object;
 			player.location = findInteractPosition(object, index_x, index_y, index_chunk);
 		}
 	}else{
-		bool collisionX = cam.Position[0] + player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x
-			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.bowl->size[0]/2;
-		bool collisionY = cam.Position[1] - player.bowl->size[1]/2 <= object->position[1] + gameobject_offset_y
-			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.bowl->size[1]/2;
+		bool collisionX = cam.Position[0] + player.getSizeX()/2 >= object->position[0] + gameobject_offset_x
+			&& object->position[0] + object->size[0] + gameobject_offset_x >= cam.Position[0] - player.getSizeX()/2;
+		bool collisionY = cam.Position[1] - player.getSizeY()/2 <= object->position[1] + gameobject_offset_y
+			&& object->position[1] - object->size[1] + gameobject_offset_y <= cam.Position[1] + player.getSizeY()/2;
 
 		if(collisionX && collisionY){
 			//getting previous location
@@ -1443,20 +1511,20 @@ void Game::player_and_object_collisions(GameObject *object, const float dt, cons
 			//to make it seem like they were stopped by the object
 			switch(direction){
 				case 0:
-					cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.bowl->size[1]/2);
+					cam.Position[1] += (object->position[1] + gameobject_offset_y) - (cam.Position[1] - player.getSizeY()/2);
 					player.velocity[1] = 0.0f;
-					player.falling = false;
+					player.setFalling(false);
 					break;
 				case 1:
-					cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.bowl->size[0]/2);
+					cam.Position[0] += object->position[0] + object->size[0] + gameobject_offset_x - (cam.Position[0] - player.getSizeX()/2);
 					player.velocity[0] = 0.0f;
 					break;
 				case 2:
-					cam.Position[1] -= (cam.Position[1] + player.bowl->size[1]/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
+					cam.Position[1] -= (cam.Position[1] + player.getSizeY()/2) - (object->position[1] - object->size[1] + gameobject_offset_y);
 					player.velocity[1] = 0.0f;
 					break;
 				case 3:
-					cam.Position[0] -= cam.Position[0] + player.bowl->size[0]/2 - (object->position[0] + gameobject_offset_x);
+					cam.Position[0] -= cam.Position[0] + player.getSizeX()/2 - (object->position[0] + gameobject_offset_x);
 					player.velocity[0] = 0.0f;
 					break;
 				default:
@@ -1638,7 +1706,7 @@ void Game::player_projectile_collision_detection(){
 				if(game_classic_two_object_collisions((GameObject *)((board_enemies[j])), (GameObject *)&(player_projectiles[i]))){
 					//deal damage
 					if(!player_projectiles[i].piercing || !board_enemies[j]->hitByPiercing){
-						board_enemies[j]->health -= std::max(player_projectiles[i].damage + player.attack - board_enemies[j]->defense, 1);
+						board_enemies[j]->health -= std::max(player_projectiles[i].damage + player.getAttack() - board_enemies[j]->defense, 1);
 					}
 					//add effects
 					board_enemies[j]->addEffects(player_projectiles[i]);
@@ -1691,7 +1759,7 @@ void Game::enemy_projectile_collision_detection(){
 		else if(abs(cam.Position[1] - enemy_projectiles[i].position[1]) > 500)
 			continue;
 		else
-			if(game_classic_two_object_collisions(glm::vec2(cam.Position[0]-player.bowl->size[0]/2, cam.Position[1]+player.bowl->size[1]/2), player.bowl->size, (GameObject *)&(enemy_projectiles[i]))){
+			if(game_classic_two_object_collisions(glm::vec2(cam.Position[0]-player.getSizeX()/2, cam.Position[1]+player.getSizeY()/2), player.getSize(), (GameObject *)&(enemy_projectiles[i]))){
 				player.dealDamage(enemy_projectiles[i].damage);
 				player.addEffects(enemy_projectiles[i]);
 				enemy_projectiles.erase(enemy_projectiles.begin() + i);
@@ -1739,23 +1807,23 @@ short Game::findPlayerDirection(GameObject *object, const float dt, const short 
 	//3 is left side
 			
 	//testing when player is above the object
-	if(prevPosition[1] - player.bowl->size[1]/2 >= object->position[1] + gameobject_offset_y){
+	if(prevPosition[1] - player.getSizeY()/2 >= object->position[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2)
+		if(-player.getSizeX()/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) &&  prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.getSizeX()/2)
 			direction = 0;
 	}
 
 	//testing when the player is below the object
-	else if(prevPosition[1] + player.bowl->size[1]/2 <= object->position[1] - object->size[1] + gameobject_offset_y){
+	else if(prevPosition[1] + player.getSizeY()/2 <= object->position[1] - object->size[1] + gameobject_offset_y){
 		//testing to see if the player with clearly above the block
-		if(-player.bowl->size[0]/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.bowl->size[0]/2)
+		if(-player.getSizeX()/2 < prevPosition[0] - (object->position[0] + gameobject_offset_x) && prevPosition[0] - (object->position[0] + gameobject_offset_x + object->size[0]) < player.getSizeX()/2)
 			direction = 2;
 	}
 	//testing when the rest of the situations where the block approaches from the side
 	//previous ifs have eliminated the top and bottom approaches
-	else if(prevPosition[0] + player.bowl->size[0]/2 <= object->position[0] + gameobject_offset_x){
+	else if(prevPosition[0] + player.getSizeX()/2 <= object->position[0] + gameobject_offset_x){
 		direction = 3;
-	}else if(prevPosition[0] - player.bowl->size[0]/2 >= object->position[0] + gameobject_offset_x + object->size[0]){
+	}else if(prevPosition[0] - player.getSizeX()/2 >= object->position[0] + gameobject_offset_x + object->size[0]){
 		direction = 1;
 	}else{
 		direction = -1;
@@ -1789,7 +1857,7 @@ GAME LOGIC
 
 */
 void Game::spawnPlayerProjectile(){
-	if(player.currentPlant == -1){
+	if(player.getCurrentPlantNum() == -1){
 		player_projectiles.push_back(ResourceManager::GetProjectile("basic"));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
@@ -1797,7 +1865,7 @@ void Game::spawnPlayerProjectile(){
 		it->setDirection(startPosition, direction);
 		it->right = true;
 	}else{
-		std::string projectileName = player.plants[player.currentPlant].projectileName[player.plants[player.currentPlant].level-1];
+		std::string projectileName = player.getProjectileName();
 		if(projectileName.compare("cactus4") == 0){
 			player_projectiles.push_back(ResourceManager::GetProjectile("cactus4"));
 			auto it = player_projectiles.rbegin();
@@ -1826,10 +1894,10 @@ glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	glm::vec2 output;
 	//if player.facing is true, it is firing to the right
 	if(player.facing){
-		output[0] = cam.Position[0] + player.bowl->size[0]/2;
+		output[0] = cam.Position[0] + player.getSizeX()/2;
 		output[1] = cam.Position[1] + p.size[1];
 	}else{
-		output[0] = cam.Position[0] - player.bowl->size[0]/2 - p.size[0];
+		output[0] = cam.Position[0] - player.getSizeX()/2 - p.size[0];
 		output[1] = cam.Position[1] + p.size[1]/2;
 	}
 	return output;
@@ -1839,8 +1907,8 @@ void Game::clearDeadEnemies(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(board_enemies[i]->health <= 0){
 			points += 2;
-			enemyMultiplier += 0.1 + player.level/100.0;
-			player.experience += 5;
+			enemyMultiplier += 0.1 + player.getLevel()/100.0;
+			player.addExperience(5);
 			if(board_enemies[i]->name.compare("Melee") == 0)
 				numEnemyKilled[0]++;
 			delete board_enemies[i];
@@ -1866,54 +1934,54 @@ void Game::processPlayerMovement(const float dt){
 	if(dt > 0.5)
 		return;
 	if(player.velocity[1] < 0)
-		player.falling = true;
+		player.setFalling(true);
 	if(Keys[GLFW_KEY_W]){
 		if(upCounter == 0)
-			player.falling = true;
+			player.setFalling(true);
 		//need to add code in the collision detector that will change falling to false
 		if(upCounter < 0.5){
 			upCounter += dt;
-			player.velocity.y = 30 + maxSpeed/2 + player.speed/4;
+			player.velocity.y = 30 + maxSpeed/2 + player.getSpeed()/4;
 		}
 	}
 	if(Keys[GLFW_KEY_S]){
 		if(player.velocity.y > 0){
-			player.velocity.y -= (player.speed + acceleration) * 2 * dt;
+			player.velocity.y -= (player.getSpeed() + acceleration) * 8 * dt;
 		}else
-			player.velocity.y -= (player.speed + acceleration) * dt;
+			player.velocity.y -= (player.getSpeed() + acceleration) * 2 * dt;
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
 		player.facing = false;
 		if(player.velocity.x > 0)
-			player.velocity.x -= (player.speed + acceleration) * 2 * dt;
+			player.velocity.x -= (player.getSpeed() + acceleration) * 4 * dt;
 		else
-			player.velocity.x -= (player.speed + acceleration) * dt;
+			player.velocity.x -= (player.getSpeed() + acceleration) * dt;
 		if(player.velocity.x < 0)
-			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-maxSpeed) - (player.speed/4)));
+			player.velocity.x = std::max(player.velocity.x, static_cast<float>((-maxSpeed) - (player.getSpeed()/4)));
 	}
 	//move right, with correct acceleration
 	if(Keys[GLFW_KEY_D]){
 		player.facing = true;
 		if(player.velocity.x < 0)
-			player.velocity.x += (player.speed + acceleration) * 2 * dt;
+			player.velocity.x += (player.getSpeed() + acceleration) * 4 * dt;
 		else
-			player.velocity.x += (player.speed + acceleration) * dt;
+			player.velocity.x += (player.getSpeed() + acceleration) * dt;
 		if(player.velocity.x > 0)
-			player.velocity.x = std::min(player.velocity.x, static_cast<float>(maxSpeed + (player.speed/4)));
+			player.velocity.x = std::min(player.velocity.x, static_cast<float>(maxSpeed + (player.getSpeed()/4)));
 	}
 	//slowing down, correct acceleration
 	if(player.velocity.x != 0 && !Keys[GLFW_KEY_A] && !Keys[GLFW_KEY_D]){
 		if(player.velocity.x < 0){
-			if(player.velocity.x > (-(player.speed + acceleration + 50) - 0.2) * dt)
+			if(player.velocity.x > (-(player.getSpeed() + acceleration + 50) - 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x += ((player.speed + acceleration + 50) + 0.2) * dt;
+				player.velocity.x += ((player.getSpeed() + acceleration + 50) + 0.2) * dt;
 		}else{
-			if(player.velocity.x < (player.speed + acceleration + 50 + 0.2) * dt)
+			if(player.velocity.x < (player.getSpeed() + acceleration + 50 + 0.2) * dt)
 				player.velocity.x = 0;
 			else
-				player.velocity.x -= (player.speed + acceleration + 50 + 0.2) * dt;
+				player.velocity.x -= (player.getSpeed() + acceleration + 50 + 0.2) * dt;
 		}
 	}
 	//always subtract 0.6 from the y velocity to simulate falling
@@ -1921,9 +1989,9 @@ void Game::processPlayerMovement(const float dt){
 	//gets corrected to 0 in the collision detection if there is a collision
 	//between the bottom of the player and the top of the object
 	player.velocity.y -= acceleration * dt;
-	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - 30 - player.speed/4));
+	player.velocity.y = std::max(player.velocity.y, (float)(-maxSpeed - 30 - player.getSpeed()/4));
 		
-	if(upCounter != 0 && !player.falling){
+	if(upCounter != 0 && !player.getFalling()){
 		upCounter = 0;
 	}
 }
@@ -1955,14 +2023,30 @@ void Game::enemyAttackLogic(){
 	for(int i{}; i < board_enemies.size(); ++i){
 		if(!(abs(board_enemies[i]->position[0] - cam.Position[0]) > 1000) && !(abs(board_enemies[i]->position[1] - cam.Position[1]) > 1000)){
 			if(board_enemies[i]->attackFunc(cam.Position)){
-				enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i]->projectileName));
-				auto it = enemy_projectiles.rbegin();
-				glm::vec2 startPosition = board_enemies[i]->getProjectileStartPositionForEnemy(*it);
-				short direction = board_enemies[i]->attackRight ? 1 : -1;
-				it->setDirection(startPosition, direction, board_enemies[i]->projectileSpeed);
-				it->right = board_enemies[i]->attackRight;
-				it->damage = board_enemies[i]->attack;
-			};
+				if(board_enemies[i]->name.compare("Spreadshot") == 0){
+					for(int j{}; j < 3; ++j){
+						enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i]->projectileName));
+						auto it = enemy_projectiles.rbegin();
+						glm::vec2 startPosition = board_enemies[i]->getProjectileStartPositionForEnemy(*it);
+						short direction = board_enemies[i]->attackRight ? 1 : -1;
+						if(j < 2){
+							it->setDirection(startPosition, direction, board_enemies[i]->projectileSpeed);
+						}else{
+							it->setDirectionY();
+						}
+						it->right = board_enemies[i]->attackRight;
+						it->damage = board_enemies[i]->attack;
+					}
+				}else{
+					enemy_projectiles.push_back(ResourceManager::GetProjectile(board_enemies[i]->projectileName));
+					auto it = enemy_projectiles.rbegin();
+					glm::vec2 startPosition = board_enemies[i]->getProjectileStartPositionForEnemy(*it);
+					short direction = board_enemies[i]->attackRight ? 1 : -1;
+					it->setDirection(startPosition, direction, board_enemies[i]->projectileSpeed);
+					it->right = board_enemies[i]->attackRight;
+					it->damage = board_enemies[i]->attack;
+				}
+			}
 		}
 	}
 }
@@ -2071,7 +2155,7 @@ void Game::renderGame(){
 
 	calculateTextRenderValues();
 
-	if(player.currentPlant != -1){
+	if(player.getCurrentPlantNum() != -1){
 		findHighlightPosition();
 		findLevelIconPosition();
 	}
@@ -2103,48 +2187,48 @@ void Game::renderGameBackground(glm::mat4 &view){
 void Game::renderBlocks(glm::mat4 &view){
 	BlockRenderer->setViewMatrix("view", view);
 	BlockRenderer->DrawInstancedSprites(numBlocks, ResourceManager::GetTexture("block"),
-		glm::vec2(0.0f, -(blockSize - player.bowl->size[1])), glm::vec2((float)blockSize, (float)blockSize));
+		glm::vec2(0.0f, -(blockSize - player.getSizeY())), glm::vec2((float)blockSize, (float)blockSize));
 }
 
 void Game::renderPlants(glm::mat4 &view){
 	PlantRenderer->setViewMatrix("view", view);
-	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -(maxPlantSize - player.bowl->size[1])));
+	PlantRenderer->DrawSprites(numPlants, ResourceManager::GetTexture("plants"), maxPlantSize, glm::vec2(0.0f, -(maxPlantSize - player.getSizeY())));
 }
 
 void Game::renderEnemyProjectiles(glm::mat4 &view){
 	EnemyProjectileRenderer->setViewMatrix("view", view);
 	EnemyProjectileRenderer->setOffset(&enemyProjectileOffsets[0], enemy_projectiles.size());
 	EnemyProjectileRenderer->setTextureCoords(&enemyProjectileTexCoords[0], enemy_projectiles.size());
-	EnemyProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxEnemyProjectileSize, glm::vec2(0.0f, player.bowl->size[1] - maxEnemyProjectileSize));
+	EnemyProjectileRenderer->DrawSprites(enemy_projectiles.size(), ResourceManager::GetTexture("enemyProjectiles"), maxEnemyProjectileSize, glm::vec2(0.0f, player.getSizeY() - maxEnemyProjectileSize));
 }
 
 void Game::renderPlayerProjectiles(glm::mat4 &view){
 	ProjectileRenderer->setViewMatrix("view", view);
 	ProjectileRenderer->setOffset(&playerProjectileOffsets[0], player_projectiles.size());
 	ProjectileRenderer->setTextureCoords(&playerProjectileTexCoords[0], player_projectiles.size());
-	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, (player.bowl->size[1] - maxProjectileSize)));
+	ProjectileRenderer->DrawSprites(player_projectiles.size(), ResourceManager::GetTexture("projectiles"), maxProjectileSize, glm::vec2(0.0f, (player.getSizeY() - maxProjectileSize)));
 }
 
 void Game::renderEnemies(glm::mat4 &view){
 	EnemyRenderer->setViewMatrix("view", view);
 	EnemyRenderer->setOffset(&enemyOffsets[0], board_enemies.size());
 	EnemyRenderer->setTextureCoords(&enemyTexCoords[0], board_enemies.size());
-	EnemyRenderer->DrawEnemies(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, -(maxEnemySize - player.bowl->size[1])), &hitData[0], board_enemies.size());
+	EnemyRenderer->DrawEnemies(board_enemies.size(), ResourceManager::GetTexture("enemies"), maxEnemySize, glm::vec2(0.0f, -(maxEnemySize - player.getSizeY())), &hitData[0], board_enemies.size());
 }
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	if(player.health == playerHealth && !player.isHit){
-		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-			player.bowl->size);
+	if(player.getHealth() == playerHealth && !player.isHit){
+		Renderer->DrawSprite(player.getTexture(), 
+			glm::vec2(cam.Position[0] - player.getSizeX()/2, cam.Position[1] + player.getSizeY()/2),
+			player.getSize());
 	}else{
 		if(player.isHit == 0)
 			player.isHit = 0.100;
-		Renderer->DrawSprite(player.bowl->attackAnimation[player.bowl->frameCounter], 
-			glm::vec2(cam.Position[0] - player.bowl->size[0]/2, cam.Position[1] + player.bowl->size[1]/2),
-			player.bowl->size, 0.0f, glm::vec3(0.5f, 0.0f, 0.0f));
-		playerHealth = player.health;
+		Renderer->DrawSprite(player.getTexture(), 
+			glm::vec2(cam.Position[0] - player.getSizeX()/2, cam.Position[1] + player.getSizeY()/2),
+			player.getSize(), 0.0f, glm::vec3(0.5f, 0.0f, 0.0f));
+		playerHealth = player.getHealth();
 	}
 }
 
@@ -2162,7 +2246,7 @@ void Game::renderText(glm::mat4 &view){
 
 void Game::renderUI(glm::mat4 &view){
 	UIRenderer->setViewMatrix("view", view);
-	if(player.bowl->numOfPlants == 3){
+	if(player.getMaxNumPlants() == 3){
 		UIRenderer->DrawSprite(ResourceManager::GetTexture("ui_three_plant"), 
 			glm::vec2(cam.Position[0] - Width/2, cam.Position[1] - Height/2),
 			glm::vec2(Width, Height));
@@ -2177,15 +2261,15 @@ void Game::renderUI(glm::mat4 &view){
 	IconRenderer->setTextureCoords(&plantIconTexCoords[0], numPlantIcon);
 	IconRenderer->DrawSprites(numPlantIcon, ResourceManager::GetTexture("plants"), maxPlantIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxPlantIconSize));
 
-	if(player.currentPlant != -1){
+	if(player.getCurrentPlantNum() != -1){
 		Renderer->setViewMatrix("view", view);
 		Renderer->DrawSprite(ResourceManager::GetTexture("highlight"), 
 			highlightPosition, glm::vec2(35, 35));
 
 		IconRenderer->setViewMatrix("view", view);
-		IconRenderer->setOffset(&levelIconOffsets[0], player.numPlants);
-		IconRenderer->setTextureCoords(&levelIconTexCoords[0], player.numPlants);
-		IconRenderer->DrawSprites(player.numPlants, ResourceManager::GetTexture("levels"), maxLevelIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxLevelIconSize));
+		IconRenderer->setOffset(&levelIconOffsets[0], player.getNumPlants());
+		IconRenderer->setTextureCoords(&levelIconTexCoords[0], player.getNumPlants());
+		IconRenderer->DrawSprites(player.getNumPlants(), ResourceManager::GetTexture("levels"), maxLevelIconSize, glm::vec2(cam.Position[0], cam.Position[1] - maxLevelIconSize));
 	}
 
 	if(player.effects.size() > 0){
@@ -2368,15 +2452,15 @@ void Game::calculateIconRenderValues(){
 	for(int i{}; i < player.effects.size(); ++i){
 
 	}
-	numPlantIcon = player.numPlants;
+	numPlantIcon = player.getNumPlants();
 	//the first square for 3 plant ui goes from
 	//445 to 480
 	//top side is at 750
-	short starting_offset = player.bowl->numOfPlants == 3 ? threePlantFirstBoxX : fourPlantFirstBoxX;
-	for(int i{}; i < player.numPlants; ++i){
+	short starting_offset = player.getMaxNumPlants() == 3 ? threePlantFirstBoxX : fourPlantFirstBoxX;
+	for(int i{}; i < player.getNumPlants(); ++i){
 		//no idea where the 45 came from but it works so i'm keeping it lol
 		plantIconOffsets.push_back(glm::vec2((starting_offset + ((plantBoxSize + plantBoxSpacing) * i) + (45.0-maxPlantIconSize)/2)/maxPlantIconSize, (plantFirstBoxY - (45.0-maxPlantIconSize)/2)/maxPlantIconSize));
-		plantIconTexCoords.push_back(ResourceManager::getDepth(player.plants[i].name));
+		plantIconTexCoords.push_back(ResourceManager::getDepth(player.getPlant(i)->name));
 	}
 
 	starting_offset = 50;
@@ -2396,11 +2480,11 @@ void Game::moveBackground(float dt){
 }
 
 void Game::findHighlightPosition(){
-	if(player.numPlants >= 1){
-		if(player.bowl->numOfPlants == 3){
-			highlightPosition = glm::vec2(threePlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.currentPlant), plantFirstBoxY);
+	if(player.getNumPlants() >= 1){
+		if(player.getMaxNumPlants() == 3){
+			highlightPosition = glm::vec2(threePlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.getCurrentPlantNum()), plantFirstBoxY);
 		}else{
-			highlightPosition = glm::vec2(fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.currentPlant), plantFirstBoxY);
+			highlightPosition = glm::vec2(fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * player.getCurrentPlantNum()), plantFirstBoxY);
 		}
 		highlightPosition[0] += cam.Position[0];
 		highlightPosition[1] += cam.Position[1] - plantBoxSize;
@@ -2410,9 +2494,9 @@ void Game::findHighlightPosition(){
 void Game::findLevelIconPosition(){
 	levelIconOffsets.clear();
 	levelIconTexCoords.clear();
-	for(int i{}; i < player.numPlants; ++i){
-		levelIconTexCoords.push_back(player.plants[i].level - 1);
-		if(player.bowl->numOfPlants == 3)
+	for(int i{}; i < player.getNumPlants(); ++i){
+		levelIconTexCoords.push_back(player.getPlant(i)->level - 1);
+		if(player.getMaxNumPlants() == 3)
 			levelIconOffsets.push_back(glm::vec2((threePlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * i) + levelBarSpacing)/maxLevelIconSize, (plantFirstBoxY - levelBarSpacing)/maxLevelIconSize));
 		else
 			levelIconOffsets.push_back(glm::vec2((fourPlantFirstBoxX + ((plantBoxSize + plantBoxSpacing) * i) + levelBarSpacing)/maxLevelIconSize, (plantFirstBoxY - levelBarSpacing)/maxLevelIconSize));
@@ -2424,7 +2508,7 @@ void Game::calculateTextRenderValues(){
 	textOffsets.clear();
 	pointOffsets.clear();
 	pointTexCoords.clear();
-	int healthNumber = player.health;
+	int healthNumber = player.getHealth();
 	std::vector<short> tempNums{};
 	while(healthNumber > 0){
 		tempNums.push_back(healthNumber % 10);

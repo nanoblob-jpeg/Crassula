@@ -42,9 +42,16 @@ public:
 		position = startPosition;
 	}
 
+	void setDirectionY(){
+		velocity[1] = projectileSpeed;
+	}
+
 	void move(float dt){
 		position[0] += velocity[0] * dt;
 		distanceTravelled += velocity[0] * dt;
+		if(velocity[1] != 0){
+			position[1] += velocity[1] * dt;
+		}
 	}
 
 	void addEffect(Effect &effect);

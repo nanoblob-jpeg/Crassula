@@ -30,7 +30,7 @@
 
 class Game
 {
-public:
+private:
 	//CONSTANTS
 	//max texture sizes
 	const short maxPlantSize{50};
@@ -71,7 +71,7 @@ public:
 	const unsigned short numOfPlants{1};
 	const unsigned short numOfEnemies{1};
 	const int numAchievements{49};
-	const int numGreenHouse{1};
+	const int numGreenHouse{50};
 
 	//this is to make the fix enemy location function work as intended
 	const std::vector<short> generationCode{0, 0, 0, 3, 4, 1, 2, 2, 2};
@@ -84,6 +84,12 @@ public:
 	//screen size constants
 	float Width, Height;
 
+	//unlock stuff logic
+	std::vector<bool> bowls{};
+	std::vector<std::string> bowlNames{};
+
+	//misc game drivers
+public:
 	//gamestates
 	enum GameState{
 		START_SCREEN,
@@ -94,14 +100,9 @@ public:
 		HOME_GREENHOUSE,
 		HOME_MAIN
 	};
-
-	//unlock stuff logic
-	std::vector<bool> bowls{};
-	std::vector<std::string> bowlNames{};
-
-	//misc game drivers
 	GameState m_state;
 	bool Keys[1024]{};
+private:
 	std::mt19937 mersenne{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
 	Camera cam = Camera(glm::vec3(0.0f, 0.0f, 1.0f));
@@ -141,7 +142,10 @@ public:
 
 	//greenhouse room logic
 	//these icons are 55x55
+public:
 	std::vector<bool> unlockedPlants{};
+	std::vector<greenHousePlant> greenhouse{};
+private:
 	int plantSelector{};
 	bool greenhouseMoved = false;
 	bool selectPressed = false;
@@ -150,11 +154,12 @@ public:
 	std::vector<float> selectedPlantTexCoords{};
 	std::vector<glm::vec2> greenhouseOffsets{};
 	std::vector<float> greenhouseTexCoords{};
-	std::vector<greenHousePlant> greenhouse{};
 	std::vector<glm::vec2> greenhouseLevelOffset{};
 
 	//Player object
+public:
 	Player player;
+private:
 	int playerHealth;
 	//uses points for recoveryTimer, this var is jsut to keep track of what the last
 	//value was
@@ -219,7 +224,7 @@ public:
 	std::vector<float> hitData{}; //used for highlighting hit enemies
 	Background *backgroundTextures = nullptr; //pointer to background textures
 
-
+public:
 	/*
 
 
@@ -231,12 +236,12 @@ public:
 	*/
 	Game(unsigned int width, unsigned int height);
 	~Game();
-	//loads all textures
 	void Init();
 	//game loop
 	void ProcessInput(float dt);
 	void Update(float dt);
 	void Render();
+	void debugOutput();
 
 	//game initialization/destruction
 	void initializeGame();
@@ -244,7 +249,6 @@ public:
 	void clearAndResetGameBoard();
 	void setBackground(std::string &name);
 	void prepBoard();
-	void reserveArraySpace();
 	void gameEndProtocol();
 	void gameStartProtocol();
 	void setUnlockedBowls();
@@ -252,6 +256,13 @@ public:
 	void loadGameData();
 	void prepGreenhouse();
 	void greenhouseSelectorHelper(int avoid);
+	void deleteRenderers();
+	//serialization
+	void serPlayerData();
+	void serGameData();
+	void serAchievementData();
+	void serBowlData();
+	void serGreenHouseData();
 
 	//unlock checkers
 	void addExpToGreenhousePlants();
