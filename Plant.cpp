@@ -35,7 +35,7 @@ int Plant::interact(Game *game){
 			}
 		}
 	}
-	if(game->player.numPlants == 0){
+	if(game->player.getNumPlants() == 0){
 		game->player.addPlant(this->name, true);
 		Plant* temp = game->player.getPlant(0);
 		temp->level = 1;

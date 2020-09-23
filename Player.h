@@ -9,6 +9,10 @@
 #define PLAYER
 class Player : public GameObject{
 private:
+	//false for left, true for right
+	bool facing;
+	float isHit{};
+
 	//input logic variables
 	bool falling{};
 	bool switchingPlants{};
@@ -37,18 +41,9 @@ private:
 	int currentPlant{-1}; // -1 represents the basic attack
 	int numCurrentLevelFourPlants = 0;
 	std::vector<Plant> plants = {};
-public:
-	//false for left, true for right
-	bool facing;
-	float isHit{};
 
-	//if the player is currently on an interactalbe GameObject, this will store it
-	//the interact key is currently "i"
-	glm::vec4 location{0.0,0.0,0.0, 0.0};
-	GameObject *interact = nullptr;
-
-	//effects
-	std::vector<Effect> effects;
+	//attacking logic
+	float timer = 0;
 
 	//stat boost vector
 	//instantiate when the player enters the gate and starts a game
@@ -57,9 +52,14 @@ public:
 	//these values which should be easy to access
 	//maybe change it to a map
 	std::vector<float> statBoosts;
+public:
+	//if the player is currently on an interactalbe GameObject, this will store it
+	//the interact key is currently "i"
+	glm::vec4 location{0.0,0.0,0.0, 0.0};
+	GameObject *interact = nullptr;
 
-	//attacking logic
-	float timer = 0;
+	//effects
+	std::vector<Effect> effects;
 
 	Player():GameObject(){};
 	void loadPlayer(const char *file);
@@ -75,44 +75,51 @@ public:
 	void setStatBoosts(std::vector<float> &p, float level);
 	void setFinalStats();
 
-	std::string& getBackgroundName();
 	void startAnimationCounter();
 	void addFrameTimer(float dt);
-	bool inAnimation();
 	void recoveryProc(int maxHealth);
 	void addExperience(float a);
 	void incrementAnimation(float dt);
 	void addToNumCurrentLevelFourPlants(int i);
 	void addPlant(std::string name, bool a);
 	void clearPlants();
+	void addNumPlants(int i);
+	void decrementIsHit(float dt);
+	void clearStatBoosts();
 
 	void setBowl(Bowl *b);
 	void setFalling(bool b);
 	void setSwitchingPlants(bool b);
 	void setCurrentPlant(int a);
-	void addNumPlants(int i);
+	void setFacing(bool b);
+	void setIsHit(float a);
 
-	std::string getBowlName();
-	std::string getName();
-	float getSpeed();
-	int getAttack();
-	int getHealth();
-	float getLuck();
-	int getLevel();
-	float getExperience();
-	float getSizeX();
-	float getSizeY();
-	glm::vec2 getSize();
-	int getMaxNumPlants();
-	Texture& getTexture();
+	bool inAnimation();
 	bool getFalling();
 	bool getSwitchingPlants();
+	bool getFacing();
+	int getAttack();
+	int getHealth();
+	int getLevel();
+	int getMaxNumPlants();
 	int getNumPlants();
 	int getNumCurrentLevelFourPlants();
 	int getMaxNumOfLevelFour();
+	int getCurrentPlantNum();
+	float getSpeed();
+	float getLuck();
+	float getExperience();
+	float getSizeX();
+	float getSizeY();
+	float getIsHit();
+	float getTimer();
 	Plant* getPlant(int i);
 	Plant* getCurrentPlant();
-	int getCurrentPlantNum();
+	Texture& getTexture();
+	std::string& getBackgroundName();
+	glm::vec2 getSize();
+	std::string getBowlName();
+	std::string getName();
 	std::string getProjectileName();
 	std::vector<Plant>::iterator getPlantArrayBegin();
 	std::vector<Plant>::iterator getPlantArrayEnd();

@@ -386,14 +386,14 @@ void Game::Update(float dt){
 
 
 	//following line just makes sure that the attack timer is always added to
-	if(!Keys[GLFW_KEY_SPACE] && player.timer >= 0.0001)
+	if(!Keys[GLFW_KEY_SPACE] && player.getTimer() >= 0.0001)
 		player.canAttack(dt);
 
 	//following line reduces the hit indicator for player
-	if(player.isHit < 0){
-		player.isHit = 0;
-	}else if(player.isHit){
-		player.isHit -= dt;
+	if(player.getIsHit() < 0){
+		player.setIsHit(0);
+	}else if(player.getIsHit()){
+		player.decrementIsHit(dt);
 	}
 
 	//adding to the attack timers of the enemies
@@ -646,7 +646,7 @@ void Game::gameEndProtocol(){
 	player.calculateLevel();
 	player.calculateStats();
 	player.interact = nullptr;
-	player.statBoosts.clear();
+	player.clearStatBoosts();
 	player.clearPlants();
 	player.effects.clear();
 	player.velocity[0] = 0;
@@ -656,7 +656,6 @@ void Game::gameEndProtocol(){
 	hitData.clear();
 	enemy_projectiles.clear();
 	player_projectiles.clear();
-	player.statBoosts.clear();
 
 	m_state = DEATH_SCREEN;
 
@@ -1861,7 +1860,7 @@ void Game::spawnPlayerProjectile(){
 		player_projectiles.push_back(ResourceManager::GetProjectile("basic"));
 		auto it = player_projectiles.rbegin();
 		glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
-		short direction = player.facing ? 1 : -1;
+		short direction = player.getFacing() ? 1 : -1;
 		it->setDirection(startPosition, direction);
 		it->right = true;
 	}else{
@@ -1871,21 +1870,21 @@ void Game::spawnPlayerProjectile(){
 			auto it = player_projectiles.rbegin();
 			glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
 			startPosition[1] += 20;
-			short direction = player.facing ? 1 : -1;
+			short direction = player.getFacing() ? 1 : -1;
 			it->setDirection(startPosition, direction);
-			it->right = player.facing;
+			it->right = player.getFacing();
 			player_projectiles.push_back(ResourceManager::GetProjectile("cactus4"));
 			it = player_projectiles.rbegin();
 			startPosition[1] -= 30;
 			it->setDirection(startPosition, direction);
-			it->right = player.facing;
+			it->right = player.getFacing();
 		}else{
 			player_projectiles.push_back(ResourceManager::GetProjectile(projectileName));
 			auto it = player_projectiles.rbegin();
 			glm::vec2 startPosition = getProjectileStartPositionForPlayer(*it);
-			short direction = player.facing ? 1 : -1;
+			short direction = player.getFacing() ? 1 : -1;
 			it->setDirection(startPosition, direction);
-			it->right = player.facing;
+			it->right = player.getFacing();
 		}
 	}
 }
@@ -1893,7 +1892,7 @@ void Game::spawnPlayerProjectile(){
 glm::vec2 Game::getProjectileStartPositionForPlayer(Projectile &p){
 	glm::vec2 output;
 	//if player.facing is true, it is firing to the right
-	if(player.facing){
+	if(player.getFacing()){
 		output[0] = cam.Position[0] + player.getSizeX()/2;
 		output[1] = cam.Position[1] + p.size[1];
 	}else{
@@ -1952,7 +1951,7 @@ void Game::processPlayerMovement(const float dt){
 	}
 	//move left, with correct acceleration
 	if(Keys[GLFW_KEY_A]){
-		player.facing = false;
+		player.setFacing(false);
 		if(player.velocity.x > 0)
 			player.velocity.x -= (player.getSpeed() + acceleration) * 4 * dt;
 		else
@@ -1962,7 +1961,7 @@ void Game::processPlayerMovement(const float dt){
 	}
 	//move right, with correct acceleration
 	if(Keys[GLFW_KEY_D]){
-		player.facing = true;
+		player.setFacing(true);
 		if(player.velocity.x < 0)
 			player.velocity.x += (player.getSpeed() + acceleration) * 4 * dt;
 		else
@@ -2218,13 +2217,13 @@ void Game::renderEnemies(glm::mat4 &view){
 
 void Game::renderPlayer(glm::mat4 &view){
 	Renderer->setViewMatrix("view", view);
-	if(player.getHealth() == playerHealth && !player.isHit){
+	if(player.getHealth() == playerHealth && !player.getIsHit()){
 		Renderer->DrawSprite(player.getTexture(), 
 			glm::vec2(cam.Position[0] - player.getSizeX()/2, cam.Position[1] + player.getSizeY()/2),
 			player.getSize());
 	}else{
-		if(player.isHit == 0)
-			player.isHit = 0.100;
+		if(player.getIsHit() == 0)
+			player.setIsHit(0.100);
 		Renderer->DrawSprite(player.getTexture(), 
 			glm::vec2(cam.Position[0] - player.getSizeX()/2, cam.Position[1] + player.getSizeY()/2),
 			player.getSize(), 0.0f, glm::vec3(0.5f, 0.0f, 0.0f));
