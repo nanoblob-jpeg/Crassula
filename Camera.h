@@ -16,8 +16,6 @@ enum Camera_Movement{
 
 // Default camera values
 const float SPEED       =  2.5f;
-const float SENSITIVITY =  0.1f;
-const float ZOOM        =  45.0f;
 
 class Camera{
 public:
@@ -29,23 +27,20 @@ public:
 
 
 	float movementSpeed;
-	float mouseSensitivity;
-	float zoom;
 
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f)):Front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed{SPEED}, mouseSensitivity{SENSITIVITY}, zoom{ZOOM}{
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f)):Front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed{SPEED}{
 		Position = position;
         WorldUp = up;
 
 		updateCameraVectors();
 	};
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
-    {
-        Position = glm::vec3(posX, posY, posZ);
-        WorldUp = glm::vec3(upX, upY, upZ);
+	// Camera(float posX, float posY, float posZ, float upX, float upY, float upZ) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED)
+ //    {
+ //        Position = glm::vec3(posX, posY, posZ);
+ //        WorldUp = glm::vec3(upX, upY, upZ);
 
-        updateCameraVectors();
-    }
-
+ //        updateCameraVectors();
+ //    }
     glm::mat4 GetViewMatrix();
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
     void ProcessKeyboard(const glm::vec2 &movement_vector, const float deltaTime);
